@@ -25,7 +25,18 @@ A **county disaster manager** in Turkana, Marsabit, Wajir, Mandera, Garissa, Isi
 Secondary users who act on the same information: county agriculture and livestock officers, and humanitarian
 partners planning water, cash and nutrition support.
 
-**SDGs:** 13 Climate Action · 2 Zero Hunger · 1 No Poverty · 11 Sustainable Cities and Communities.
+## SDG impact statement
+
+| SDG | Target | How Ukame Watch contributes |
+|---|---|---|
+| **13 Climate Action** (primary) | 13.1 Strengthen resilience and adaptive capacity to climate-related hazards | Turns 35 years of climate data into county-level drought, heavy-rain and heat signals with tested skill, so preparedness starts before a season fails |
+| **2 Zero Hunger** | 2.4 Sustainable food production and resilience to drought and floods | Early drought signals give livestock and agriculture officers time for water repairs, pasture planning and timely offtake |
+| **1 No Poverty** | 1.5 Reduce exposure of the poor to climate-related extreme events | The eight counties are among Kenya's poorest; earlier water, cash and nutrition support protects household assets |
+| **11 Sustainable Cities and Communities** | 11.5 Reduce deaths and people affected by disasters | Heavy-rain watches prompt early warning and evacuation preparation in flood-prone areas |
+
+**What we can and cannot claim.** Ukame Watch shortens the time between a rainfall signal and a county
+conversation about preparedness. It does not measure hunger, livestock losses or impact, and it does not
+replace NDMA or KMD. Its value depends on officers acting on its drafts, and we have not yet tested it with them.
 
 ## Results
 
@@ -106,6 +117,21 @@ flowchart LR
   playbook actions when a level is active, logs every tool call, and holds every advisory as a draft until a named
   person approves it.
 
+## Technology stack
+
+| Layer | Technology |
+|---|---|
+| Language | Python 3.12 |
+| Data | NASA POWER daily API (MERRA-2), Open-Meteo (ERA5 cross-check, 7-day forecast), NOAA CPC ENSO and IOD indices, geoBoundaries, KNBS 2019 census, WorldPop |
+| Analysis | pandas, NumPy, SciPy, pymannkendall (trend tests), GeoPandas, Shapely, rasterio, rasterstats |
+| Model | scikit-learn logistic regression per season, time-based split, Brier skill score vs climatology and persistence |
+| AI assistant | Qwen 2.5 3B via Ollama (local), six Python tools, code-level guardrails, JSONL audit logs |
+| Dashboard | Streamlit, Plotly |
+| Live demo | stlite (Streamlit on Pyodide/WebAssembly), GitHub Pages |
+| Notebooks | Jupyter (nbformat, nbconvert), Matplotlib |
+| Testing | pytest (86 tests) |
+| Hardware | Runs on a MacBook Air M1 with 8 GB RAM; no GPU, no paid services |
+
 ## Responsible AI
 
 - No personal data anywhere; all sources are public and aggregated (see `DATA.md`).
@@ -138,9 +164,9 @@ can explain every module. The runtime assistant uses **Qwen 2.5 3B** (Alibaba Cl
 
 ## Team
 
-| Member | Owns (can explain and rerun) |
-|---|---|
-| _name_ | Data pipeline, QC and `DATA.md` (`data.py`, `analysis.py`) |
-| _name_ | Seasonal outlook and validation (`outlook.py`, `validation.py`, notebook 02) |
-| _name_ | Agent, guardrails and evaluation (`agent*.py`, `guardrails.py`, `logs/`) |
-| _name_ (Alumni/Finalist Collaborator) | Dashboard, playbook and demo (`app/`, `docs/`) |
+| Member | Role | Owns (can explain and rerun) |
+|---|---|---|
+| _name_ | Data and QC | Data pipeline, QC and `DATA.md` (`data.py`, `analysis.py`) |
+| _name_ | Modelling | Seasonal outlook and validation (`outlook.py`, `validation.py`, notebook 02) |
+| _name_ | AI assistant | Agent, guardrails and evaluation (`agent*.py`, `guardrails.py`, `logs/`) |
+| _name_ | Product and demo | Dashboard, playbook, live demo and pitch (`app/`, `docs/`) |
