@@ -41,6 +41,40 @@ def quality_report(daily: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+# ---------------------------------------------------------------- rainfall QC
+QC_CANDIDATE_MM = 100.0     # days above this are checked against ERA5
+QC_ERA5_RATIO = 0.10        # ERA5 below 10% of the NASA POWER value => single-day artifact
+QC_IMPLAUSIBLE_MM = 200.0   # with no ERA5 check, days above this are implausible in these arid counties
+
+
+def qc_rainfall(daily: pd.DataFrame, era5: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Replace spurious one-day rainfall spikes. Returns (cleaned daily, log of every candidate day).
+
+    NASA POWER contains a few physically implausible days (e.g. 608 mm in Turkana on 31 Dec 2020) that
+    an independent reanalysis (ERA5) does not see at all. Those are replaced with the ERA5 value. Heavy
+    days that ERA5 partly confirms are kept: reanalyses underestimate convective extremes.
+    """
+    d = daily.copy()
+    e = era5.set_index(["county", "date"])["era5_mm"] if len(era5) else pd.Series(dtype=float)
+    flags = []
+    for i in d.index[d["precipitation_sum"] > QC_CANDIDATE_MM]:
+        c, dt, v = d.at[i, "county"], d.at[i, "date"], float(d.at[i, "precipitation_sum"])
+        ref = e.get((c, dt), np.nan)
+        if not pd.isna(ref) and ref < QC_ERA5_RATIO * v:
+            d.at[i, "precipitation_sum"] = float(ref)
+            action = "replaced with ERA5"
+        elif not pd.isna(ref):
+            action = "kept (ERA5 confirms rain)"
+        elif v > QC_IMPLAUSIBLE_MM:
+            d.at[i, "precipitation_sum"] = np.nan
+            action = "set missing (implausible, no ERA5 check)"
+        else:
+            action = "kept (no ERA5 check, below implausible limit)"
+        flags.append({"county": c, "date": dt.date().isoformat(), "original_mm": v,
+                      "era5_mm": None if pd.isna(ref) else float(ref), "action": action})
+    return d, pd.DataFrame(flags, columns=["county", "date", "original_mm", "era5_mm", "action"])
+
+
 # ---------------------------------------------------------------- monthly + climatology
 def monthly(daily: pd.DataFrame) -> pd.DataFrame:
     d = daily.assign(year=daily["date"].dt.year, month=daily["date"].dt.month)

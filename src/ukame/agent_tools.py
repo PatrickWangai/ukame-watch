@@ -131,6 +131,7 @@ def get_seasonal_outlook(store: Store, county: str) -> dict:
         "p_dry_climatology": _r(r.get("p_dry_climatology"), 2),
         "p_dry_persistence": _r(r.get("p_dry_persistence"), 2),
         "test_skill": skill,
+        "skill_metric": "Brier skill score (BSS) vs climatology: above 0 = better than climatology; F1 for warnings",
         "model_beats_baselines_in_test": has_skill,
         "note": r.get("note") or ("" if has_skill else
                                   "The model did not beat the baselines for this county and season in testing; "

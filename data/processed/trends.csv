@@ -23,20 +23,20 @@ Kitui,heavy_rain_days,1991-2025,35,no trend,0.875,0.0,False
 Kitui,max_3day_rain_mm,1991-2025,35,no trend,0.1475,2.978,False
 Kitui,heat_days,1991-2025,35,increasing,0.0027,6.667,True
 Kitui,mean_tmax_c,1991-2025,35,increasing,0.0008,0.31,True
-Mandera,annual_rain_mm,1991-2025,35,no trend,0.4265,15.838,False
+Mandera,annual_rain_mm,1991-2025,35,no trend,0.6092,7.855,False
 Mandera,MAM_rain_mm,1991-2025,35,no trend,0.8424,3.172,False
-Mandera,OND_rain_mm,1991-2025,35,no trend,0.7982,6.525,False
+Mandera,OND_rain_mm,1991-2025,35,no trend,0.9547,-0.522,False
 Mandera,longest_dry_spell_days,1991-2025,35,no trend,0.5319,-2.381,False
 Mandera,heavy_rain_days,1991-2025,35,no trend,0.4541,0.0,False
-Mandera,max_3day_rain_mm,1991-2025,35,no trend,0.5136,2.422,False
+Mandera,max_3day_rain_mm,1991-2025,35,no trend,0.4954,2.5,False
 Mandera,heat_days,1991-2025,35,increasing,0.0105,5.0,True
 Mandera,mean_tmax_c,1991-2025,35,no trend,0.0649,0.18,False
-Marsabit,annual_rain_mm,1991-2025,35,no trend,0.268,-22.389,False
+Marsabit,annual_rain_mm,1991-2025,35,no trend,0.1475,-28.268,False
 Marsabit,MAM_rain_mm,1991-2025,35,no trend,0.3634,-14.289,False
 Marsabit,OND_rain_mm,1991-2025,35,no trend,0.9547,-0.553,False
 Marsabit,longest_dry_spell_days,1991-2025,35,no trend,0.4019,4.211,False
-Marsabit,heavy_rain_days,1991-2025,35,no trend,0.9199,0.0,False
-Marsabit,max_3day_rain_mm,1991-2025,35,no trend,1.0,-0.135,False
+Marsabit,heavy_rain_days,1991-2025,35,no trend,0.9656,0.0,False
+Marsabit,max_3day_rain_mm,1991-2025,35,no trend,0.9773,-0.19,False
 Marsabit,heat_days,1991-2025,35,increasing,0.0021,6.875,True
 Marsabit,mean_tmax_c,1991-2025,35,increasing,0.0001,0.348,True
 Samburu,annual_rain_mm,1991-2025,35,no trend,0.0608,-49.073,False
@@ -47,19 +47,19 @@ Samburu,heavy_rain_days,1991-2025,35,no trend,0.7973,0.0,False
 Samburu,max_3day_rain_mm,1991-2025,35,no trend,0.1914,3.333,False
 Samburu,heat_days,1991-2025,35,increasing,0.0,10.0,True
 Samburu,mean_tmax_c,1991-2025,35,increasing,0.0007,0.295,True
-Turkana,annual_rain_mm,1991-2025,35,no trend,0.0736,39.787,False
+Turkana,annual_rain_mm,1991-2025,35,no trend,0.1475,34.903,False
 Turkana,MAM_rain_mm,1991-2025,35,no trend,0.1322,29.152,False
-Turkana,OND_rain_mm,1991-2025,35,no trend,0.2805,12.417,False
+Turkana,OND_rain_mm,1991-2025,35,no trend,0.3942,10.25,False
 Turkana,longest_dry_spell_days,1991-2025,35,no trend,0.7437,-1.2,False
-Turkana,heavy_rain_days,1991-2025,35,increasing,0.0112,1.111,True
-Turkana,max_3day_rain_mm,1991-2025,35,increasing,0.0015,15.526,True
+Turkana,heavy_rain_days,1991-2025,35,increasing,0.0148,1.111,True
+Turkana,max_3day_rain_mm,1991-2025,35,increasing,0.0011,14.567,True
 Turkana,heat_days,1991-2025,35,no trend,0.1178,3.333,False
 Turkana,mean_tmax_c,1991-2025,35,no trend,0.3202,0.102,False
-Wajir,annual_rain_mm,1991-2025,35,no trend,0.8424,-4.975,False
-Wajir,MAM_rain_mm,1991-2025,35,no trend,0.6092,-9.052,False
-Wajir,OND_rain_mm,1991-2025,35,no trend,0.6092,-11.933,False
+Wajir,annual_rain_mm,1991-2025,35,no trend,0.1055,-39.57,False
+Wajir,MAM_rain_mm,1991-2025,35,no trend,0.2559,-16.247,False
+Wajir,OND_rain_mm,1991-2025,35,no trend,0.2559,-20.558,False
 Wajir,longest_dry_spell_days,1991-2025,35,no trend,0.5506,2.581,False
-Wajir,heavy_rain_days,1991-2025,35,no trend,0.6068,0.0,False
-Wajir,max_3day_rain_mm,1991-2025,35,no trend,0.1397,9.2,False
+Wajir,heavy_rain_days,1991-2025,35,no trend,0.8081,0.0,False
+Wajir,max_3day_rain_mm,1991-2025,35,no trend,0.2442,4.986,False
 Wajir,heat_days,1991-2025,35,increasing,0.0237,5.263,True
 Wajir,mean_tmax_c,1991-2025,35,increasing,0.0115,0.24,True

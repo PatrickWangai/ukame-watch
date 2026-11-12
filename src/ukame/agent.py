@@ -34,6 +34,19 @@ Rules you must follow:
 """
 
 MAX_ROUNDS = 5
+_I_DONT_KNOW = re.compile(r"\bI (?:don'?t|do not|can'?t|cannot) (?:know|have|predict)", re.I)
+_ACTIVE = {"drought_level": ("drought", {"Alert", "Alarm"}), "heavy_rain_level": ("heavy_rain", {"Watch", "Warning"}),
+           "heat_level": ("heat", {"Watch", "Warning"})}
+
+
+def _active_levels(outputs: list) -> list:
+    """(hazard, level) pairs that tool outputs report as active, in first-seen order."""
+    found = []
+    for o in outputs:
+        for key, (hazard, levels) in _ACTIVE.items():
+            if o.get(key) in levels and (hazard, o[key]) not in found:
+                found.append((hazard, o[key]))
+    return found
 
 
 def _now() -> str:
@@ -103,7 +116,27 @@ def answer(question: str, store, llm=None, log_dir: Path = C.LOGS) -> dict:
     if text is None:
         text = "I don't know: I could not complete this request within the allowed number of tool calls."
 
-    # 3. Post-LLM guardrails -----------------------------------------------------------------
+    # 3. Code-enforced playbook: small models often skip it, so active hazard levels always get cited actions.
+    looked_up = {(tc["arguments"].get("hazard"), tc["arguments"].get("level"))
+                 for tc in tool_log if tc["tool"] == "lookup_playbook"}
+    for hazard, level in _active_levels(tool_outputs):
+        if (hazard, level) in looked_up:
+            continue
+        looked_up.add((hazard, level))
+        args = {"hazard": hazard, "level": level}
+        result = T.dispatch(store, "lookup_playbook", args)
+        rec = {"question_id": qid, "time": _now(), "tool": "lookup_playbook", "arguments": args,
+               "result": result, "added_by": "code"}
+        _append(log_dir / "tool_calls.jsonl", rec)
+        tool_log.append(rec)
+        tool_outputs.append(result)
+        if "actions" in result:
+            text += f"\n\n**Recommended actions: {hazard.replace('_', ' ')} {level}** (Ukame Watch playbook)\n"
+            text += "\n".join(f"- {a['sector']}: {a['action']} (" +
+                              ", ".join(f"[{c['id']}]({c['url']})" for c in a["citations"]) + ")"
+                              for a in result["actions"])
+
+    # 4. Post-LLM guardrails -----------------------------------------------------------------
     checks["used_tools"] = bool(tool_log)
     if G.makes_absolute_safety_claim(text):
         checks["absolute_claim_blocked"] = True
@@ -119,6 +152,8 @@ def answer(question: str, store, llm=None, log_dir: Path = C.LOGS) -> dict:
     status = "draft"
     if checks["ungrounded_numbers"] or not checks["used_tools"]:
         status = "needs_review"
+    if not checks["used_tools"] and not checks["ungrounded_numbers"] and _I_DONT_KNOW.search(text):
+        status = "refusal"  # an honest "I don't know" without data needs no approval
     out = _result(qid, question, text, status, tool_log, checks)
     _append(log_dir / "answers.jsonl", out)
     return out

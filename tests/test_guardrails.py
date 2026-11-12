@@ -67,3 +67,7 @@ def test_county_mentions_distinguish_covered_uncovered_and_none():
     assert G.county_mentions("Is Mandera at risk?") == {"covered": ["Mandera"], "uncovered": []}
     assert G.county_mentions("What about Nairobi?") == {"covered": [], "uncovered": ["Nairobi"]}
     assert G.county_mentions("hello") == {"covered": [], "uncovered": []}
+
+
+def test_ordinal_percentiles_are_methodology_not_data():
+    assert G.ungrounded_numbers("Above the 99th percentile and the 95th percentile.", "{}") == []

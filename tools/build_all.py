@@ -51,7 +51,14 @@ def main(force=False):
     D.study_counties().to_file(P / "counties.geojson", driver="GeoJSON")
 
     step("2. Weather behaviour")
-    daily = D.load_weather()
+    raw_daily = D.load_weather()
+    candidates = raw_daily[raw_daily["precipitation_sum"] > A.QC_CANDIDATE_MM]
+    era5 = D.era5_for_days(candidates, pd.read_csv(P / "counties.csv"))
+    daily, qc = A.qc_rainfall(raw_daily, era5)
+    save(qc, "qc_rainfall_flags")
+    print(f"  rainfall QC: {len(qc)} candidate days > {A.QC_CANDIDATE_MM:.0f} mm; "
+          f"{(qc['action'] == 'replaced with ERA5').sum()} replaced, "
+          f"{qc['action'].str.startswith('set missing').sum()} set missing, {qc['action'].str.startswith('kept').sum()} kept")
     q = save(A.quality_report(daily), "quality_report")
     if (q[["missing_dates", "negative_rain", "tmin_above_tmax", "duplicate_dates"]].sum().sum()) > 0:
         print("  WARNING: quality issues found, see quality_report.csv")

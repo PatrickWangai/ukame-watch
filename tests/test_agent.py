@@ -61,7 +61,8 @@ def test_grounded_answer_is_a_draft_with_disclaimer_and_logged_tool_calls(tmp_pa
     assert out["status"] == "draft"          # never auto-approved
     assert C.DISCLAIMER in out["text"]
     assert out["checks"]["ungrounded_numbers"] == []
-    assert toolbox == [("get_current_status", {"county": "Wajir"})]
+    assert toolbox[0] == ("get_current_status", {"county": "Wajir"})
+    assert ("lookup_playbook", {"hazard": "drought", "level": "Alarm"}) in toolbox  # added by code for active level
     log = [json.loads(line) for line in (tmp_path / "tool_calls.jsonl").read_text().splitlines()]
     assert log[0]["tool"] == "get_current_status" and log[0]["question_id"] == out["id"]
 
@@ -94,3 +95,24 @@ def test_approval_is_recorded_with_approver(tmp_path, toolbox):
     assert rec["decision"] == "approved" and rec["approver"] == "County Officer (test)"
     saved = json.loads((tmp_path / "advisories.jsonl").read_text().splitlines()[-1])
     assert saved["id"] == out["id"] and saved["decision"] == "approved"
+
+
+def test_active_hazard_level_gets_cited_playbook_actions_even_if_model_skips_them(tmp_path, monkeypatch):
+    def fake_dispatch(store, name, args):
+        if name == "lookup_playbook":
+            return {"hazard": args["hazard"], "level": args["level"],
+                    "actions": [{"sector": "Water", "action": "Fix boreholes",
+                                 "citations": [{"id": "S1", "title": "Source one", "url": "https://example.org/1"}]}]}
+        return {"county": "Wajir", "drought_level": "Alarm", "pct_of_normal": 40.0}
+    monkeypatch.setattr(A.T, "dispatch", fake_dispatch)
+    llm = FakeLLM([tool_call("get_current_status", county="Wajir"), final("Wajir is at Alarm.")])
+    out = A.answer("How is Wajir?", store=None, llm=llm, log_dir=tmp_path)
+    assert "Fix boreholes" in out["text"]
+    assert "https://example.org/1" in out["text"]
+    assert any(tc["tool"] == "lookup_playbook" and tc.get("added_by") == "code" for tc in out["tool_calls"])
+
+
+def test_no_tool_i_dont_know_answer_is_a_refusal_not_a_review_item(tmp_path, toolbox):
+    llm = FakeLLM([final("I don't know: that date is beyond any forecast.")])
+    out = A.answer("Rain in Turkana in March 2028?", store=None, llm=llm, log_dir=tmp_path)
+    assert out["status"] == "refusal"

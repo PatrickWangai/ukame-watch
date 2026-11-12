@@ -63,7 +63,10 @@ def ungrounded_numbers(answer: str, tools_text: str, allowed: list[str] | None =
             candidates.update({round(x, 0), round(x, 1), round(x, 2), x})
     allowed_values = {_to_float(a) for a in (allowed or [])}
     bad = []
-    for raw in _NUMBER.findall(answer):
+    for m in _NUMBER.finditer(answer):
+        raw = m.group()
+        if answer[m.end():m.end() + 2].lower() in ("st", "nd", "rd", "th"):
+            continue  # ordinals such as "99th percentile" describe the method, not data
         val = _to_float(raw.rstrip(".,"))
         if val is None or (val.is_integer() and 0 <= val <= 10) or val in allowed_values:
             continue

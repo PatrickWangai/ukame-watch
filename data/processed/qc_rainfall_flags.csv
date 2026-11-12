@@ -1,0 +1,13 @@
+county,date,original_mm,era5_mm,action
+Turkana,2020-12-31,608.5,1.0,replaced with ERA5
+Turkana,2021-01-01,110.64,6.0,replaced with ERA5
+Marsabit,2021-01-01,145.37,0.1,replaced with ERA5
+Wajir,2021-11-27,485.95,14.4,replaced with ERA5
+Wajir,2021-11-28,321.31,9.3,replaced with ERA5
+Wajir,2021-11-29,187.7,6.0,replaced with ERA5
+Wajir,2022-04-20,481.44,14.3,replaced with ERA5
+Wajir,2023-06-05,262.09,0.0,replaced with ERA5
+Wajir,2023-06-09,122.0,0.5,replaced with ERA5
+Mandera,2021-11-27,564.23,17.8,replaced with ERA5
+Mandera,2023-06-05,144.47,0.0,replaced with ERA5
+Isiolo,2023-11-03,131.2,26.3,kept (ERA5 confirms rain)

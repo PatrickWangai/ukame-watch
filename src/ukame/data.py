@@ -94,6 +94,40 @@ def fetch_weather(county: str, lat: float, lon: float, force: bool = False) -> p
     return df
 
 
+def era5_for_days(candidates: pd.DataFrame, counties: pd.DataFrame) -> pd.DataFrame:
+    """ERA5 daily rainfall for specific (county, date) pairs, used to check suspicious NASA POWER spikes.
+
+    Looks first in the full ERA5 files we already have, then in a cache, then asks Open-Meteo for just
+    those days (tiny requests). Results are cached in data/raw/qc_era5_checks.csv so rebuilds are offline-safe.
+    """
+    cache_path = C.RAW / "qc_era5_checks.csv"
+    have = load_era5_crosscheck().rename(columns={"precipitation_sum": "era5_mm"})
+    if cache_path.exists():
+        have = pd.concat([have, pd.read_csv(cache_path, parse_dates=["date"])], ignore_index=True)
+    have = have.drop_duplicates(["county", "date"])
+    keys = set(zip(have["county"], have["date"]))
+    pos = counties.set_index("county")
+    new_rows = []
+    for c, dt in zip(candidates["county"], candidates["date"]):
+        if (c, dt) in keys:
+            continue
+        try:
+            js = _get(C.OPEN_METEO_ARCHIVE, retries=2, timeout=60, params={
+                "latitude": pos.loc[c, "lat"], "longitude": pos.loc[c, "lon"], "models": "era5",
+                "start_date": dt.date().isoformat(), "end_date": dt.date().isoformat(),
+                "daily": "precipitation_sum", "timezone": C.TIMEZONE}).json()
+            new_rows.append({"county": c, "date": dt, "era5_mm": js["daily"]["precipitation_sum"][0]})
+        except Exception:
+            continue  # no check possible: qc_rainfall falls back to the plausibility limit
+        time.sleep(0.5)
+    if new_rows:
+        cached = pd.read_csv(cache_path, parse_dates=["date"]) if cache_path.exists() else pd.DataFrame()
+        pd.concat([cached, pd.DataFrame(new_rows)], ignore_index=True).to_csv(cache_path, index=False)
+        have = pd.concat([have, pd.DataFrame(new_rows)], ignore_index=True)
+    want = candidates[["county", "date"]].merge(have[["county", "date", "era5_mm"]], on=["county", "date"], how="inner")
+    return want
+
+
 def load_era5_crosscheck() -> pd.DataFrame:
     """ERA5 (Open-Meteo) daily rainfall for the counties downloaded before the archive API rate-limited us.
 
