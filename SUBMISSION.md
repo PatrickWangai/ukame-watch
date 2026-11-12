@@ -14,7 +14,7 @@ Planning-support tool only: Kenya Meteorological Department warnings and NDMA dr
 | **Dashboard only** (runs in the browser; first load 1–2 minutes) | https://patrickwangai.github.io/ukame-watch/dashboard.html |
 | **Code repository** (public) | https://github.com/PatrickWangai/ukame-watch |
 | **README** (setup, results, architecture, SDG statement, stack) | [README.md](README.md) |
-| **Backup demo video** (2–3 minutes) | [add link before the freeze] |
+| **Backup demo video** (2 min 57 s, captioned) | https://patrickwangai.github.io/ukame-watch/docs/ukame-watch-demo.mp4 |
 | **Grand Finale deck** (if we qualify) | Shared separately by the team |
 
 The live demo has every feature except the AI assistant, which needs a local model. Run it on a laptop
@@ -26,7 +26,7 @@ with `ollama pull qwen2.5:3b` (see README).
 |---|---|---|---|
 | 1 | GitHub repository with code | Done | https://github.com/PatrickWangai/ukame-watch |
 | 2 | README with setup and run instructions | Done | [README.md](README.md), "Quick start" |
-| 3 | Backup demo video, 2–3 minutes | **To add** | [add link] |
+| 3 | Backup demo video, 2–3 minutes | Done | https://patrickwangai.github.io/ukame-watch/docs/ukame-watch-demo.mp4 (also in the repo: [docs/ukame-watch-demo.mp4](docs/ukame-watch-demo.mp4)) |
 | 4 | Live demo URL | Done | https://patrickwangai.github.io/ukame-watch/ |
 | 5 | Team member details | **Names to add** | [README.md](README.md), "Team" |
 | 6 | Alumni Contribution note | Not applicable: the organisers told us no alumni collaborator is needed for our team | — |
@@ -71,6 +71,6 @@ A fresh clone reproduces the same validation and forecast-skill results.
 
 ## Still to do before the 15:00 freeze
 
-- [ ] Record and link the backup demo video (item 3)
+- [x] Record and link the backup demo video (item 3)
 - [ ] Add team names (item 5)
 - [ ] A team member approves at least one advisory in the dashboard, so the agent log shows a human approval

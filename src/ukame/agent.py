@@ -30,7 +30,9 @@ Rules you must follow:
 4. You do not predict cyclone paths. You do not replace official warnings: the Kenya Meteorological
    Department and NDMA drought bulletins take priority.
 5. When a hazard level is Alert, Alarm, Watch or Warning, call lookup_playbook and list its actions with sources.
-6. Keep advisories short, using these headings: Situation, Outlook, Recommended actions, Limits.
+6. Use the exact level word a tool returns (Normal, Alert, Alarm). Never change it.
+7. Only describe the seasonal outlook if you called get_seasonal_outlook.
+8. Keep advisories short, using these headings: Situation, Outlook (only with outlook data), Recommended actions, Limits.
 """
 
 MAX_ROUNDS = 5
@@ -79,7 +81,8 @@ def answer(question: str, store, llm=None, log_dir: Path = C.LOGS) -> dict:
     llm = llm or ollama_llm
     log_dir = Path(log_dir)
     qid = f"q-{datetime.now().strftime('%Y%m%d-%H%M%S')}-{uuid.uuid4().hex[:6]}"
-    checks = {"used_tools": False, "ungrounded_numbers": [], "absolute_claim_blocked": False}
+    checks = {"used_tools": False, "ungrounded_numbers": [], "absolute_claim_blocked": False,
+              "level_mismatch": [], "unsupported_claims": []}
 
     # 1. Pre-LLM guardrails ------------------------------------------------------------------
     if G.is_cyclone_track_request(question):
@@ -125,6 +128,9 @@ def answer(question: str, store, llm=None, log_dir: Path = C.LOGS) -> dict:
         text = ("I can't rule out risk, and I won't describe any county as risk-free. "
                 + ("What the tools report: " + "; ".join(levels) + ". " if levels else "")
                 + "Conditions can change quickly; follow Kenya Meteorological Department and NDMA updates.")
+    # Claims the tools do not support: a wrong level word, or an outlook nobody looked up.
+    checks["level_mismatch"] = G.level_mismatches(text, tool_outputs)
+    checks["unsupported_claims"] = G.unsupported_claims(text, [tc["tool"] for tc in tool_log])
     # 4. Code-enforced playbook: small models often skip it, so active hazard levels always get cited actions.
     looked_up = {(tc["arguments"].get("hazard"), tc["arguments"].get("level"))
                  for tc in tool_log if tc["tool"] == "lookup_playbook"}
@@ -164,7 +170,8 @@ def answer(question: str, store, llm=None, log_dir: Path = C.LOGS) -> dict:
     checks["ungrounded_numbers"] = G.ungrounded_numbers(text, tools_text, allowed=allowed)
 
     status = "draft"
-    if checks["ungrounded_numbers"] or not checks["used_tools"]:
+    if (checks["ungrounded_numbers"] or not checks["used_tools"] or checks["level_mismatch"]
+            or checks["unsupported_claims"]):
         status = "needs_review"
     if not checks["used_tools"] and not checks["ungrounded_numbers"] and _I_DONT_KNOW.search(text):
         status = "refusal"  # an honest "I don't know" without data needs no approval

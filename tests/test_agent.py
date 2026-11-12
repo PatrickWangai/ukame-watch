@@ -141,3 +141,14 @@ def test_every_advisory_ends_with_the_sources_of_its_numbers(tmp_path, monkeypat
     assert "**Sources**" in out["text"]
     assert "get_current_status (Wajir): NASA POWER daily (MERRA-2 reanalysis), data through 2026-11-09" in out["text"]
     assert out["checks"]["ungrounded_numbers"] == []
+
+
+def test_draft_contradicting_the_tool_level_needs_review(tmp_path, monkeypatch):
+    monkeypatch.setattr(A.T, "dispatch", lambda store, name, args: {"county": "Samburu", "drought_level": "Alarm",
+                                                                     "pct_of_normal": 25.9})
+    llm = FakeLLM([tool_call("get_current_status", county="Samburu"),
+                   final("Samburu is at Alert level. The outlook gives a 50% probability of the driest third.")])
+    out = A.answer("How is Samburu?", store=None, llm=llm, log_dir=tmp_path)
+    assert out["status"] == "needs_review"
+    assert out["checks"]["level_mismatch"] == ["Alert"]
+    assert out["checks"]["unsupported_claims"]

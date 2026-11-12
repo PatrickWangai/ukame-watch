@@ -84,3 +84,39 @@ def county_mentions(question: str) -> dict:
     def found(names):
         return [n for n in names if re.search(rf"\b{re.escape(n)}\b", question, re.I)]
     return {"covered": found(C.COUNTIES), "uncovered": found(OTHER_KENYAN_COUNTIES)}
+
+
+# ---------------------------------------------------------------- claims the tools do not support
+_W = r"(Normal|None|Alert|Alarm|Emergency|Recovery)"  # level words, capitalised as the tools return them
+_LEVEL_PATTERNS = [
+    re.compile(rf"\b{_W}\s+(?:drought\s+)?(?i:level|phase|stage)\b"),
+    re.compile(rf"\b(?i:level|phase|stage)\b[\s*_`:=\"“”']*(?:(?i:is|of|at)\b[\s*_`:=\"“”']*)?{_W}\b"),
+]
+_OUTLOOK = re.compile(r"\b(outlook|driest third|probability)\b", re.I)
+
+
+def _canon_level(word: str) -> str:
+    return "Normal" if word in ("None", "Normal") else word
+
+
+def level_mismatches(text: str, tool_outputs: list) -> list[str]:
+    """Drought level words in the text that no tool reported (e.g. "Alert level" when the tool says Alarm)."""
+    reported = {_canon_level(o["drought_level"]) for o in tool_outputs
+                if isinstance(o, dict) and o.get("drought_level") in ("None", "Alert", "Alarm")}
+    if not reported:
+        return []
+    wrong = []
+    for pat in _LEVEL_PATTERNS:
+        for m in pat.finditer(text):
+            w = _canon_level(m.group(1))
+            if w not in reported and w not in wrong:
+                wrong.append(w)
+    return wrong
+
+
+def unsupported_claims(text: str, tools_called: list[str]) -> list[str]:
+    """Topics the text discusses without having called the tool that holds that data."""
+    claims = []
+    if _OUTLOOK.search(text) and "get_seasonal_outlook" not in tools_called:
+        claims.append("describes the seasonal outlook without calling get_seasonal_outlook")
+    return claims

@@ -71,3 +71,30 @@ def test_county_mentions_distinguish_covered_uncovered_and_none():
 
 def test_ordinal_percentiles_are_methodology_not_data():
     assert G.ungrounded_numbers("Above the 99th percentile and the 95th percentile.", "{}") == []
+
+
+def test_level_word_that_contradicts_the_tool_is_flagged():
+    outputs = [{"county": "Samburu", "drought_level": "Alarm"}]
+    assert G.level_mismatches("The drought situation in Samburu is at Alert level.", outputs) == ["Alert"]
+
+
+def test_matching_level_and_playbook_verbs_are_not_flagged():
+    outputs = [{"county": "Samburu", "drought_level": "Alarm"}]
+    text = "Samburu is at Alarm level. Alert livestock officers to monitor pasture."
+    assert G.level_mismatches(text, outputs) == []
+
+
+def test_normal_matches_a_tool_level_of_none():
+    assert G.level_mismatches("Drought level is Normal.", [{"drought_level": "None"}]) == []
+
+
+def test_outlook_claim_without_outlook_tool_is_unsupported():
+    assert G.unsupported_claims("The outlook shows a 50% probability of the driest third.", ["get_current_status"])
+    assert not G.unsupported_claims("The outlook shows under 5%.", ["get_seasonal_outlook"])
+    assert not G.unsupported_claims("Rainfall is 26% of normal.", ["get_current_status"])
+
+
+def test_level_mismatch_is_caught_inside_markdown_formatting():
+    outputs = [{"county": "Samburu", "drought_level": "Alarm"}]
+    assert G.level_mismatches("- **Current Drought Level:** Alert", outputs) == ["Alert"]
+    assert G.level_mismatches("Drought level: *Alarm*", outputs) == []

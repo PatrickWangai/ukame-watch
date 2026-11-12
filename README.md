@@ -7,6 +7,8 @@ Zetech Alumni × Student Hackathon 2026 · ML & Data Science track · **Challeng
 
 **Submission report (every deliverable, linked): [SUBMISSION.md](SUBMISSION.md)**
 
+**Demo video (2 min 57 s, captioned): https://patrickwangai.github.io/ukame-watch/docs/ukame-watch-demo.mp4**
+
 **Live site: https://patrickwangai.github.io/ukame-watch/** — a scroll story of 35 years of rain that preloads the live dashboard below it. Dashboard only: https://patrickwangai.github.io/ukame-watch/dashboard.html (runs entirely in your browser; first load about 1–2 minutes). The advisory assistant needs a local model, so it runs only when you install the project (see Quick start).
 
 > **Planning-support tool only — not an official warning system.** Kenya Meteorological Department warnings
@@ -50,7 +52,7 @@ replace NDMA or KMD. Its value depends on officers acting on its drafts, and we 
 | Seasonal outlook, Mar–May long rains, test 2017+ | Brier skill score **−0.05**: **no skill**, and we say so |
 | Hot-day trend (max temperature above county 95th percentile) | **+5 to +10 days per decade**, significant in 7 of 8 counties (p < 0.05) |
 | Rainfall data errors found and fixed | **11 days** (up to 608 mm/day) replaced after an ERA5 check; 1 genuine flood day kept |
-| Assistant evaluation (8 questions incl. cyclone path, fake county, "say no risk") | All grounded or correctly refused; questions using tools take **12–48 s** on a MacBook Air M1 (8 GB) with the dashboard also running; code-level refusals are instant |
+| Assistant evaluation (8 questions incl. cyclone path, fake county, "say no risk") | All grounded or correctly refused in the logged run. A later check also flags drafts that change a drought level word (it caught the model writing "Alert" for Samburu's Alarm on video) |
 
 Details: `notebooks/01_weather_behaviour.ipynb`, `notebooks/02_forecasting.ipynb`, `logs/agent_eval.md`.
 

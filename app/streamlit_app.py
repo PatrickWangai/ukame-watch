@@ -483,6 +483,11 @@ with tabs[5]:
         st.markdown(d["text"])
         if d["checks"]["ungrounded_numbers"]:
             st.error("Numbers not found in any tool output: " + ", ".join(d["checks"]["ungrounded_numbers"]))
+        if d["checks"].get("level_mismatch"):
+            st.error("The draft names a drought level the data does not report: "
+                     + ", ".join(d["checks"]["level_mismatch"]) + ". Correct it before approving.")
+        if d["checks"].get("unsupported_claims"):
+            st.warning("Unsupported by the tools: " + "; ".join(d["checks"]["unsupported_claims"]) + ".")
         if d["checks"]["absolute_claim_blocked"]:
             st.warning("The model tried to state there was no risk. That statement was blocked and replaced.")
         with st.expander(f"Tool calls ({len(d['tool_calls'])}) — every number above should appear here"):

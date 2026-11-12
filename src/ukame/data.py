@@ -230,7 +230,8 @@ def fetch_forecast(lat: float, lon: float, days: int = 7) -> pd.DataFrame:
     """Live 7-day daily forecast from Open-Meteo (not cached: always current)."""
     params = {"latitude": lat, "longitude": lon, "forecast_days": days, "timezone": C.TIMEZONE,
               "daily": "precipitation_sum,temperature_2m_max"}
-    js = _get(C.OPEN_METEO_FORECAST, params=params, timeout=60).json()
+    # Live call: fail fast (the agent and dashboard then say the forecast is unavailable) instead of retrying for minutes.
+    js = _get(C.OPEN_METEO_FORECAST, params=params, retries=2, timeout=20).json()
     df = pd.DataFrame(js["daily"]).rename(columns={"time": "date"})
     df["date"] = pd.to_datetime(df["date"])
     return df
