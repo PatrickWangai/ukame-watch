@@ -13,10 +13,6 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
-from sklearn.linear_model import LogisticRegression
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler
-
 from . import config as C
 
 FEATURES = ["oni", "dmi", "now_pct"]
@@ -112,6 +108,10 @@ def _usable(ds: pd.DataFrame) -> pd.Series:
 
 def fit(ds: pd.DataFrame) -> dict:
     """Fits one logistic model per season group on training rows. Returns models + baseline probabilities."""
+    from sklearn.linear_model import LogisticRegression  # build-time only
+    from sklearn.pipeline import make_pipeline
+    from sklearn.preprocessing import StandardScaler
+
     train = ds[_usable(ds) & (ds["split"] == "train") & ds["dry"].notna()]
     fitted = {}
     for group, g in train.groupby("season_group"):

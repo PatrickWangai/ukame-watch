@@ -1,0 +1,9 @@
+# Runtime dependencies for the dashboard only (used by Streamlit Community Cloud, which reads the
+# requirements file next to the entrypoint first). The full build pipeline uses ../requirements.txt.
+streamlit==1.67.0
+pandas==3.1.1
+numpy==2.5.4
+plotly==7.1.0
+shapely==2.2.0
+requests==2.34.2
+ollama==0.6.3

@@ -8,7 +8,6 @@ import json
 import time
 from datetime import date, timedelta
 
-import geopandas as gpd
 import numpy as np
 import pandas as pd
 import requests
@@ -37,8 +36,10 @@ def _get(url: str, params: dict | None = None, retries: int = 5, timeout: int = 
 
 
 # ---------------------------------------------------------------- boundaries
-def fetch_boundaries(force: bool = False) -> gpd.GeoDataFrame:
+def fetch_boundaries(force: bool = False):
     """Kenya county (ADM1) polygons from geoBoundaries (public domain)."""
+    import geopandas as gpd  # build-time only: the dashboard does not need it
+
     path = C.RAW / "ken_adm1.geojson"
     if force or not path.exists():
         meta = _get(C.GEOBOUNDARIES_API).json()
@@ -46,8 +47,10 @@ def fetch_boundaries(force: bool = False) -> gpd.GeoDataFrame:
     return gpd.read_file(path)
 
 
-def study_counties() -> gpd.GeoDataFrame:
+def study_counties():
     """The 8 study counties, with an interior representative point computed in an equal-area projection."""
+    import geopandas as gpd
+
     gdf = fetch_boundaries()
     gdf = gdf[gdf["shapeName"].isin(C.COUNTIES)][["shapeName", "shapeISO", "geometry"]]
     gdf = gdf.rename(columns={"shapeName": "county", "shapeISO": "iso"}).reset_index(drop=True)

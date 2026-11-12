@@ -470,8 +470,10 @@ with tabs[5]:
             try:
                 st.session_state["draft"] = A.answer(q, store)
             except Exception as e:
-                st.error(f"The local model is not available ({type(e).__name__}). Start it with `ollama serve`, "
-                         f"then check `ollama list` shows {C.AGENT_MODEL}.")
+                st.error(f"The assistant needs a local AI model ({C.AGENT_MODEL} via Ollama), which is not running "
+                         f"here ({type(e).__name__}). In the online demo it is switched off: clone the repository and "
+                         f"follow the README to run it on a laptop, where nothing leaves the device. "
+                         f"Locally: start `ollama serve` and check `ollama list` shows {C.AGENT_MODEL}.")
     d = st.session_state.get("draft")
     if d:
         colour = {"draft": JADE, "needs_review": STATUS["critical"], "refusal": INK2}.get(d["status"], INK2)
