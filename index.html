@@ -121,6 +121,30 @@
   @keyframes slide { 0% { transform: translateX(-100%); } 100% { transform: translateX(300%); } }
   .board-links { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 18px; font-size: 16px; }
 
+  .label-pill { display: inline-block; max-width: 72ch; background: var(--card); border-left: 5px solid var(--jade); border-radius: 0 12px 12px 0; padding: 12px 18px; font-size: 16px; color: var(--ink); margin: 0 0 26px; }
+  .reqs { list-style: none; padding: 0; margin: 40px 0 0; border-top: 1px solid var(--line); counter-reset: req; }
+  .reqs li { display: grid; grid-template-columns: 56px minmax(200px, 1.1fr) 2fr minmax(150px, .8fr); gap: 20px; padding: 18px 0; border-bottom: 1px solid var(--line); align-items: start; counter-increment: req; }
+  .reqs li::before { content: counter(req, decimal-leading-zero); font-family: var(--display); font-weight: 700; font-size: 26px; color: var(--jade); line-height: 1.1; }
+  .reqs .r { font-weight: 700; }
+  .reqs .w { color: var(--ink2); }
+  .reqs .e { font-size: 16px; }
+  .reqs .ok { display: inline-block; font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--jade); margin-bottom: 4px; }
+  .deliver { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px 28px; margin: 28px 0 0; padding: 0; list-style: none; }
+  .deliver li { padding-left: 28px; position: relative; color: var(--ink2); }
+  .deliver li::before { content: "✓"; position: absolute; left: 0; color: var(--jade); font-weight: 700; }
+  .deliver li.todo::before { content: "○"; color: #b8461a; }
+  .deliver li.todo { color: var(--ink); }
+  .rules { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 40px; }
+  .rules div { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 22px; }
+  .rules h3 { font-family: var(--display); font-size: 24px; line-height: 1.1; margin: 0 0 8px; }
+  .rules p { margin: 0; color: var(--ink2); font-size: 16px; }
+  .sdgs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 40px; }
+  .sdgs div { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 24px; }
+  .sdgs b { display: block; font-family: var(--display); font-size: 40px; line-height: 1; color: var(--jade); margin-bottom: 4px; }
+  .sdgs span { display: block; font-weight: 700; margin-bottom: 8px; }
+  .sdgs p { margin: 0; color: var(--ink2); font-size: 16px; }
+  @media (max-width: 960px) { .reqs li { grid-template-columns: 44px 1fr; } .reqs .w, .reqs .e { grid-column: 2; } .rules, .sdgs { grid-template-columns: repeat(2, 1fr); } .deliver { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .rules, .sdgs, .deliver { grid-template-columns: 1fr; } }
   footer { background: var(--ink); color: #D7DBD5; padding: 72px 0 56px; margin-top: 40px; }
   footer .wrap { display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px; }
   footer .wordmark { color: #EEF0EC; font-size: 40px; } footer .wordmark span { color: var(--jade-light); }
@@ -152,6 +176,7 @@
     <nav aria-label="Sections"><ul>
       <li class="hide-sm"><a href="#story">The whiplash</a></li>
       <li class="hide-sm"><a href="#proof">Proof</a></li>
+      <li class="hide-sm"><a href="#requirements">Requirements</a></li>
       <li><a href="#board">Live board</a></li>
       <li><a href="https://github.com/PatrickWangai/ukame-watch">GitHub</a></li>
     </ul></nav>
@@ -163,6 +188,7 @@
     <p class="eyebrow">Northern Kenya · 8 arid counties · 5.6 million people</p>
     <h1 id="title">Ukame <span>Watch</span></h1>
     <p class="thesis"><b>Drought, then flood, in the same counties.</b> An early-warning board that tells county officers what is coming, and admits what it cannot know.</p>
+    <p class="label-pill"><b>Planning-support tool, not an official warning system.</b> Kenya Meteorological Department warnings and NDMA drought bulletins always take priority.</p>
     <div class="cta">
       <a class="btn primary" href="#board">See the live board <span aria-hidden="true">↓</span></a>
       <a class="btn ghost" href="#story">Scroll the record</a>
@@ -217,14 +243,61 @@
     <p class="fail reveal"><b>Where it fails:</b> no skill for the March–May long rains (<span id="p-skill-long">−0.05</span>). The board says so on screen, and every limit is published.</p>
   </section>
 
-  <section class="block wrap" aria-labelledby="trust-title">
-    <p class="eyebrow reveal">Built to be trusted</p>
-    <h2 id="trust-title" class="reveal">Planning support, never a black box</h2>
-    <div class="trust">
-      <div class="reveal"><span class="k">Human in charge</span><h3>A person approves every advisory</h3><p>The assistant only drafts. Nothing is shared until a named officer approves it, and every decision is logged.</p></div>
-      <div class="reveal"><span class="k">Every number checked</span><h3>No invented figures</h3><p>Code checks each number against the data tools, blocks claims like “no risk”, and refuses cyclone-path forecasts.</p></div>
-      <div class="reveal"><span class="k">Honest data</span><h3>Errors found and fixed</h3><p>11 impossible rainfall days caught by cross-checking a second dataset, and a population source 3× too high, replaced by the census.</p></div>
+  <section class="block wrap" id="requirements" aria-labelledby="req-title">
+    <p class="eyebrow reveal">Challenge 1: Climate Sentinel</p>
+    <h2 id="req-title" class="reveal">Every core requirement, with evidence</h2>
+    <p class="lede reveal">The brief sets ten core requirements. Each one is met, and each links to the file a judge can open or rerun.</p>
+    <ol class="reqs">
+      <li class="reveal"><div><span class="ok">Met</span><div class="r">Data</div></div><div class="w">35 years of daily rainfall and temperature for 8 counties, plus boundaries, population and the ENSO index; rainfall stated as model-based</div><div class="e"><a href="https://github.com/PatrickWangai/ukame-watch/blob/main/DATA.md">DATA.md →</a></div></li>
+      <li class="reveal"><div><span class="ok">Met</span><div class="r">Weather behaviour</div></div><div class="w">1991–2020 normals, both rainy seasons, Mann-Kendall trend tests, dry spells, heavy-rain days, maximum 3-day rain</div><div class="e"><a href="https://github.com/PatrickWangai/ukame-watch/blob/main/notebooks/01_weather_behaviour.ipynb">Notebook 01 →</a></div></li>
+      <li class="reveal"><div><span class="ok">Met</span><div class="r">Hazard indicators</div></div><div class="w">Drought (3-month % of normal) and heavy rain (3-day total vs 99th percentile), checked against 10 documented events</div><div class="e"><a href="https://github.com/PatrickWangai/ukame-watch/blob/main/data/processed/validation_documented.csv">Validation table →</a></div></li>
+      <li class="reveal"><div><span class="ok">Met</span><div class="r">Cyclone exposure / heat</div></div><div class="w">Inland counties, so heat stress replaces cyclones as the brief allows: hot days above each county’s 95th percentile</div><div class="e"><a href="https://github.com/PatrickWangai/ukame-watch/blob/main/data/processed/heat_monthly.csv">Heat data →</a></div></li>
+      <li class="reveal"><div><span class="ok">Met</span><div class="r">Geospatial</div></div><div class="w">Interactive map with rainfall, population-density and hot-day layers; equal-area projection for areas and centroids</div><div class="e"><a href="https://github.com/PatrickWangai/ukame-watch/blob/main/app/streamlit_app.py">Dashboard code →</a></div></li>
+      <li class="reveal"><div><span class="ok">Met</span><div class="r">Seasonal outlook</div></div><div class="w">Driest-third outlook; train 1991–2016, test 2017–2026; training-only thresholds; climatology and persistence baselines; per-county metrics</div><div class="e"><a href="https://github.com/PatrickWangai/ukame-watch/blob/main/notebooks/02_forecasting.ipynb">Notebook 02 →</a></div></li>
+      <li class="reveal"><div><span class="ok">Met</span><div class="r">Short-range watch</div></div><div class="w">Live 7-day forecast flagged against each county’s 99th-percentile 3-day rainfall and hot-day threshold</div><div class="e"><a href="https://github.com/PatrickWangai/ukame-watch/blob/main/src/ukame/watch.py">watch.py →</a></div></li>
+      <li class="reveal"><div><span class="ok">Met</span><div class="r">AI agent</div></div><div class="w">6 tools; every number cited and checked; official warnings take priority; drafts until a person approves; 8 test questions incl. the 4 required traps</div><div class="e"><a href="https://github.com/PatrickWangai/ukame-watch/blob/main/logs/agent_eval.md">Agent log →</a></div></li>
+      <li class="reveal"><div><span class="ok">Met</span><div class="r">Playbook and limitations</div></div><div class="w">5–6 cited actions per hazard and level; a published limitations note</div><div class="e"><a href="https://github.com/PatrickWangai/ukame-watch/blob/main/docs/playbook.md">Playbook →</a></div></li>
+      <li class="reveal"><div><span class="ok">Met</span><div class="r">Dashboard</div></div><div class="w">Map, rainfall vs normal, outlook, heat, 7-day watch and advisory, written for a county disaster manager</div><div class="e"><a href="dashboard.html">Live dashboard →</a></div></li>
+    </ol>
+    <h3 class="reveal" style="font-family:var(--display);font-size:30px;margin:56px 0 0">Deliverables</h3>
+    <ul class="deliver">
+      <li><a href="https://github.com/PatrickWangai/ukame-watch">Public repository</a> with README, requirements.txt and DATA.md</li>
+      <li><a href="https://github.com/PatrickWangai/ukame-watch/blob/main/notebooks/01_weather_behaviour.ipynb">Weather behaviour notebook</a></li>
+      <li><a href="https://github.com/PatrickWangai/ukame-watch/blob/main/notebooks/02_forecasting.ipynb">Forecasting notebook</a></li>
+      <li>Working app: <a href="dashboard.html">in the browser</a>, or locally with the AI assistant</li>
+      <li><a href="https://github.com/PatrickWangai/ukame-watch/blob/main/docs/playbook.md">Playbook</a> and <a href="https://github.com/PatrickWangai/ukame-watch/blob/main/docs/limitations.md">limitations note</a></li>
+      <li>Reproducible: one command rebuilds every number; 86 automated tests</li>
+      <li class="todo">Agent log with a team member’s approval (added before the freeze)</li>
+      <li class="todo">2–3 minute backup video (added before the freeze)</li>
+      <li><a href="https://github.com/PatrickWangai/ukame-watch/blob/main/SUBMISSION.md">Submission report</a> listing every item</li>
+    </ul>
+  </section>
+
+  <section class="block wrap" aria-labelledby="rules-title">
+    <p class="eyebrow reveal">Track rules</p>
+    <h2 id="rules-title" class="reveal">Built the way the rules ask</h2>
+    <div class="rules">
+      <div class="reveal"><h3>Open data, free tools</h3><p>Every source, access date and licence is recorded in <a href="https://github.com/PatrickWangai/ukame-watch/blob/main/DATA.md">DATA.md</a>. No paid services.</p></div>
+      <div class="reveal"><h3>The AI never calculates</h3><p>Code computes every number; each one in an advisory must match a tool result, or the draft is flagged.</p></div>
+      <div class="reveal"><h3>Every tool call logged</h3><p>Tool calls, answers and human decisions are kept in <a href="https://github.com/PatrickWangai/ukame-watch/blob/main/logs/agent_eval.md">audit logs</a>.</p></div>
+      <div class="reveal"><h3>“I don’t know” when data is missing</h3><p>Unknown counties, future dates and cyclone paths are refused instead of guessed.</p></div>
+      <div class="reveal"><h3>A person approves</h3><p>Advisories stay drafts until a named officer approves them.</p></div>
+      <div class="reveal"><h3>No personal data</h3><p>Only public, aggregated data. The AI runs locally, so nothing is sent to a hosted service.</p></div>
+      <div class="reveal"><h3>Honest results</h3><p>No forecast skill for the March–May rains, and we say so. Data errors are logged, not hidden.</p></div>
+      <div class="reveal"><h3>Models cited, AI disclosed</h3><p>Qwen 2.5 3B (local, Qwen Research License), logistic regression, and Claude Code as coding assistant: see the <a href="https://github.com/PatrickWangai/ukame-watch#models-used-and-how-track-rule-every-model-cited">README</a>.</p></div>
     </div>
+  </section>
+
+  <section class="block wrap" aria-labelledby="sdg-title">
+    <p class="eyebrow reveal">Sustainable Development Goals</p>
+    <h2 id="sdg-title" class="reveal">Earlier action on Kenya’s costliest climate hazards</h2>
+    <div class="sdgs">
+      <div class="reveal"><b>13.1</b><span>Climate Action</span><p>County drought, heavy-rain and heat signals before a season fails.</p></div>
+      <div class="reveal"><b>2.4</b><span>Zero Hunger</span><p>Time for water repairs, pasture planning and timely livestock offtake.</p></div>
+      <div class="reveal"><b>1.5</b><span>No Poverty</span><p>Protects household assets in some of Kenya’s poorest counties.</p></div>
+      <div class="reveal"><b>11.5</b><span>Sustainable Communities</span><p>Heavy-rain watches prompt early warning and evacuation plans.</p></div>
+    </div>
+    <p class="lede reveal" style="margin-top:28px">What we can claim: Ukame Watch shortens the time between a rainfall signal and a county conversation about preparedness. It does not measure hunger or losses, and it has not yet been tested with county officers.</p>
   </section>
 
   <section class="block wrap" id="board" aria-labelledby="board-title">
@@ -252,6 +325,7 @@
       <a class="wordmark" href="#top">Ukame <span>Watch</span></a>
       <p><b>Planning support only, not an official warning.</b> Kenya Meteorological Department warnings and NDMA drought bulletins always take priority.</p>
       <p>Built for the Zetech Alumni × Student Hackathon 2026, ML &amp; Data Science track, Challenge 1: Climate Sentinel. Data: NASA POWER, ERA5 (Open-Meteo), NOAA CPC, KNBS 2019 census, geoBoundaries.</p>
+      <p>AI disclosure: built with help from Claude Code (Anthropic). The in-app assistant is Qwen 2.5 3B, running locally.</p>
     </div>
     <ul>
       <li><a href="https://github.com/PatrickWangai/ukame-watch">Code on GitHub</a></li>

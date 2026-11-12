@@ -32,7 +32,7 @@ with `ollama pull qwen2.5:3b` (see README).
 | 6 | Alumni Contribution note | Not applicable: the organisers told us no alumni collaborator is needed for our team | — |
 | 7 | SDG impact statement | Done | [README.md](README.md), "SDG impact statement" (SDG 13.1, 2.4, 1.5, 11.5) |
 | 8 | Technology stack | Done | [README.md](README.md), "Technology stack" |
-| 9 | AI-tool disclosure | Done | [README.md](README.md), "AI assistance disclosure" |
+| 9 | AI-tool disclosure (and every model cited, per track rules) | Done | [README.md](README.md), "Models used and how" and "AI assistance disclosure" |
 | 10 | Known limitations | Done | [docs/limitations.md](docs/limitations.md) |
 
 ## Challenge 1 core requirements: where each one is met

@@ -157,12 +157,24 @@ logs/                     agent evaluation and audit logs
 tests/                    86 tests
 ```
 
+## Models used and how (track rule: every model cited)
+
+| Model | Provider and licence | How we use it |
+|---|---|---|
+| **Qwen 2.5 3B Instruct** (`qwen2.5:3b`) | Alibaba Cloud Qwen team, [Qwen Research License](https://huggingface.co/Qwen/Qwen2.5-3B-Instruct) (non-commercial research use; this is a non-commercial hackathon prototype) | Runs **locally** through Ollama, selected explicitly in `src/ukame/config.py`. It only chooses which of six data tools to call and words the draft advisory. It never calculates: every number comes from a tool and is checked in code |
+| **Logistic regression** (scikit-learn, BSD licence) | Trained by us | Seasonal outlook: probability that the next 3 months fall in the driest third, one model per season group, trained 1991–2016, tested 2017–2026 |
+| **MERRA-2 reanalysis** via NASA POWER | NASA, free and open | Source of daily rainfall and temperature (a weather model constrained by observations, not station data) |
+| **ERA5 reanalysis** via Open-Meteo | ECMWF / Copernicus, CC BY 4.0 via Open-Meteo | Cross-check and quality control of suspicious rainfall days |
+| **Open-Meteo forecast models** | National weather services via Open-Meteo, CC BY 4.0 | Live 7-day rainfall and temperature forecast |
+
+No data is sent to a hosted AI service, and no API keys are used or committed.
+
 ## AI assistance disclosure
 
-As the hackathon rules require: this project was built with help from an AI coding assistant (Claude Code,
-Anthropic), used for code generation, data-source research and documentation drafting. The team reviewed and
-can explain every module. The runtime assistant uses **Qwen 2.5 3B** (Alibaba Cloud, Apache 2.0 licence) via
-**Ollama**, locally. All data sources and licences are in `DATA.md`.
+As the hackathon rules require: this project was built with help from an AI coding assistant (**Claude Code,
+Anthropic**), used for code generation, data-source research, testing and documentation drafting. The team reviewed
+and can explain every module. The runtime assistant is the local Qwen 2.5 3B model above. All data sources and
+licences are in `DATA.md`.
 
 ## Team
 
