@@ -5,6 +5,8 @@
 
 Zetech Alumni × Student Hackathon 2026 · ML & Data Science track · **Challenge 1: Climate Sentinel**
 
+**Submission report (every deliverable, linked): [SUBMISSION.md](SUBMISSION.md)**
+
 **Live demo: https://patrickwangai.github.io/ukame-watch/** — runs entirely in your browser (first load about 1–2 minutes while Python downloads). The advisory assistant needs a local model, so it runs only when you install the project (see Quick start).
 
 > **Planning-support tool only — not an official warning system.** Kenya Meteorological Department warnings
