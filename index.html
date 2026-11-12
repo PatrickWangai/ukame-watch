@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>Ukame Watch: drought, heavy-rain and heat early warning for northern Kenya</title>
+  <meta name="description" content="Planning-support dashboard for eight arid counties of northern Kenya. Zetech Hackathon 2026, Climate Sentinel." />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@stlite/browser@1.12.2/build/stlite.css" />
+  <style>
+    body { margin: 0; background: #EEF0EC; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #1B1D1C; }
+    #loading { max-width: 640px; margin: 18vh auto 0; padding: 0 1.5rem; }
+    #loading h1 { font-size: 2rem; margin: 0 0 .4rem; } #loading h1 span { color: #0F6E66; }
+    #loading p { color: #52514e; line-height: 1.5; }
+    #loading .bar { height: 4px; background: #d9dcd6; border-radius: 2px; overflow: hidden; margin-top: 1.2rem; }
+    #loading .bar div { height: 100%; width: 30%; background: #0F6E66; animation: slide 1.4s ease-in-out infinite; }
+    @keyframes slide { 0% { margin-left: -30%; } 100% { margin-left: 100%; } }
+    @media (prefers-reduced-motion: reduce) { #loading .bar div { animation: none; width: 100%; } }
+  </style>
+</head>
+<body>
+  <div id="loading">
+    <h1>Ukame <span>Watch</span></h1>
+    <p>Starting the dashboard in your browser. The first visit downloads Python and the data
+       (about 30–60 seconds); later visits are faster.</p>
+    <p>Planning support only — not an official warning. Kenya Meteorological Department warnings and NDMA
+       drought bulletins take priority.</p>
+    <div class="bar" aria-hidden="true"><div></div></div>
+  </div>
+  <div id="root"></div>
+  <script type="module">
+    import { mount } from "https://cdn.jsdelivr.net/npm/@stlite/browser@1.12.2/build/stlite.js";
+    const files = [
+      "app/streamlit_app.py",
+      "docs/limitations.md",
+      "src/ukame/__init__.py",
+      "src/ukame/config.py",
+      "src/ukame/agent.py",
+      "src/ukame/agent_tools.py",
+      "src/ukame/guardrails.py",
+      "src/ukame/watch.py",
+      "src/ukame/outlook.py",
+      "src/ukame/data.py",
+      "data/processed/annual.csv",
+      "data/processed/climatology.csv",
+      "data/processed/counties.csv",
+      "data/processed/counties.geojson",
+      "data/processed/crosscheck_era5.csv",
+      "data/processed/heat_decade.csv",
+      "data/processed/heat_monthly.csv",
+      "data/processed/meta.json",
+      "data/processed/monthly.csv",
+      "data/processed/outlook_current.csv",
+      "data/processed/outlook_model.json",
+      "data/processed/outlook_predictions.csv",
+      "data/processed/outlook_skill.csv",
+      "data/processed/population.csv",
+      "data/processed/qc_rainfall_flags.csv",
+      "data/processed/quality_report.csv",
+      "data/processed/recent_daily.csv",
+      "data/processed/regional_drought_pct.csv",
+      "data/processed/regional_heavy_3m.csv",
+      "data/processed/season_totals.csv",
+      "data/processed/three_month.csv",
+      "data/processed/thresholds.csv",
+      "data/processed/trends.csv",
+      "data/processed/validation_documented.csv",
+      "data/processed/validation_top_periods.csv",
+      "data/reference/census_2019.csv",
+      "data/reference/documented_events.csv",
+      "data/reference/playbook.json",
+      "data/reference/qc_era5_checks.csv"
+];
+    mount(
+      {
+        requirements: ["pandas", "plotly", "shapely", "requests"],
+        entrypoint: "app/streamlit_app.py",
+        files: Object.fromEntries(files.map((f) => [f, { url: "./" + f }])),
+        streamlitConfig: {"theme.base": "light", "theme.primaryColor": "#0F6E66", "theme.backgroundColor": "#EEF0EC", "theme.secondaryBackgroundColor": "#FCFCFB", "theme.textColor": "#1B1D1C", "client.toolbarMode": "viewer"},
+      },
+      document.getElementById("root"),
+    );
+    new MutationObserver((_, obs) => {
+      if (document.querySelector("[data-testid='stApp'] [data-testid='stMarkdown']")) {
+        document.getElementById("loading").remove(); obs.disconnect();
+      }
+    }).observe(document.getElementById("root"), { childList: true, subtree: true });
+  </script>
+</body>
+</html>
