@@ -1,89 +1,403 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <title>Ukame Watch: drought, heavy-rain and heat early warning for northern Kenya</title>
-  <meta name="description" content="Planning-support dashboard for eight arid counties of northern Kenya. Zetech Hackathon 2026, Climate Sentinel." />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@stlite/browser@1.12.2/build/stlite.css" />
-  <style>
-    body { margin: 0; background: #EEF0EC; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #1B1D1C; }
-    #loading { max-width: 640px; margin: 18vh auto 0; padding: 0 1.5rem; }
-    #loading h1 { font-size: 2rem; margin: 0 0 .4rem; } #loading h1 span { color: #0F6E66; }
-    #loading p { color: #52514e; line-height: 1.5; }
-    #loading .bar { height: 4px; background: #d9dcd6; border-radius: 2px; overflow: hidden; margin-top: 1.2rem; }
-    #loading .bar div { height: 100%; width: 30%; background: #0F6E66; animation: slide 1.4s ease-in-out infinite; }
-    @keyframes slide { 0% { margin-left: -30%; } 100% { margin-left: 100%; } }
-    @media (prefers-reduced-motion: reduce) { #loading .bar div { animation: none; width: 100%; } }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ukame Watch: drought and flood early warning for northern Kenya</title>
+<meta name="description" content="Early warning for eight arid counties of northern Kenya. Drought, heavy rain and heat, tested against 35 years of real disasters. Zetech Hackathon 2026.">
+<meta property="og:title" content="Ukame Watch">
+<meta property="og:description" content="Drought, then flood, in the same counties. An early-warning board for northern Kenya that admits what it cannot know.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+  :root {
+    --dust: #EEF0EC; --card: #FCFCFB; --ink: #1B1D1C; --ink2: #3E423D; --muted: #5E625D;
+    --jade: #0F6E66; --jade-light: #6FC1B5; --line: #D9DCD6;
+    --dry: #b8302f; --dry2: #e34948; --dry3: #ee9288; --mid: #d6d5cf; --wet3: #9ec5f4; --wet2: #5598e7; --wet: #1c5cab;
+    --tint: var(--dust);
+    --display: 'Archivo Narrow', 'Arial Narrow', Arial, sans-serif;
+    --body: 'Atkinson Hyperlegible', Verdana, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--tint); color: var(--ink); font-family: var(--body); font-size: 18px; line-height: 1.55;
+         transition: background-color 700ms ease; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--jade); outline-offset: 3px; border-radius: 4px; }
+  .skip { position: absolute; left: -9999px; top: 8px; z-index: 20; background: var(--ink); color: var(--card); padding: 10px 16px; border-radius: 8px; }
+  .skip:focus { left: 16px; }
+  .wrap { width: min(1240px, 100% - 48px); margin-inline: auto; }
+  .eyebrow { font-size: 15px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--jade); margin: 0 0 14px; }
+  h2 { font-family: var(--display); font-weight: 700; font-size: clamp(40px, 6vw, 76px); line-height: 1.0; letter-spacing: -.005em; margin: 0 0 20px; }
+  .lede { font-size: clamp(19px, 1.6vw, 23px); color: var(--ink2); max-width: 60ch; margin: 0; }
+
+  /* nav */
+  .nav { position: sticky; top: 0; z-index: 10; backdrop-filter: blur(10px); background: color-mix(in srgb, var(--tint) 82%, transparent); border-bottom: 1px solid transparent; transition: border-color .3s; }
+  .nav.scrolled { border-bottom-color: var(--line); }
+  .nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 60px; gap: 16px; }
+  .wordmark { font-family: var(--display); font-weight: 700; font-size: 24px; text-decoration: none; letter-spacing: .01em; }
+  .wordmark span { color: var(--jade); }
+  .nav ul { display: flex; gap: 22px; list-style: none; margin: 0; padding: 0; font-size: 16px; }
+  .nav ul a { text-decoration: none; color: var(--ink2); }
+  .nav ul a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+  @media (max-width: 720px) { .nav ul li.hide-sm { display: none; } }
+
+  /* hero */
+  .hero { min-height: calc(100svh - 60px); display: grid; align-content: center; padding: 48px 0 56px; }
+  .hero h1 { font-family: var(--display); font-weight: 700; font-size: clamp(84px, 17vw, 236px); line-height: .86; letter-spacing: -.02em; margin: 0 0 28px; }
+  .hero h1 span { color: var(--jade); }
+  .hero .thesis { font-size: clamp(22px, 2.3vw, 31px); line-height: 1.35; max-width: 30ch; margin: 0 0 30px; }
+  .hero .thesis b { font-weight: 700; }
+  .cta { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 40px; }
+  .btn { display: inline-flex; align-items: center; gap: 10px; font: 700 18px/1 var(--body); padding: 16px 24px; border-radius: 999px; text-decoration: none; border: 2px solid var(--ink); }
+  .btn.primary { background: var(--ink); color: var(--card); }
+  .btn.primary:hover { background: var(--jade); border-color: var(--jade); }
+  .btn.ghost:hover { background: var(--card); }
+  .status { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; font-size: 16px; color: var(--ink2); }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--jade); box-shadow: 0 0 0 0 rgba(15,110,102,.5); animation: pulse 2.2s infinite; flex: none; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(15,110,102,.45); } 70% { box-shadow: 0 0 0 10px rgba(15,110,102,0); } 100% { box-shadow: 0 0 0 0 rgba(15,110,102,0); } }
+  .strip { display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; margin-top: 34px; max-width: 900px; }
+  .strip div { display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--ink2); }
+  .strip i { display: block; height: 44px; border-radius: 5px; }
+  .strip b { color: var(--ink); font-size: 16px; }
+  .strip-cap { font-size: 15px; color: var(--muted); margin-top: 10px; }
+
+  /* whiplash scrollytelling */
+  .whiplash { position: relative; }
+  .sticky { position: sticky; top: 60px; height: calc(100svh - 60px); display: grid; grid-template-columns: minmax(260px, 380px) 1fr; gap: 40px; align-items: center; }
+  .caption { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 28px 30px; min-height: 230px; box-shadow: 0 12px 40px rgba(27,29,28,.06); }
+  .caption .season { font-family: var(--display); font-weight: 700; font-size: 52px; line-height: 1; margin: 6px 0 4px; white-space: nowrap; }
+  .caption .pct { font-size: 17px; color: var(--muted); margin: 0 0 14px; }
+  .caption p.text { font-size: 20px; line-height: 1.45; margin: 0; }
+  .caption .src { font-size: 14px; color: var(--muted); margin-top: 14px; }
+  .chart-wrap { position: relative; }
+  .chart-wrap svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .bar { transform-box: fill-box; transform-origin: bottom; transform: scaleY(0); transition: transform 380ms cubic-bezier(.2,.8,.2,1); }
+  .bar.on { transform: scaleY(1); }
+  .bar.now { stroke: var(--ink); stroke-width: 2; }
+  .tick { font: 14px var(--body); fill: var(--muted); }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 14px; color: var(--ink2); margin-top: 12px; }
+  .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+  .steps-list { display: none; }
+  details.data { margin-top: 10px; font-size: 15px; }
+  details.data table { border-collapse: collapse; margin-top: 8px; font-size: 14px; }
+  details.data td, details.data th { padding: 2px 10px; border-bottom: 1px solid var(--line); text-align: right; }
+  @media (max-width: 860px) {
+    .sticky { grid-template-columns: 1fr; align-content: center; gap: 18px; }
+    .caption { order: 2; min-height: 0; padding: 20px; } .caption .season { font-size: 44px; } .caption p.text { font-size: 17px; }
+  }
+
+  section.block { padding: 120px 0; }
+  @media (max-width: 720px) { section.block { padding: 72px 0; } .tick { font-size: 34px; } .legend { font-size: 13px; gap: 10px; } }
+  .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 44px; }
+  .q { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 28px; }
+  .q h3 { font-family: var(--display); font-size: 30px; line-height: 1.05; margin: 0 0 12px; color: var(--jade); }
+  .q p { margin: 0; color: var(--ink2); }
+  @media (max-width: 960px) { .grid4 { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .grid4 { grid-template-columns: 1fr; } }
+
+  .proof { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin-top: 44px; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 30px; display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: center; }
+  .stat .n { font-family: var(--display); font-weight: 700; font-size: clamp(54px, 6vw, 84px); line-height: 1; color: var(--jade); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .stat p { margin: 0; color: var(--ink2); }
+  .fail { margin-top: 18px; background: var(--card); border-left: 6px solid #ec835a; border-radius: 0 18px 18px 0; padding: 24px 30px; font-size: 21px; }
+  @media (max-width: 860px) { .proof { grid-template-columns: 1fr; } .stat { grid-template-columns: 1fr; gap: 10px; } }
+
+  .trust { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; margin-top: 44px; }
+  .trust h3 { font-family: var(--display); font-size: 30px; line-height: 1.05; margin: 0 0 10px; }
+  .trust p { margin: 0; color: var(--ink2); }
+  .trust .k { font-weight: 700; color: var(--jade); font-size: 15px; letter-spacing: .1em; text-transform: uppercase; display: block; margin-bottom: 10px; }
+  @media (max-width: 860px) { .trust { grid-template-columns: 1fr; } }
+
+  .board-frame { position: relative; margin-top: 36px; border-radius: 18px; overflow: hidden; border: 1px solid var(--line); background: var(--dust); height: min(90svh, 960px); min-height: 640px; box-shadow: 0 20px 60px rgba(27,29,28,.10); }
+  .board-frame iframe { width: 100%; height: 100%; border: 0; display: block; }
+  .loader { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; gap: 14px; background: var(--dust); padding: 24px; transition: opacity .5s; }
+  .loader.gone { opacity: 0; pointer-events: none; }
+  .loader .t { font-family: var(--display); font-size: 34px; font-weight: 700; margin: 0; }
+  .loader p { margin: 0; color: var(--ink2); max-width: 46ch; }
+  .bar-anim { width: 260px; height: 4px; background: var(--line); border-radius: 2px; overflow: hidden; margin: 6px auto 0; }
+  .bar-anim i { display: block; height: 100%; width: 35%; background: var(--jade); animation: slide 1.4s ease-in-out infinite; }
+  @keyframes slide { 0% { transform: translateX(-100%); } 100% { transform: translateX(300%); } }
+  .board-links { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 18px; font-size: 16px; }
+
+  footer { background: var(--ink); color: #D7DBD5; padding: 72px 0 56px; margin-top: 40px; }
+  footer .wrap { display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px; }
+  footer .wordmark { color: #EEF0EC; font-size: 40px; } footer .wordmark span { color: var(--jade-light); }
+  footer p { margin: 14px 0 0; max-width: 56ch; }
+  footer ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+  footer a { color: #EEF0EC; }
+  @media (max-width: 760px) { footer .wrap { grid-template-columns: 1fr; } }
+
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; } body { transition: none; }
+    .dot, .bar-anim i { animation: none; }
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .bar { transform: none; transition: none; }
+    .sticky { position: static; height: auto; padding: 40px 0; }
+    .whiplash { height: auto !important; }
+    .caption { display: none; }
+    .steps-list { display: block; }
+  }
+</style>
 </head>
 <body>
-  <div id="loading">
-    <h1>Ukame <span>Watch</span></h1>
-    <p>Starting the dashboard in your browser. The first visit downloads Python and the data
-       (about 30–60 seconds); later visits are faster.</p>
-    <p>Planning support only — not an official warning. Kenya Meteorological Department warnings and NDMA
-       drought bulletins take priority.</p>
-    <div class="bar" aria-hidden="true"><div></div></div>
+<a href="#story" class="skip">Skip to the story</a>
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="wordmark" href="#top">Ukame <span>Watch</span></a>
+    <nav aria-label="Sections"><ul>
+      <li class="hide-sm"><a href="#story">The whiplash</a></li>
+      <li class="hide-sm"><a href="#proof">Proof</a></li>
+      <li><a href="#board">Live board</a></li>
+      <li><a href="https://github.com/PatrickWangai/ukame-watch">GitHub</a></li>
+    </ul></nav>
   </div>
-  <div id="root"></div>
-  <script type="module">
-    import { mount } from "https://cdn.jsdelivr.net/npm/@stlite/browser@1.12.2/build/stlite.js";
-    const files = [
-      "app/streamlit_app.py",
-      "docs/limitations.md",
-      "src/ukame/__init__.py",
-      "src/ukame/config.py",
-      "src/ukame/agent.py",
-      "src/ukame/agent_tools.py",
-      "src/ukame/guardrails.py",
-      "src/ukame/watch.py",
-      "src/ukame/outlook.py",
-      "src/ukame/data.py",
-      "data/processed/annual.csv",
-      "data/processed/climatology.csv",
-      "data/processed/counties.csv",
-      "data/processed/counties.geojson",
-      "data/processed/crosscheck_era5.csv",
-      "data/processed/heat_decade.csv",
-      "data/processed/heat_monthly.csv",
-      "data/processed/meta.json",
-      "data/processed/monthly.csv",
-      "data/processed/outlook_current.csv",
-      "data/processed/outlook_model.json",
-      "data/processed/outlook_predictions.csv",
-      "data/processed/outlook_skill.csv",
-      "data/processed/population.csv",
-      "data/processed/qc_rainfall_flags.csv",
-      "data/processed/quality_report.csv",
-      "data/processed/recent_daily.csv",
-      "data/processed/regional_drought_pct.csv",
-      "data/processed/regional_heavy_3m.csv",
-      "data/processed/season_totals.csv",
-      "data/processed/three_month.csv",
-      "data/processed/thresholds.csv",
-      "data/processed/trends.csv",
-      "data/processed/validation_documented.csv",
-      "data/processed/validation_top_periods.csv",
-      "data/reference/census_2019.csv",
-      "data/reference/documented_events.csv",
-      "data/reference/playbook.json",
-      "data/reference/qc_era5_checks.csv"
-];
-    mount(
-      {
-        requirements: ["pandas", "plotly", "shapely", "requests"],
-        entrypoint: "app/streamlit_app.py",
-        files: Object.fromEntries(files.map((f) => [f, { url: "./" + f }])),
-        streamlitConfig: {"theme.base": "light", "theme.primaryColor": "#0F6E66", "theme.backgroundColor": "#EEF0EC", "theme.secondaryBackgroundColor": "#FCFCFB", "theme.textColor": "#1B1D1C", "client.toolbarMode": "viewer"},
-      },
-      document.getElementById("root"),
-    );
-    new MutationObserver((_, obs) => {
-      if (document.querySelector("[data-testid='stApp'] [data-testid='stMarkdown']")) {
-        document.getElementById("loading").remove(); obs.disconnect();
+</header>
+
+<main id="top">
+  <section class="hero wrap" aria-labelledby="title">
+    <p class="eyebrow">Northern Kenya · 8 arid counties · 5.6 million people</p>
+    <h1 id="title">Ukame <span>Watch</span></h1>
+    <p class="thesis"><b>Drought, then flood, in the same counties.</b> An early-warning board that tells county officers what is coming, and admits what it cannot know.</p>
+    <div class="cta">
+      <a class="btn primary" href="#board">See the live board <span aria-hidden="true">↓</span></a>
+      <a class="btn ghost" href="#story">Scroll the record</a>
+    </div>
+    <div class="status" id="status" aria-live="polite"><span class="dot" aria-hidden="true"></span><span id="status-text">Weather data through 9 Nov 2026 · Outlook for Nov 2026 – Jan 2027 loading…</span></div>
+    <div class="strip" id="strip" aria-label="The last eight rainy seasons, eight-county average rainfall as a percentage of normal"></div>
+    <p class="strip-cap">The last eight rainy seasons, as % of normal rainfall. <i>Ukame</i> is Swahili for drought.</p>
+  </section>
+
+  <section class="whiplash" id="story" aria-labelledby="story-title">
+    <div class="sticky wrap">
+      <div class="caption" id="caption" aria-live="polite">
+        <p class="eyebrow" id="story-title">35 years of rain</p>
+        <p class="season" id="cap-season">1991</p>
+        <p class="pct" id="cap-pct"></p>
+        <p class="text" id="cap-text">Every bar is one rainy season, averaged across eight counties, as a share of its 1991–2020 normal. Red seasons failed. Blue seasons flooded. Scroll.</p>
+        <p class="src" id="cap-src"></p>
+      </div>
+      <div class="chart-wrap">
+        <svg id="chart" viewBox="0 0 1000 520" role="img" aria-label="Bar chart of 71 rainy seasons from 1991 to 2026. Values swing from 28 percent of normal in early 2000 to 324 percent in late 1997."></svg>
+        <div class="legend" aria-hidden="true">
+          <span><i style="background:var(--dry)"></i>under 50%</span><span><i style="background:var(--dry2)"></i>50–75%</span><span><i style="background:var(--dry3)"></i>75–90%</span>
+          <span><i style="background:var(--mid)"></i>near normal</span><span><i style="background:var(--wet3)"></i>110–150%</span><span><i style="background:var(--wet2)"></i>150–200%</span><span><i style="background:var(--wet)"></i>over 200%</span>
+        </div>
+        <ol class="steps-list" id="steps-list"></ol>
+        <details class="data"><summary>Show the data as a table</summary><table id="data-table"><thead><tr><th>Season</th><th>% of normal</th></tr></thead><tbody></tbody></table></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="block wrap" aria-labelledby="q-title">
+    <p class="eyebrow reveal">What it does</p>
+    <h2 id="q-title" class="reveal">Four questions, one board</h2>
+    <p class="lede reveal">Before a season fails, a county disaster officer needs four answers. Ukame Watch gives each one per county, in plain language.</p>
+    <div class="grid4">
+      <div class="q reveal"><h3>Is this season unusual?</h3><p>Rainfall as % of the 1991–2020 normal, and an NDMA-style drought level for every county.</p></div>
+      <div class="q reveal"><h3>What comes next?</h3><p>A 3-month outlook tested against two baselines, and a live 7-day heavy-rain and heat watch.</p></div>
+      <div class="q reveal"><h3>Who is exposed?</h3><p>Census population per county, and the rise in hot days since 1991.</p></div>
+      <div class="q reveal"><h3>What do we prepare?</h3><p>A cited action playbook, and an offline AI that drafts an advisory a named officer must approve.</p></div>
+    </div>
+  </section>
+
+  <section class="block wrap" id="proof" aria-labelledby="proof-title">
+    <p class="eyebrow reveal">Proof, not promises</p>
+    <h2 id="proof-title" class="reveal">It catches the disasters Kenya already lived through</h2>
+    <div class="proof">
+      <div class="stat reveal"><span class="n" data-count="10" data-suffix=" of 10" id="p-detected">10 of 10</span><p>documented droughts and floods, 1997–2024, flagged by the indicators</p></div>
+      <div class="stat reveal"><span class="n" data-count="6" data-suffix=" of 6" id="p-top">6 of 6</span><p>worst droughts and heavy-rain periods in 35 years of data match a documented disaster</p></div>
+      <div class="stat reveal"><span class="n" id="p-skill">+0.12</span><p>forecast skill for Oct–Dec rains on unseen years 2017–2026 (Brier skill score against climatology)</p></div>
+      <div class="stat reveal"><span class="n">+5 to +10</span><p>extra hot days per decade, statistically significant in 7 of 8 counties</p></div>
+    </div>
+    <p class="fail reveal"><b>Where it fails:</b> no skill for the March–May long rains (<span id="p-skill-long">−0.05</span>). The board says so on screen, and every limit is published.</p>
+  </section>
+
+  <section class="block wrap" aria-labelledby="trust-title">
+    <p class="eyebrow reveal">Built to be trusted</p>
+    <h2 id="trust-title" class="reveal">Planning support, never a black box</h2>
+    <div class="trust">
+      <div class="reveal"><span class="k">Human in charge</span><h3>A person approves every advisory</h3><p>The assistant only drafts. Nothing is shared until a named officer approves it, and every decision is logged.</p></div>
+      <div class="reveal"><span class="k">Every number checked</span><h3>No invented figures</h3><p>Code checks each number against the data tools, blocks claims like “no risk”, and refuses cyclone-path forecasts.</p></div>
+      <div class="reveal"><span class="k">Honest data</span><h3>Errors found and fixed</h3><p>11 impossible rainfall days caught by cross-checking a second dataset, and a population source 3× too high, replaced by the census.</p></div>
+    </div>
+  </section>
+
+  <section class="block wrap" id="board" aria-labelledby="board-title">
+    <p class="eyebrow">Live</p>
+    <h2 id="board-title">The live board</h2>
+    <p class="lede">The full dashboard, running in your browser with live data and the 7-day forecast. It started loading when you opened this page.</p>
+    <div class="board-frame">
+      <iframe id="board-frame" title="Ukame Watch live dashboard" data-src="dashboard.html"></iframe>
+      <div class="loader" id="loader" role="status">
+        <p class="t">Starting the board</p>
+        <p id="loader-text">Python is downloading into your browser. The first visit takes about a minute; later visits are faster.</p>
+        <div class="bar-anim" aria-hidden="true"><i></i></div>
+      </div>
+    </div>
+    <div class="board-links">
+      <a href="dashboard.html">Open the board full screen →</a>
+      <a href="https://github.com/PatrickWangai/ukame-watch#quick-start">Run it on a laptop, with the AI assistant →</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <a class="wordmark" href="#top">Ukame <span>Watch</span></a>
+      <p><b>Planning support only, not an official warning.</b> Kenya Meteorological Department warnings and NDMA drought bulletins always take priority.</p>
+      <p>Built for the Zetech Alumni × Student Hackathon 2026, ML &amp; Data Science track, Challenge 1: Climate Sentinel. Data: NASA POWER, ERA5 (Open-Meteo), NOAA CPC, KNBS 2019 census, geoBoundaries.</p>
+    </div>
+    <ul>
+      <li><a href="https://github.com/PatrickWangai/ukame-watch">Code on GitHub</a></li>
+      <li><a href="https://github.com/PatrickWangai/ukame-watch/blob/main/SUBMISSION.md">Submission report</a></li>
+      <li><a href="https://github.com/PatrickWangai/ukame-watch/blob/main/docs/limitations.md">Limitations</a></li>
+      <li><a href="https://github.com/PatrickWangai/ukame-watch/blob/main/DATA.md">Data sources</a></li>
+      <li><a href="https://github.com/PatrickWangai/ukame-watch/blob/main/docs/playbook.md">Action playbook</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const BINS = [[50,'#b8302f'],[75,'#e34948'],[90,'#ee9288'],[110,'#d6d5cf'],[150,'#9ec5f4'],[200,'#5598e7'],[Infinity,'#1c5cab']];
+  const colour = v => BINS.find(([u]) => v < u)[1];
+  const tintFor = v => v < 75 ? '#F3E4DB' : v > 125 ? '#DEE9F5' : '#EEF0EC';
+  const label = (y, m) => (m === 5 ? 'Mar–May ' : 'Oct–Dec ') + y;
+  const short = (y, m) => (m === 5 ? 'Mar–May ' : 'Oct–Dec ') + String(y).slice(2);
+
+  // Story steps: the season they appear at, and sourced text.
+  const STEPS = [
+    { key: '1991-5', text: 'Every bar is one rainy season, averaged across eight counties, as a share of its 1991–2020 normal. Red seasons failed. Blue seasons flooded. Keep scrolling.', src: '' },
+    { key: '1997-12', text: 'El Niño. The wettest season in our 35-year record.', src: 'Wainwright et al. (2020), Weather' },
+    { key: '2000-5', text: 'Barely two years later, the long rains fail. The Kenyan government called it the worst drought in 37 years.', src: 'FAO GIEWS (2000); Government of Kenya report to UNW-DPC (2014)' },
+    { key: '2005-12', text: 'The short rains fail across the north. A national disaster is declared in January 2006.', src: 'FAO GIEWS, January 2006' },
+    { key: '2010-12', text: 'Two failed seasons in a row across the Horn of Africa.', src: 'NOAA Climate.gov' },
+    { key: '2016-12', text: 'Late, brief and inadequate rains. Drought is declared a national disaster in February 2017.', src: 'World Weather Attribution' },
+    { key: '2019-12', text: 'A strong positive Indian Ocean Dipole floods the short rains.', src: 'UN OCHA, October 2019' },
+    { key: '2022-12', text: 'Season after season falls short. A national disaster is declared in September 2021.', src: 'ACAPS, March 2022' },
+    { key: '2023-12', text: 'El Niño floods displace more than 135,000 people in Kenya; Garissa, Mandera and Wajir are worst hit.', src: 'UN OCHA via ECHO, 20 November 2023' },
+    { key: '2026-5', text: 'Drought to flood and back, within months. That whiplash is what Ukame Watch watches.', src: '' },
+  ];
+
+  const nav = document.getElementById('nav');
+  addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 10), { passive: true });
+
+  // Reveal on scroll
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  const csv = t => { const [h, ...rows] = t.trim().split(/\r?\n/); const k = h.split(','); return rows.map(r => { const v = r.split(','); return Object.fromEntries(k.map((x, i) => [x, v[i]])); }); };
+  const get = (p, kind = 'text') => fetch(p).then(r => { if (!r.ok) throw new Error(p); return r[kind](); });
+
+  // Hero status line from live outputs
+  Promise.all([get('data/processed/meta.json', 'json'), get('data/processed/outlook_current.csv')]).then(([meta, oc]) => {
+    const rows = csv(oc); const d = new Date(meta.data_through + 'T00:00:00');
+    const when = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    const vals = [...new Set(rows.map(r => r.p_dry_model_display))];
+    const win = (rows[0] && rows[0].target_window || '').replace(' - ', ' – ');
+    const risk = vals.length === 1 ? `risk of a very dry season ${vals[0]} in all ${rows.length} counties` : `risk of a very dry season ${vals.join(' to ')} across counties`;
+    document.getElementById('status-text').textContent = `Weather data through ${when} · Outlook for ${win}: ${risk}`;
+  }).catch(() => { document.getElementById('status-text').textContent = 'Weather data updated from NASA POWER and NOAA'; });
+
+  // Proof numbers from live outputs (static values stay if this fails)
+  get('data/processed/outlook_skill.csv').then(t => {
+    const r = csv(t), f = n => (n > 0 ? '+' : '−') + Math.abs(n).toFixed(2);
+    const s = r.find(x => x.scope === 'season' && x.name === 'short_rains' && x.method === 'model');
+    const l = r.find(x => x.scope === 'season' && x.name === 'long_rains' && x.method === 'model');
+    if (s) document.getElementById('p-skill').textContent = f(+s.bss);
+    if (l) document.getElementById('p-skill-long').textContent = f(+l.bss);
+  }).catch(() => {});
+  get('data/processed/validation_documented.csv').then(t => {
+    const r = csv(t); const n = r.filter(x => x.detected === 'True').length;
+    const el = document.getElementById('p-detected'); el.dataset.count = n; el.dataset.suffix = ` of ${r.length}`; el.textContent = `${n} of ${r.length}`;
+  }).catch(() => {});
+
+  // Count-up for stat numbers that have data-count
+  if (!reduce) {
+    const cio = new IntersectionObserver(es => es.forEach(e => {
+      if (!e.isIntersecting) return; cio.unobserve(e.target);
+      const el = e.target, end = +el.dataset.count, suf = el.dataset.suffix || ''; let t0;
+      const step = ts => { t0 ??= ts; const p = Math.min(1, (ts - t0) / 900); el.textContent = Math.round(end * (1 - Math.pow(1 - p, 3))) + suf; if (p < 1) requestAnimationFrame(step); };
+      requestAnimationFrame(step);
+    }), { threshold: .6 });
+    document.querySelectorAll('[data-count]').forEach(el => cio.observe(el));
+  }
+
+  // The whiplash chart
+  get('data/processed/regional_drought_pct.csv').then(t => {
+    const data = csv(t).map(r => ({ y: +r.year, m: +r.month, v: +r.value })).sort((a, b) => a.y - b.y || a.m - b.m);
+    const N = data.length, W = 1000, H = 520, top = 30, bottom = 470, left = 44, right = 1000;
+    const vmax = 340, y = v => bottom - (Math.min(v, vmax) / vmax) * (bottom - top);
+    const bw = (right - left) / N;
+    const svg = document.getElementById('chart'); const ns = 'http://www.w3.org/2000/svg';
+    const el = (n, a) => { const e = document.createElementNS(ns, n); for (const k in a) e.setAttribute(k, a[k]); return e; };
+    [0, 100, 200, 300].forEach(v => {
+      svg.append(el('line', { x1: left, x2: right, y1: y(v), y2: y(v), stroke: v === 100 ? '#1B1D1C' : '#D9DCD6', 'stroke-width': v === 100 ? 1.5 : 1, 'stroke-dasharray': v === 100 ? '6 5' : '' }));
+      const tx = el('text', { x: 0, y: y(v) + 5, class: 'tick' }); tx.textContent = v + '%'; svg.append(tx);
+    });
+    const bars = data.map((d, i) => {
+      const r = el('rect', { x: left + i * bw + 1.5, y: y(d.v), width: Math.max(2, bw - 3), height: bottom - y(d.v), rx: 2, fill: colour(d.v), class: 'bar' });
+      const tt = el('title', {}); tt.textContent = `${label(d.y, d.m)}: ${Math.round(d.v)}% of normal`; r.append(tt);
+      svg.append(r); return r;
+    });
+    [1995, 2000, 2005, 2010, 2015, 2020, 2025].forEach(yr => {
+      const i = data.findIndex(d => d.y === yr); if (i < 0) return;
+      const tx = el('text', { x: left + i * bw, y: bottom + 28, class: 'tick' }); tx.textContent = yr; svg.append(tx);
+    });
+    const tb = document.querySelector('#data-table tbody');
+    data.forEach(d => { const tr = document.createElement('tr'); tr.innerHTML = `<td>${label(d.y, d.m)}</td><td>${Math.round(d.v)}%</td>`; tb.append(tr); });
+
+    // Hero strip: last eight seasons, live
+    const strip = document.getElementById('strip');
+    data.slice(-8).forEach(d => { const c = document.createElement('div'); c.innerHTML = `<i style="background:${colour(d.v)}"></i><b>${Math.round(d.v)}%</b><span>${short(d.y, d.m)}</span>`; strip.append(c); });
+
+    const idx = STEPS.map(s => data.findIndex(d => `${d.y}-${d.m}` === s.key));
+    const list = document.getElementById('steps-list');
+    STEPS.forEach((s, k) => { const d = data[idx[k]]; if (!d) return; const li = document.createElement('li'); li.innerHTML = `<b>${label(d.y, d.m)}, ${Math.round(d.v)}%:</b> ${s.text}`; list.append(li); });
+
+    const sec = document.getElementById('story');
+    if (reduce) { bars.forEach(b => b.classList.add('on')); return; }
+    sec.style.height = `${Math.max(320, STEPS.length * 55)}vh`;
+    const cs = document.getElementById('cap-season'), cp = document.getElementById('cap-pct'), ct = document.getElementById('cap-text'), cr = document.getElementById('cap-src');
+    let shown = -1, lastStep = -1;
+    const update = () => {
+      const r = sec.getBoundingClientRect(), span = sec.offsetHeight - innerHeight;
+      const p = Math.min(1, Math.max(0, -r.top / Math.max(1, span)));
+      const upto = Math.min(N - 1, Math.floor(p * (N - 1) + 0.0001));
+      if (upto !== shown) {
+        bars.forEach((b, i) => { b.classList.toggle('on', i <= upto); b.classList.toggle('now', i === upto); });
+        shown = upto;
+        const inView = r.top < innerHeight && r.bottom > 0;
+        document.documentElement.style.setProperty('--tint', inView && r.top <= 60 ? tintFor(data[upto].v) : 'var(--dust)');
+        let k = 0; idx.forEach((ix, j) => { if (ix >= 0 && ix <= upto) k = j; });
+        const d = data[upto];
+        cs.textContent = label(d.y, d.m);
+        cp.textContent = `${Math.round(d.v)}% of normal rainfall, eight-county average`;
+        if (k !== lastStep) { ct.textContent = STEPS[k].text; cr.textContent = STEPS[k].src ? `Source: ${STEPS[k].src}` : ''; lastStep = k; }
       }
-    }).observe(document.getElementById("root"), { childList: true, subtree: true });
-  </script>
+      if (r.top > 60 || r.bottom < innerHeight * 0.5) document.documentElement.style.setProperty('--tint', 'var(--dust)');
+    };
+    addEventListener('scroll', update, { passive: true }); addEventListener('resize', update); update();
+  }).catch(() => { document.getElementById('cap-text').textContent = 'The season record could not load. Open the live board below.'; });
+
+  // Preload the board after this page has painted, then hide the loader once the dashboard renders.
+  addEventListener('load', () => setTimeout(() => {
+    const f = document.getElementById('board-frame'), loader = document.getElementById('loader'), lt = document.getElementById('loader-text');
+    f.src = f.dataset.src; const t0 = Date.now();
+    const poll = setInterval(() => {
+      let ready = false; try { ready = !!f.contentDocument.querySelector('.uw-tile'); } catch (e) {}
+      if (ready) { loader.classList.add('gone'); clearInterval(poll); }
+      else if (Date.now() - t0 > 45000) lt.textContent = 'Still loading on a slow connection. You can keep reading; it will appear here when ready.';
+    }, 1500);
+  }, 600));
+})();
+</script>
 </body>
 </html>

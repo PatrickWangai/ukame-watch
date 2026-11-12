@@ -1,5 +1,6 @@
-"""Generate index.html: the dashboard running entirely in the visitor's browser (stlite + Pyodide),
+"""Generate dashboard.html: the dashboard running entirely in the visitor's browser (stlite + Pyodide),
 served free by GitHub Pages straight from this repository. No server, no account.
+index.html (hand-written) is the story landing page; it embeds dashboard.html and preloads it.
 
 Usage: python tools/make_web_demo.py   (rerun after adding files the app reads)
 
@@ -82,10 +83,10 @@ def main():
     missing = [f for f in APP_FILES if not (ROOT / f).exists()]
     if missing:
         raise SystemExit(f"Missing files: {missing}")
-    (ROOT / "index.html").write_text(HTML.format(stlite=STLITE, files=json.dumps(APP_FILES, indent=6),
+    (ROOT / "dashboard.html").write_text(HTML.format(stlite=STLITE, files=json.dumps(APP_FILES, indent=6),
                                                   config=json.dumps(STREAMLIT_CONFIG)))
     (ROOT / ".nojekyll").write_text("")  # serve dot-folders and every file as-is on GitHub Pages
-    print(f"wrote index.html ({len(APP_FILES)} files mounted)")
+    print(f"wrote dashboard.html ({len(APP_FILES)} files mounted)")
 
 
 if __name__ == "__main__":

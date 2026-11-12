@@ -10,7 +10,8 @@ Planning-support tool only: Kenya Meteorological Department warnings and NDMA dr
 
 | What | Where |
 |---|---|
-| **Live demo** (runs in the browser; first load 1–2 minutes) | https://patrickwangai.github.io/ukame-watch/ |
+| **Live site** (story page; preloads the dashboard) | https://patrickwangai.github.io/ukame-watch/ |
+| **Dashboard only** (runs in the browser; first load 1–2 minutes) | https://patrickwangai.github.io/ukame-watch/dashboard.html |
 | **Code repository** (public) | https://github.com/PatrickWangai/ukame-watch |
 | **README** (setup, results, architecture, SDG statement, stack) | [README.md](README.md) |
 | **Backup demo video** (2–3 minutes) | [add link before the freeze] |
