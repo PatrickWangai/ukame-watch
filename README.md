@@ -1,10 +1,142 @@
 # Ukame Watch
 
-Drought, heavy-rain and heat early-warning support for eight arid and semi-arid counties in northern Kenya.
+**Drought, heavy-rain and heat early-warning support for eight arid counties of northern Kenya.**
+*Ukame* is Swahili for drought.
 
-**Zetech Alumni x Student Hackathon 2026 — ML & Data Science track, Challenge 1: Climate Sentinel.**
+Zetech Alumni × Student Hackathon 2026 · ML & Data Science track · **Challenge 1: Climate Sentinel**
 
-> Planning-support tool only. Not an official warning system. Kenya Meteorological Department warnings and
-> National Drought Management Authority (NDMA) bulletins always take priority.
+> **Planning-support tool only — not an official warning system.** Kenya Meteorological Department warnings
+> and NDMA drought bulletins always take priority. Advisories are drafts until a named person approves them.
 
-Work in progress — full documentation follows.
+## Who it is for and what it answers
+
+A **county disaster manager** in Turkana, Marsabit, Wajir, Mandera, Garissa, Isiolo, Samburu or Kitui
+(5.6 million people, KNBS 2019 census) needs four answers in plain language:
+
+| Question | Where Ukame Watch answers it |
+|---|---|
+| Is this season unusual? | Situation board and map: 3-month rainfall as % of the 1991–2020 normal, drought level |
+| What is likely next? | Seasonal outlook (next 3 months) and live 7-day heavy-rain / heat watch |
+| Who is exposed? | Population per county and by drought class; hot-day trends |
+| What should we prepare? | Cited action playbook, and an assistant that drafts advisories for human approval |
+
+Secondary users who act on the same information: county agriculture and livestock officers, and humanitarian
+partners planning water, cash and nutrition support.
+
+**SDGs:** 13 Climate Action · 2 Zero Hunger · 1 No Poverty · 11 Sustainable Cities and Communities.
+
+## Results
+
+| What we checked | Result |
+|---|---|
+| Documented disasters detected by our indicators | **10 of 10** (5 droughts, 5 heavy-rain/flood periods) |
+| Worst 3 droughts and worst 3 heavy-rain periods in our data | **all 6 match documented events** (3 added after being flagged, then verified independently; labelled) |
+| Seasonal outlook, Oct–Dec short rains, test 2017+ | Brier skill score **+0.12** vs climatology; F1 **0.61** vs 0.46 for persistence |
+| Seasonal outlook, Mar–May long rains, test 2017+ | Brier skill score **−0.05**: **no skill**, and we say so |
+| Hot-day trend (max temperature above county 95th percentile) | **+5 to +10 days per decade**, significant in 7 of 8 counties (p < 0.05) |
+| Rainfall data errors found and fixed | **11 days** (up to 608 mm/day) replaced after an ERA5 check; 1 genuine flood day kept |
+| Assistant evaluation (8 questions incl. cyclone path, fake county, "say no risk") | All grounded or correctly refused; questions using tools take **11–34 s** on a MacBook Air M1 (8 GB), code-level refusals are instant |
+
+Details: `notebooks/01_weather_behaviour.ipynb`, `notebooks/02_forecasting.ipynb`, `logs/agent_eval.md`.
+
+## Quick start
+
+```bash
+python3.12 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+
+python tools/build_all.py              # one command: fetch data, QC, indicators, validation, outlook (~20 s)
+streamlit run app/streamlit_app.py     # dashboard at http://localhost:8501
+
+# Assistant (optional, runs locally — nothing leaves the laptop)
+ollama pull qwen2.5:3b
+python tools/run_agent_eval.py                    # 8-question evaluation -> logs/agent_eval.md
+python tools/run_agent_eval.py --review "Name"    # same, with a person approving or rejecting each draft
+
+pytest                                  # 75 tests
+```
+
+Processed results are committed in `data/processed/`, so the dashboard runs even without internet
+(the live 7-day watch then says it is unavailable).
+
+## How it works
+
+```mermaid
+flowchart LR
+  subgraph Sources
+    NP[NASA POWER daily 1991-2026]
+    E5[ERA5 via Open-Meteo<br/>cross-check + QC]
+    IDX[NOAA CPC ENSO + IOD indices]
+    POP[KNBS 2019 census<br/>+ WorldPop 2020]
+    GB[geoBoundaries counties]
+    FC[Open-Meteo 7-day forecast]
+  end
+  NP --> QC[Rainfall QC] --> AN[Indicators:<br/>% of normal, 3-day p99, hot days]
+  E5 --> QC
+  AN --> VAL[Validation vs<br/>10 documented events]
+  AN --> OUT[Seasonal outlook<br/>logistic, per season]
+  IDX --> OUT
+  AN --> TOOLS
+  OUT --> TOOLS[6 agent tools]
+  FC --> TOOLS
+  POP --> TOOLS
+  PB[Cited playbook] --> TOOLS
+  TOOLS --> AG[Local LLM agent<br/>qwen2.5:3b + guardrails]
+  AG --> HUM{Human approval}
+  AN --> DASH[Streamlit dashboard]
+  OUT --> DASH
+  VAL --> DASH
+  HUM --> DASH
+```
+
+- **Indicators** (`src/ukame/analysis.py`): monthly normals (1991–2020), Mann-Kendall trends with Sen's slope,
+  longest dry spell, heavy-rain days (> wet-day p95), max 3-day rain; **drought** = 3-month rainfall as % of
+  normal; **heavy rain** = 3-day total above the county's 99th percentile; **heat** = max temperature above the
+  county's 95th percentile. All thresholds come from the normal period only.
+- **Seasonal outlook** (`src/ukame/outlook.py`): will the next 3 months fall in the driest third? Separate
+  logistic models per season group using ENSO, the Indian Ocean Dipole and recent rainfall. Time-based split
+  (train ≤ 2016, test ≥ 2017), training-only thresholds, compared with climatology and persistence.
+- **Agent** (`src/ukame/agent.py`, `agent_tools.py`, `guardrails.py`): six tools (current status, 7-day watch,
+  outlook, heat stress, population exposure, playbook). The model never calculates. Code refuses cyclone-track
+  requests and uncovered counties, blocks "no risk" claims, checks every number against tool outputs, adds cited
+  playbook actions when a level is active, logs every tool call, and holds every advisory as a draft until a named
+  person approves it.
+
+## Responsible AI
+
+- No personal data anywhere; all sources are public and aggregated (see `DATA.md`).
+- Local model: nothing is sent to a hosted AI service.
+- Every number in an advisory is traceable: `logs/tool_calls.jsonl` (every call), `logs/answers.jsonl`
+  (every answer and its checks), `logs/advisories.jsonl` (every human decision).
+- Honest results: the long-rains outlook has no skill; the indicator flags seasons that were not declared
+  disasters; data errors are logged, not hidden. Read `docs/limitations.md`.
+
+## Repository
+
+```
+app/streamlit_app.py      dashboard
+src/ukame/                pipeline, model, agent and guardrails (tested)
+tools/                    build_all.py (one command), fetch_data.py, run_agent_eval.py
+data/reference/           documented events, cited playbook, census figures (hand-curated, cited)
+data/processed/           build outputs read by the app (regenerated by build_all.py)
+notebooks/                weather behaviour and forecasting notebooks (executed)
+docs/                     playbook.md (generated), limitations.md
+logs/                     agent evaluation and audit logs
+tests/                    75 tests
+```
+
+## AI assistance disclosure
+
+As the hackathon rules require: this project was built with help from an AI coding assistant (Claude Code,
+Anthropic), used for code generation, data-source research and documentation drafting. The team reviewed and
+can explain every module. The runtime assistant uses **Qwen 2.5 3B** (Alibaba Cloud, Apache 2.0 licence) via
+**Ollama**, locally. All data sources and licences are in `DATA.md`.
+
+## Team
+
+| Member | Owns (can explain and rerun) |
+|---|---|
+| _name_ | Data pipeline, QC and `DATA.md` (`data.py`, `analysis.py`) |
+| _name_ | Seasonal outlook and validation (`outlook.py`, `validation.py`, notebook 02) |
+| _name_ | Agent, guardrails and evaluation (`agent*.py`, `guardrails.py`, `logs/`) |
+| _name_ (Alumni/Finalist Collaborator) | Dashboard, playbook and demo (`app/`, `docs/`) |

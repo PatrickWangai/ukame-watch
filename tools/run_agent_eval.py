@@ -64,7 +64,10 @@ def main(reviewer: str | None = None):
     for i, kind, status, n, ung, blocked, dec, secs in summary:
         lines.append(f"| {i} | {kind} | {status} | {n} | {', '.join(ung) or '-'} | {blocked} | {dec or 'pending'} | {secs:.1f} |")
     times = sorted(s[-1] for s in summary)
-    lines += ["", f"Median response time: {times[len(times) // 2]:.1f} s on a MacBook Air M1 (8 GB RAM)."]
+    tool_times = sorted(s[-1] for s in summary if s[3] > 0)
+    lines += ["", f"Median response time, all questions: {times[len(times) // 2]:.1f} s "
+                  f"(code-level refusals are instant). Questions that called tools: "
+                  f"{min(tool_times):.0f}-{max(tool_times):.0f} s. MacBook Air M1, 8 GB RAM, {C.AGENT_MODEL}."]
     (C.LOGS / "agent_eval.md").write_text("\n".join(lines) + "\n")
     print("\nwrote logs/agent_eval.md")
 

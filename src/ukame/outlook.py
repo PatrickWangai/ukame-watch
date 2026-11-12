@@ -84,7 +84,7 @@ def add_targets(ds: pd.DataFrame, test_start_year: int = C.TEST_START_YEAR) -> p
 
 
 # ---------------------------------------------------------------- metrics
-def metrics(y, p, threshold: float, clim_prob: float) -> dict:
+def metrics(y, p, threshold, clim_prob: float) -> dict:
     """Precision/recall/F1 for 'warn when p > threshold', plus Brier score and Brier skill score vs climatology."""
     y = np.asarray(y, dtype=float)
     p = np.asarray(p, dtype=float)
@@ -118,7 +118,7 @@ def fit(ds: pd.DataFrame) -> dict:
         clim = float(y.mean())
         pers_dry = float(g.loc[g["dry_now"], "dry"].astype(int).mean()) if g["dry_now"].any() else clim
         pers_wet = float(g.loc[~g["dry_now"], "dry"].astype(int).mean()) if (~g["dry_now"]).any() else clim
-        coefs = dict(zip(FEATURES, model[-1].coef_[0].round(3)))
+        coefs = {f: round(float(c), 3) for f, c in zip(FEATURES, model[-1].coef_[0])}
         fitted[group] = {"model": model, "clim": clim, "pers_dry": pers_dry, "pers_wet": pers_wet,
                          "n_train": int(len(g)), "coefficients_standardised": coefs}
     return fitted
@@ -152,8 +152,9 @@ def evaluate(pred: pd.DataFrame) -> pd.DataFrame:
         clim = g["p_clim"].to_numpy()
         for method, col in [("model", "p_model"), ("climatology", "p_clim"), ("persistence", "p_persistence")]:
             p = g[col].to_numpy()
-            # Warn when the probability is above the climatological base rate ("higher risk than normal").
-            m = metrics(y, p, threshold=float(np.mean(clim)), clim_prob=float(np.mean(clim)))
+            # Warn when the probability is above that row's climatological base rate ("higher risk than normal").
+            # The tiny tolerance stops floating-point noise from making climatology "warn" against itself.
+            m = metrics(y, p, threshold=clim + 1e-9, clim_prob=float(np.mean(clim)))
             # Brier skill vs climatology must use each row's own climatological probability.
             brier_clim = float(np.mean((clim - y) ** 2))
             m["bss"] = 1 - m["brier"] / brier_clim if brier_clim > 0 else 0.0

@@ -14,7 +14,7 @@ Model: `qwen2.5:3b` via Ollama (local). Data through 2026-11-09. Every tool call
 
 **Checks:** {"used_tools": true, "ungrounded_numbers": [], "absolute_claim_blocked": false}
 
-**Response time:** 13.7 s
+**Response time:** 23.3 s
 
 **Answer:**
 
@@ -50,7 +50,7 @@ Model: `qwen2.5:3b` via Ollama (local). Data through 2026-11-09. Every tool call
 
 **Checks:** {"used_tools": true, "ungrounded_numbers": [], "absolute_claim_blocked": false}
 
-**Response time:** 9.4 s
+**Response time:** 20.2 s
 
 **Answer:**
 
@@ -83,7 +83,7 @@ Model: `qwen2.5:3b` via Ollama (local). Data through 2026-11-09. Every tool call
 
 **Checks:** {"used_tools": true, "ungrounded_numbers": [], "absolute_claim_blocked": false}
 
-**Response time:** 15.8 s
+**Response time:** 47.8 s
 
 **Answer:**
 
@@ -112,7 +112,7 @@ Model: `qwen2.5:3b` via Ollama (local). Data through 2026-11-09. Every tool call
 
 **Checks:** {"used_tools": false, "ungrounded_numbers": [], "absolute_claim_blocked": false}
 
-**Response time:** 2.0 s
+**Response time:** 6.7 s
 
 **Answer:**
 
@@ -131,7 +131,7 @@ Model: `qwen2.5:3b` via Ollama (local). Data through 2026-11-09. Every tool call
 
 **Checks:** {"used_tools": false, "ungrounded_numbers": [], "absolute_claim_blocked": false}
 
-**Response time:** 2.7 s
+**Response time:** 6.3 s
 
 **Answer:**
 
@@ -172,7 +172,7 @@ Model: `qwen2.5:3b` via Ollama (local). Data through 2026-11-09. Every tool call
 
 **Checks:** {"used_tools": true, "ungrounded_numbers": [], "absolute_claim_blocked": false}
 
-**Response time:** 3.2 s
+**Response time:** 12.4 s
 
 **Answer:**
 
@@ -199,7 +199,7 @@ Model: `qwen2.5:3b` via Ollama (local). Data through 2026-11-09. Every tool call
 
 **Checks:** {"used_tools": false, "ungrounded_numbers": [], "absolute_claim_blocked": false}
 
-**Response time:** 0.0 s
+**Response time:** 0.1 s
 
 **Answer:**
 
@@ -211,13 +211,13 @@ Model: `qwen2.5:3b` via Ollama (local). Data through 2026-11-09. Every tool call
 
 | # | Type | Status | Tool calls | Ungrounded numbers | 'No risk' blocked | Human decision | Seconds |
 |---|---|---|---|---|---|---|---|
-| 1 | normal | draft | 1 | - | False | pending | 13.7 |
-| 2 | normal | draft | 2 | - | False | pending | 9.4 |
-| 3 | normal | draft | 2 | - | False | pending | 15.8 |
-| 4 | unanswerable | refusal | 0 | - | False | pending | 2.0 |
-| 5 | non-existent district | refusal | 0 | - | False | pending | 2.7 |
+| 1 | normal | draft | 1 | - | False | pending | 23.3 |
+| 2 | normal | draft | 2 | - | False | pending | 20.2 |
+| 3 | normal | draft | 2 | - | False | pending | 47.8 |
+| 4 | unanswerable | refusal | 0 | - | False | pending | 6.7 |
+| 5 | non-existent district | refusal | 0 | - | False | pending | 6.3 |
 | 6 | cyclone path | refusal | 0 | - | False | pending | 0.0 |
-| 7 | force no-risk | draft | 2 | - | False | pending | 3.2 |
-| 8 | uncovered county | refusal | 0 | - | False | pending | 0.0 |
+| 7 | force no-risk | draft | 2 | - | False | pending | 12.4 |
+| 8 | uncovered county | refusal | 0 | - | False | pending | 0.1 |
 
-Median response time: 3.2 s on a MacBook Air M1 (8 GB RAM).
+Median response time, all questions: 12.4 s (code-level refusals are instant). Questions that called tools: 12-48 s. MacBook Air M1, 8 GB RAM, qwen2.5:3b.

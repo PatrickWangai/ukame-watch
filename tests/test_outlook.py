@@ -95,3 +95,14 @@ def test_display_probability_floors_and_caps_extremes():
     assert O.display_probability(0.013) == "under 5%"
     assert O.display_probability(0.97) == "over 95%"
     assert O.display_probability(0.334) == "33%"
+
+
+def test_climatology_baseline_never_warns_despite_floating_point_means():
+    clim = 0.35064935064935066  # mean of many copies of this can round to slightly less than itself
+    n = 224
+    pred = pd.DataFrame({"split": "test", "dry": pd.array([True, False] * (n // 2), dtype="boolean"),
+                         "season_group": "short_rains", "county": "X",
+                         "p_model": 0.5, "p_clim": clim, "p_persistence": 0.3})
+    ev = O.evaluate(pred)
+    row = ev[(ev["scope"] == "all") & (ev["method"] == "climatology")].iloc[0]
+    assert row["recall"] == 0.0

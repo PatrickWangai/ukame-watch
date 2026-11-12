@@ -44,7 +44,7 @@ st.markdown(f"""
 @import url('https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..800&family=Atkinson+Hyperlegible:wght@400;700&display=swap');
 html, body, [class*="css"], .stMarkdown, .stText, p, li, label {{ font-family: 'Atkinson Hyperlegible', system-ui, sans-serif; }}
 h1, h2, h3, .uw-display {{ font-family: 'Archivo', system-ui, sans-serif; font-stretch: 72%; letter-spacing: 0.005em; }}
-.block-container {{ padding-top: 1.6rem; max-width: 1360px; }}
+.block-container {{ padding-top: 3.6rem; max-width: 1360px; }}
 .uw-top {{ display:flex; justify-content:space-between; align-items:flex-end; gap:1rem; flex-wrap:wrap;
           border-bottom: 2px solid {INK}; padding-bottom:.6rem; margin-bottom:.8rem; }}
 .uw-brand {{ font-family:'Archivo',system-ui; font-stretch:68%; font-weight:800; font-size:2.7rem; line-height:1; color:{INK}; }}
@@ -100,8 +100,41 @@ def forecast_df(county):
         return None
 
 
+@st.cache_data
+def county_geojson():
+    """Plotly's map engine (d3-geo) expects clockwise outer rings; GeoJSON (RFC 7946) uses counter-clockwise.
+    Without re-orienting, each county is drawn as 'the whole world except the county'."""
+    from shapely.geometry import MultiPolygon, mapping, shape
+    from shapely.geometry.polygon import orient
+    gj = json.loads((P / "counties.geojson").read_text())
+    for f in gj["features"]:
+        g = shape(f["geometry"])
+        parts = g.geoms if isinstance(g, MultiPolygon) else [g]
+        g = MultiPolygon([orient(p, sign=-1.0) for p in parts])
+        f["geometry"] = mapping(g)
+    return gj
+
+
 store = get_store()
 meta = json.loads((P / "meta.json").read_text())
+
+
+_MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+
+def window_text(label):
+    """'ASO 2026' -> 'Aug–Oct 2026'; 'NDJ 2027' -> 'Nov 2026–Jan 2027'."""
+    try:
+        code, year = label.split()
+        end_m = "JFMAMJJASOND".index(code[-1]) + 1
+        end_y = int(year)
+        months = [(end_m - k - 1) % 12 for k in (2, 1, 0)]
+        start_y = end_y - (1 if months[0] > months[-1] else 0)
+        if start_y == end_y:
+            return f"{_MON[months[0]]}–{_MON[months[-1]]} {end_y}"
+        return f"{_MON[months[0]]} {start_y}–{_MON[months[-1]]} {end_y}"
+    except Exception:
+        return label
 
 
 def pct_colour(p):
@@ -147,7 +180,7 @@ for c in C.COUNTIES:
     s = statuses[c]
     icon, label, colour = LEVEL_STYLE.get(s["drought_level"], ("○", s["drought_level"], MUTED))
     seasons = tm[(tm["county"] == c) & tm["month"].isin([5, 12]) & tm["pct_normal"].notna()].tail(8)
-    strip = "".join(f'<div style="background:{pct_colour(r.pct_normal)}" title="{r.window}: {r.pct_normal:.0f}% of normal"></div>'
+    strip = "".join(f'<div style="background:{pct_colour(r.pct_normal)}" title="{window_text(r.window)}: {r.pct_normal:.0f}% of normal"></div>'
                     for r in seasons.itertuples())
     w = watches[c]
     if "error" in w:
@@ -162,11 +195,11 @@ for c in C.COUNTIES:
     tiles.append(f"""
 <div class="uw-tile" role="group" aria-label="{c}: drought level {label}">
   <div class="uw-row"><h4>{c}</h4>
-    <span class="uw-chip" style="color:{INK};border-color:{colour};background:{colour}22">{icon} {label}</span></div>
-  <div class="uw-fig">{pct} <span class="uw-cap">of normal rain, {s['window']}</span></div>
+    <span class="uw-chip" style="color:{INK};border-color:{colour};background:{colour}22">{icon} Drought: {label.lower()}</span></div>
+  <div class="uw-fig">{pct} <span class="uw-cap">of normal rain, {window_text(s['window'])}</span></div>
   <div class="uw-strip" aria-hidden="true">{strip}</div>
-  <div class="uw-cap">Last 8 rainy seasons · {int(pop.loc[c, 'population']):,} people</div>
-  <div class="uw-flags">Chance of a driest-third season, {out['target_window']}: <b>{outlook_txt}</b><br>{flags}</div>
+  <div class="uw-row uw-cap"><span>Last 8 rainy seasons →</span><span>{int(pop.loc[c, 'population']):,} people</span></div>
+  <div class="uw-flags">Risk of a very dry {out['target_window'].replace(' - ', '–')}: <b>{outlook_txt}</b><br>{flags}</div>
 </div>""")
 st.markdown(f'<div class="uw-board">{"".join(tiles)}</div>', unsafe_allow_html=True)
 st.markdown('<div class="uw-key">' + "".join(f'<span><i style="background:{col}"></i>{lab}</span>' for _, col, lab in PCT_BINS)
@@ -175,7 +208,7 @@ st.markdown('<div class="uw-key">' + "".join(f'<span><i style="background:{col}"
 # ------------------------------------------------------------------ map + county focus
 left, right = st.columns([1.05, 1])
 with left:
-    gj = json.loads((P / "counties.geojson").read_text())
+    gj = county_geojson()
     cty = table("counties")
     vals = [statuses[c]["pct_of_normal"] for c in cty["county"]]
     fig = go.Figure()
@@ -194,7 +227,7 @@ with left:
     fig.add_trace(go.Scattergeo(lon=cty["lon"], lat=cty["lat"], text=cty["county"], mode="text",
                                 textfont=dict(color=INK, size=12), hoverinfo="skip", showlegend=False))
     fig.update_geos(fitbounds="locations", visible=False, bgcolor=SURFACE)
-    base_layout(fig, height=430, title=f"Rainfall vs normal, latest 3 months ({statuses['Wajir']['window']})")
+    base_layout(fig, height=430, title=f"Rainfall vs normal, {window_text(statuses['Wajir']['window'])}")
     fig.update_layout(legend=dict(orientation="v", y=0.02, yanchor="bottom", x=0.0, xanchor="left", title=None))
     st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
 
@@ -203,7 +236,7 @@ with right:
     s = statuses[county]
     st.markdown(f"### {county}")
     m1, m2, m3 = st.columns(3)
-    m1.metric("Rain vs normal", "—" if s["pct_of_normal"] is None else f"{s['pct_of_normal']:.0f}%", help=s["window"])
+    m1.metric("Rain vs normal", "—" if s["pct_of_normal"] is None else f"{s['pct_of_normal']:.0f}%", help=window_text(s["window"]))
     m2.metric("Drought level", LEVEL_STYLE.get(s["drought_level"], ("", s["drought_level"], ""))[1])
     m3.metric("Population (2019)", f"{int(pop.loc[county, 'population']):,}")
     mon = table("monthly")
@@ -255,7 +288,9 @@ with tabs[1]:
     st.markdown(f"#### Chance the next three months fall in the driest third: {o['target_window'].iloc[0]}")
     st.caption("Climatology (the dotted line) is about one in three by definition. Below it means a drier-than-usual "
                "season is less likely than normal. Values under 5% are shown as 'under 5%': the model is extrapolating "
-               "from a very strong El Niño and positive Indian Ocean Dipole, so exact small numbers are not meaningful.")
+               "from a very strong El Niño and positive Indian Ocean Dipole, so exact small numbers are not meaningful. "
+               "In testing, forecasts below 20% still verified dry about a quarter of the time: read 'under 5%' as "
+               "'clearly below the usual one in three', not as a guarantee of good rains.")
     oo = o.sort_values("p_dry_model")
     fig = go.Figure(go.Bar(y=oo["county"], x=oo["p_dry_model"] * 100, orientation="h", marker_color=SERIES[0],
                            marker=dict(cornerradius=4), text=oo["p_dry_model_display"], textposition="outside",
@@ -369,7 +404,7 @@ with tabs[4]:
                "independent sources. We mark them so the check is not mistaken for a blind test.")
     rd = table("regional_drought_pct")
     rd["season"] = rd["month"].map({5: "MAM", 12: "OND"})
-    rd["label"] = rd["season"] + " " + rd["year"].astype(str)
+    rd["label"] = rd["season"] + " " + rd["year"].astype(str)  # compact on a 70-season axis
     fig = go.Figure(go.Bar(x=rd["label"], y=rd["value"], marker_color=[pct_colour(v) for v in rd["value"]],
                            marker_line_color="rgba(11,11,11,.25)", marker_line_width=0.5,
                            hovertemplate="%{x}: %{y:.0f}% of normal (8-county mean)<extra></extra>"))
