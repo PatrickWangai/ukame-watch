@@ -35,7 +35,7 @@ partners planning water, cash and nutrition support.
 | Seasonal outlook, Mar–May long rains, test 2017+ | Brier skill score **−0.05**: **no skill**, and we say so |
 | Hot-day trend (max temperature above county 95th percentile) | **+5 to +10 days per decade**, significant in 7 of 8 counties (p < 0.05) |
 | Rainfall data errors found and fixed | **11 days** (up to 608 mm/day) replaced after an ERA5 check; 1 genuine flood day kept |
-| Assistant evaluation (8 questions incl. cyclone path, fake county, "say no risk") | All grounded or correctly refused; questions using tools take **11–34 s** on a MacBook Air M1 (8 GB), code-level refusals are instant |
+| Assistant evaluation (8 questions incl. cyclone path, fake county, "say no risk") | All grounded or correctly refused; questions using tools take **12–48 s** on a MacBook Air M1 (8 GB) with the dashboard also running; code-level refusals are instant |
 
 Details: `notebooks/01_weather_behaviour.ipynb`, `notebooks/02_forecasting.ipynb`, `logs/agent_eval.md`.
 
