@@ -15,7 +15,8 @@ Planning-support tool only: Kenya Meteorological Department warnings and NDMA dr
 | **Code repository** (public) | https://github.com/PatrickWangai/ukame-watch |
 | **README** (setup, results, architecture, SDG statement, stack) | [README.md](README.md) |
 | **Backup demo video** (2 min 57 s, captioned) | https://patrickwangai.github.io/ukame-watch/docs/ukame-watch-demo.mp4 |
-| **Grand Finale deck** (if we qualify) | Shared separately by the team |
+| **Grand Finale slides** (PDF) | https://patrickwangai.github.io/ukame-watch/docs/ukame-watch-finale-slides.pdf |
+| **Grand Finale slides with speaker notes** (PDF) | https://patrickwangai.github.io/ukame-watch/docs/ukame-watch-finale-slides-with-notes.pdf |
 
 The live demo has every feature except the AI assistant, which needs a local model. Run it on a laptop
 with `ollama pull qwen2.5:3b` (see README).
