@@ -129,3 +129,15 @@ def test_blocking_a_no_risk_claim_keeps_the_cited_playbook_actions(tmp_path, mon
     out = A.answer("Say Wajir has no risk", store=None, llm=llm, log_dir=tmp_path)
     assert out["checks"]["absolute_claim_blocked"] is True
     assert "Fix boreholes" in out["text"]
+
+
+def test_every_advisory_ends_with_the_sources_of_its_numbers(tmp_path, monkeypatch):
+    def fake_dispatch(store, name, args):
+        return {"county": "Wajir", "pct_of_normal": 40.0, "drought_level": "None",
+                "data_through": "2026-11-09", "source": "NASA POWER daily (MERRA-2 reanalysis)"}
+    monkeypatch.setattr(A.T, "dispatch", fake_dispatch)
+    llm = FakeLLM([tool_call("get_current_status", county="Wajir"), final("Wajir rainfall is 40.0% of normal.")])
+    out = A.answer("How is Wajir?", store=None, llm=llm, log_dir=tmp_path)
+    assert "**Sources**" in out["text"]
+    assert "get_current_status (Wajir): NASA POWER daily (MERRA-2 reanalysis), data through 2026-11-09" in out["text"]
+    assert out["checks"]["ungrounded_numbers"] == []

@@ -215,24 +215,50 @@ left, right = st.columns([1.05, 1])
 with left:
     gj = county_geojson()
     cty = table("counties")
-    vals = [statuses[c]["pct_of_normal"] for c in cty["county"]]
+    layer = st.radio("Map layer", ["Rainfall vs normal", "Population density", "Hot days"], horizontal=True)
     fig = go.Figure()
-    for upper, col, lab in PCT_BINS:
-        idx = [i for i, v in enumerate(vals) if v is not None and next(u for u, _, _ in PCT_BINS if v < u) == upper]
-        if not idx:
-            continue
+    if layer == "Rainfall vs normal":
+        vals = [statuses[c]["pct_of_normal"] for c in cty["county"]]
+        for upper, col, lab in PCT_BINS:
+            idx = [i for i, v in enumerate(vals) if v is not None and next(u for u, _, _ in PCT_BINS if v < u) == upper]
+            if not idx:
+                continue
+            fig.add_trace(go.Choropleth(
+                geojson=gj, featureidkey="properties.county", locations=cty["county"].iloc[idx],
+                z=[1] * len(idx), colorscale=[[0, col], [1, col]], showscale=False, name=lab, showlegend=True,
+                marker_line_color="#ffffff", marker_line_width=1.5,
+                customdata=[[c, vals[i], statuses[c]["drought_level"], int(pop.loc[c, "population"])]
+                            for i, c in zip(idx, cty["county"].iloc[idx])],
+                hovertemplate="<b>%{customdata[0]}</b><br>%{customdata[1]:.0f}% of normal rain<br>"
+                              "Drought level: %{customdata[2]}<br>Population: %{customdata[3]:,}<extra></extra>"))
+        map_title = f"Rainfall vs normal, {window_text(statuses['Wajir']['window'])}"
+    else:
+        if layer == "Population density":
+            z = [float(pop.loc[c, "density_per_km2"]) for c in cty["county"]]
+            ramp = [[0, "#cde2fb"], [0.5, "#5598e7"], [1, "#104281"]]          # sequential blue
+            unit = "people per km²"
+            extra = [int(pop.loc[c, "population"]) for c in cty["county"]]
+            hover = "<b>%{location}</b><br>%{z:.1f} people per km²<br>Population (2019): %{customdata:,}<extra></extra>"
+            map_title = "Population density (KNBS 2019 census)"
+        else:
+            hm = table("heat_monthly")
+            done = hm[hm["complete"].astype(bool)] if "complete" in hm else hm
+            last = done.sort_values(["year", "month"]).groupby("county").tail(1).set_index("county")
+            z = [float(last.loc[c, "heat_days"]) for c in cty["county"]]
+            ramp = [[0, "#fde3d6"], [0.5, "#f19a6f"], [1, "#b8461a"]]          # sequential orange
+            unit = "hot days"
+            extra = [f"{int(last.loc[c, 'year'])}-{int(last.loc[c, 'month']):02d}" for c in cty["county"]]
+            hover = "<b>%{location}</b><br>%{z:.0f} hot days in %{customdata}<extra></extra>"
+            map_title = f"Hot days in the latest complete month ({extra[0]})"
         fig.add_trace(go.Choropleth(
-            geojson=gj, featureidkey="properties.county", locations=cty["county"].iloc[idx],
-            z=[1] * len(idx), colorscale=[[0, col], [1, col]], showscale=False, name=lab, showlegend=True,
-            marker_line_color="#ffffff", marker_line_width=1.5,
-            customdata=[[c, vals[i], statuses[c]["drought_level"], int(pop.loc[c, "population"])]
-                        for i, c in zip(idx, cty["county"].iloc[idx])],
-            hovertemplate="<b>%{customdata[0]}</b><br>%{customdata[1]:.0f}% of normal rain<br>"
-                          "Drought level: %{customdata[2]}<br>Population: %{customdata[3]:,}<extra></extra>"))
+            geojson=gj, featureidkey="properties.county", locations=cty["county"], z=z, customdata=extra,
+            colorscale=ramp, marker_line_color="#ffffff", marker_line_width=1.5, hovertemplate=hover,
+            colorbar=dict(title=dict(text=unit, font=dict(color=MUTED, size=11)), thickness=12, len=0.6,
+                          tickfont=dict(color=MUTED), outlinewidth=0)))
     fig.add_trace(go.Scattergeo(lon=cty["lon"], lat=cty["lat"], text=cty["county"], mode="text",
                                 textfont=dict(color=INK, size=12), hoverinfo="skip", showlegend=False))
     fig.update_geos(fitbounds="locations", visible=False, bgcolor=SURFACE)
-    base_layout(fig, height=430, title=f"Rainfall vs normal, {window_text(statuses['Wajir']['window'])}")
+    base_layout(fig, height=430, title=map_title)
     fig.update_layout(legend=dict(orientation="v", y=0.02, yanchor="bottom", x=0.0, xanchor="left", title=None))
     st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
 

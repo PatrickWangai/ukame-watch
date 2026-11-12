@@ -145,6 +145,19 @@ def answer(question: str, store, llm=None, log_dir: Path = C.LOGS) -> dict:
                               ", ".join(f"[{c['id']}]({c['url']})" for c in a["citations"]) + ")"
                               for a in result["actions"])
 
+    # 5. Cite the source of every number: one line per tool result that carries a source.
+    cites = []
+    for rec in tool_log:
+        res = rec["result"]
+        if isinstance(res, dict) and res.get("source"):
+            who = f" ({res['county']})" if res.get("county") else ""
+            when = f", data through {res['data_through']}" if res.get("data_through") else ""
+            line = f"- {rec['tool']}{who}: {res['source']}{when}"
+            if line not in cites:
+                cites.append(line)
+    if cites:
+        text += "\n\n**Sources**\n" + "\n".join(cites)
+
     checks["used_tools"] = bool(tool_log)
     tools_text = json.dumps(tool_outputs, default=str)
     allowed = re.findall(r"\d[\d,]*(?:\.\d+)?", question + " " + C.DISCLAIMER)
