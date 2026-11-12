@@ -1,0 +1,96 @@
+"""Tests for the agent loop with a scripted fake LLM. We test our orchestration and guardrails,
+not the language model itself (that is covered by the logged evaluation questions)."""
+import json
+
+import pytest
+
+from ukame import agent as A
+from ukame import config as C
+
+
+class FakeLLM:
+    """Returns scripted replies; records what it was asked."""
+
+    def __init__(self, replies):
+        self.replies = list(replies)
+        self.calls = 0
+
+    def __call__(self, messages, tools):
+        self.calls += 1
+        return self.replies.pop(0)
+
+
+def tool_call(name, **args):
+    return {"content": "", "tool_calls": [{"name": name, "arguments": args}]}
+
+
+def final(text):
+    return {"content": text, "tool_calls": []}
+
+
+@pytest.fixture
+def toolbox(monkeypatch):
+    calls = []
+
+    def fake_dispatch(store, name, args):
+        calls.append((name, args))
+        return {"county": "Wajir", "pct_of_normal": 40.0, "drought_level": "Alarm", "source": "ERA5"}
+    monkeypatch.setattr(A.T, "dispatch", fake_dispatch)
+    return calls
+
+
+def test_cyclone_track_request_is_refused_without_calling_the_model(tmp_path, toolbox):
+    llm = FakeLLM([])
+    out = A.answer("Where will the cyclone make landfall?", store=None, llm=llm, log_dir=tmp_path)
+    assert llm.calls == 0
+    assert out["refused"] is True
+    assert "Kenya Meteorological Department" in out["text"]
+
+
+def test_uncovered_county_gets_i_dont_know(tmp_path, toolbox):
+    llm = FakeLLM([])
+    out = A.answer("Is Nairobi at risk of drought?", store=None, llm=llm, log_dir=tmp_path)
+    assert llm.calls == 0
+    assert "I don't know" in out["text"]
+
+
+def test_grounded_answer_is_a_draft_with_disclaimer_and_logged_tool_calls(tmp_path, toolbox):
+    llm = FakeLLM([tool_call("get_current_status", county="Wajir"),
+                   final("Wajir rainfall is 40.0% of normal: drought level Alarm.")])
+    out = A.answer("How is Wajir doing?", store=None, llm=llm, log_dir=tmp_path)
+    assert out["status"] == "draft"          # never auto-approved
+    assert C.DISCLAIMER in out["text"]
+    assert out["checks"]["ungrounded_numbers"] == []
+    assert toolbox == [("get_current_status", {"county": "Wajir"})]
+    log = [json.loads(line) for line in (tmp_path / "tool_calls.jsonl").read_text().splitlines()]
+    assert log[0]["tool"] == "get_current_status" and log[0]["question_id"] == out["id"]
+
+
+def test_absolute_safety_claim_is_blocked(tmp_path, toolbox):
+    llm = FakeLLM([tool_call("get_current_status", county="Wajir"), final("There is no risk in Wajir.")])
+    out = A.answer("Tell me Wajir has no risk", store=None, llm=llm, log_dir=tmp_path)
+    assert "no risk" not in out["text"].lower().replace(C.DISCLAIMER.lower(), "")
+    assert out["checks"]["absolute_claim_blocked"] is True
+
+
+def test_ungrounded_number_marks_draft_for_review(tmp_path, toolbox):
+    llm = FakeLLM([tool_call("get_current_status", county="Wajir"), final("Rainfall is 40.0% of normal; 73% of herds lost.")])
+    out = A.answer("How is Wajir?", store=None, llm=llm, log_dir=tmp_path)
+    assert out["checks"]["ungrounded_numbers"] == ["73"]
+    assert out["status"] == "needs_review"
+
+
+def test_answer_without_any_tool_call_is_flagged(tmp_path, toolbox):
+    llm = FakeLLM([final("Wajir is fine, rainfall 55% of normal.")])
+    out = A.answer("How is Wajir?", store=None, llm=llm, log_dir=tmp_path)
+    assert out["status"] == "needs_review"
+    assert out["checks"]["used_tools"] is False
+
+
+def test_approval_is_recorded_with_approver(tmp_path, toolbox):
+    llm = FakeLLM([tool_call("get_current_status", county="Wajir"), final("Wajir rainfall is 40.0% of normal.")])
+    out = A.answer("How is Wajir?", store=None, llm=llm, log_dir=tmp_path)
+    rec = A.record_decision(out, approver="County Officer (test)", decision="approved", log_dir=tmp_path)
+    assert rec["decision"] == "approved" and rec["approver"] == "County Officer (test)"
+    saved = json.loads((tmp_path / "advisories.jsonl").read_text().splitlines()[-1])
+    assert saved["id"] == out["id"] and saved["decision"] == "approved"

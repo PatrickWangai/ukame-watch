@@ -1,0 +1,82 @@
+{
+  "note": "Planning-support actions informed by the cited sources. This is not an official NDMA contingency plan. Drought Emergency and Recovery phases are declared by NDMA using food-security indicators this tool does not have, so the tool never issues them.",
+  "sources": {
+    "NDMA-PHASES": {"title": "NDMA Kenya: Drought early warning system and phases (Normal, Alert, Alarm, Emergency, Recovery) - presentation to UN-SPIDER", "url": "https://www.un-spider.org/sites/default/files/03_ValerianMicheni_NDMA.pdf"},
+    "NDMA-BULLETIN": {"title": "NDMA National Drought Early Warning Bulletin, February 2026", "url": "https://knowledgeweb.ndma.go.ke/Content/LibraryDocuments/National_Drought_Early_Warning_Bulletin_Feb_202620260311171955.pdf"},
+    "KRCS-DROUGHT-EAP": {"title": "Kenya Red Cross / IFRC: Kenya Drought Early Action Protocol summary (EAP2022KE02)", "url": "https://reliefweb.int/report/kenya/kenya-drought-early-action-protocol-summary-eap2022ke02"},
+    "KRCS-FLOOD-EAP": {"title": "Kenya Red Cross / IFRC: Kenya Floods Early Action Protocol (EAP2021KE01)", "url": "https://www.anticipation-hub.org/Documents/EAPs/EAP2021KE01_Kenya_Floods.pdf"},
+    "ACAPS-DROUGHT": {"title": "ACAPS: Kenya - Impact of drought (31 Mar 2022)", "url": "https://www.acaps.org/sites/acaps/files/products/files/20220331_acaps_thematic_report_kenyaimpact_of_drought.pdf"},
+    "OCHA-FLOODS-2024": {"title": "ReliefWeb: Kenya Floods - Apr 2024 (OCHA flash updates)", "url": "https://reliefweb.int/disaster/FL-2024-000045-KEN"},
+    "WHO-HEAT": {"title": "WHO: Heat-health action plans - guidance, second edition", "url": "https://who.int/europe/publications/i/item/9789289062930"},
+    "KMD": {"title": "Kenya Meteorological Department: official forecasts and warnings", "url": "https://meteo.go.ke"}
+  },
+  "hazards": {
+    "drought": {
+      "Alert": {
+        "trigger": "3-month rainfall below 75% of the 1991-2020 normal, OR seasonal outlook probability of a driest-third season of 50% or more",
+        "actions": [
+          {"sector": "Coordination", "action": "Share this draft with the County Steering Group and compare it with the latest NDMA drought early warning bulletin before any decision", "sources": ["NDMA-BULLETIN", "NDMA-PHASES"]},
+          {"sector": "Water", "action": "Run a rapid functionality check of boreholes, water pans and earth dams in the county", "sources": ["KRCS-DROUGHT-EAP"]},
+          {"sector": "Water", "action": "Schedule repairs of broken water points and desilting of water pans while there is still lead time", "sources": ["KRCS-DROUGHT-EAP"]},
+          {"sector": "Livestock", "action": "Alert livestock officers to monitor pasture, water distances and livestock body condition for early decline", "sources": ["ACAPS-DROUGHT", "NDMA-BULLETIN"]},
+          {"sector": "Anticipatory action", "action": "Check whether early action protocol triggers (e.g. Kenya Red Cross drought EAP) are close to being met and confirm readiness", "sources": ["KRCS-DROUGHT-EAP", "NDMA-BULLETIN"]}
+        ]
+      },
+      "Alarm": {
+        "trigger": "3-month rainfall below 50% of normal, OR two consecutive assessed windows below 75% of normal",
+        "actions": [
+          {"sector": "Coordination", "action": "Request NDMA confirmation of the county phase and activate the county drought contingency plan through official channels", "sources": ["NDMA-PHASES", "NDMA-BULLETIN"]},
+          {"sector": "Water", "action": "Prepare water trucking and water-point repair for areas with the longest walking distances to water", "sources": ["KRCS-DROUGHT-EAP", "ACAPS-DROUGHT"]},
+          {"sector": "Cash", "action": "Prepare cash support for the most affected households so they can buy water when vendor prices rise", "sources": ["KRCS-DROUGHT-EAP"]},
+          {"sector": "Nutrition and health", "action": "Ask the county health department to scale up nutrition screening of children and pregnant or breastfeeding women", "sources": ["ACAPS-DROUGHT"]},
+          {"sector": "Livestock", "action": "Coordinate with livestock officers on timely offtake and feed or water support before animals lose condition", "sources": ["ACAPS-DROUGHT", "NDMA-BULLETIN"]},
+          {"sector": "Communication", "action": "Publish an approved advisory in English and Swahili through county radio and chiefs' barazas", "sources": ["NDMA-BULLETIN"]}
+        ]
+      }
+    },
+    "heavy_rain": {
+      "Watch": {
+        "trigger": "Forecast 3-day rainfall total in the next 7 days above the county's 99th-percentile 3-day total",
+        "actions": [
+          {"sector": "Coordination", "action": "Check the latest Kenya Meteorological Department warnings; they take priority over this tool", "sources": ["KMD"]},
+          {"sector": "Early warning", "action": "Send early warning messages to communities living along seasonal rivers (laggas) and in low-lying areas", "sources": ["KRCS-FLOOD-EAP"]},
+          {"sector": "Preparedness", "action": "Confirm the location and readiness of pre-positioned relief items (shelter kits, water treatment, hygiene kits)", "sources": ["KRCS-FLOOD-EAP"]},
+          {"sector": "Infrastructure", "action": "Inspect and clear drainage channels and culverts on key roads", "sources": ["KRCS-FLOOD-EAP"]},
+          {"sector": "Health", "action": "Alert the county health department to prepare for waterborne disease after flooding, including cholera", "sources": ["OCHA-FLOODS-2024"]}
+        ]
+      },
+      "Warning": {
+        "trigger": "Observed 3-day rainfall above the 99th percentile in the last 3 days AND more heavy rain forecast",
+        "actions": [
+          {"sector": "Coordination", "action": "Escalate to the County Disaster Management Committee and align with KMD and Kenya Red Cross updates", "sources": ["KMD", "OCHA-FLOODS-2024"]},
+          {"sector": "Evacuation", "action": "Prepare evacuation of households in flood-prone areas to identified safe sites", "sources": ["KRCS-FLOOD-EAP", "OCHA-FLOODS-2024"]},
+          {"sector": "Shelter and WASH", "action": "Distribute water treatment and hygiene supplies to displaced households", "sources": ["OCHA-FLOODS-2024", "KRCS-FLOOD-EAP"]},
+          {"sector": "Access", "action": "Map cut-off roads and bridges to plan how relief will reach isolated areas", "sources": ["OCHA-FLOODS-2024"]},
+          {"sector": "Health", "action": "Increase disease surveillance and readiness for cholera cases in affected areas", "sources": ["OCHA-FLOODS-2024"]}
+        ]
+      }
+    },
+    "heat": {
+      "Watch": {
+        "trigger": "3 or more forecast days in the next 7 with apparent maximum temperature above the county's 95th percentile",
+        "actions": [
+          {"sector": "Communication", "action": "Issue public heat advice: drink water, avoid midday sun, check on older people and young children", "sources": ["WHO-HEAT"]},
+          {"sector": "Health", "action": "Alert health facilities to expect heat-related illness and confirm cooling and rehydration supplies", "sources": ["WHO-HEAT"]},
+          {"sector": "Schools", "action": "Advise schools to shift outdoor activities away from the hottest hours and ensure drinking water", "sources": ["WHO-HEAT"]},
+          {"sector": "Livelihoods", "action": "Advise employers and outdoor workers, including herders, to schedule heavy work for cooler hours", "sources": ["WHO-HEAT"]},
+          {"sector": "Water", "action": "Check that water points can cope with higher demand from people and livestock", "sources": ["WHO-HEAT", "KRCS-DROUGHT-EAP"]}
+        ]
+      },
+      "Warning": {
+        "trigger": "5 or more forecast days in the next 7 above the county's 95th percentile",
+        "actions": [
+          {"sector": "Coordination", "action": "Activate pre-agreed heat actions with the county health department; link the warning to specific responsibilities", "sources": ["WHO-HEAT"]},
+          {"sector": "At-risk groups", "action": "Prioritise outreach to older people, young children, people with chronic illness and outdoor workers", "sources": ["WHO-HEAT"]},
+          {"sector": "Health", "action": "Ensure cooling in health facilities and schools where possible", "sources": ["WHO-HEAT"]},
+          {"sector": "Surveillance", "action": "Track heat-related illness reports during the event to judge whether actions are working", "sources": ["WHO-HEAT"]},
+          {"sector": "Compound risk", "action": "If drought is also at Alert or Alarm, treat water supply as the top priority for people and livestock", "sources": ["KRCS-DROUGHT-EAP", "ACAPS-DROUGHT"]}
+        ]
+      }
+    }
+  }
+}

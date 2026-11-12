@@ -1,0 +1,109 @@
+scope,name,method,n,events,precision,recall,f1,brier,bss
+all,all,model,864,348,0.476,0.54,0.506,0.238,0.022
+all,all,climatology,864,348,0.439,0.787,0.564,0.243,0.0
+all,all,persistence,864,348,0.429,0.448,0.438,0.246,-0.012
+season,long_rains,model,240,74,0.342,0.689,0.457,0.23,-0.072
+season,long_rains,climatology,240,74,0.0,0.0,0.0,0.215,0.0
+season,long_rains,persistence,240,74,0.316,0.486,0.383,0.222,-0.037
+season,other,model,400,161,0.49,0.46,0.474,0.241,0.009
+season,other,climatology,400,161,0.0,0.0,0.0,0.243,0.0
+season,other,persistence,400,161,0.46,0.466,0.463,0.243,0.002
+season,short_rains,model,224,113,0.663,0.558,0.606,0.241,0.12
+season,short_rains,climatology,224,113,0.504,1.0,0.671,0.274,0.0
+season,short_rains,persistence,224,113,0.517,0.398,0.45,0.277,-0.013
+county,Garissa,model,118,47,0.473,0.553,0.51,0.231,0.041
+county,Garissa,climatology,118,47,0.466,0.872,0.607,0.241,0.0
+county,Garissa,persistence,118,47,0.449,0.468,0.458,0.24,0.007
+county,Isiolo,model,98,38,0.489,0.605,0.541,0.215,0.097
+county,Isiolo,climatology,98,38,0.426,0.763,0.547,0.239,0.0
+county,Isiolo,persistence,98,38,0.4,0.421,0.41,0.243,-0.02
+county,Kitui,model,118,35,0.42,0.6,0.494,0.197,0.067
+county,Kitui,climatology,118,35,0.307,0.771,0.439,0.211,0.0
+county,Kitui,persistence,118,35,0.297,0.314,0.306,0.218,-0.033
+county,Mandera,model,98,34,0.39,0.471,0.427,0.237,-0.048
+county,Mandera,climatology,98,34,0.353,0.706,0.471,0.227,0.0
+county,Mandera,persistence,98,34,0.25,0.265,0.257,0.248,-0.093
+county,Marsabit,model,98,41,0.46,0.561,0.505,0.239,0.036
+county,Marsabit,climatology,98,41,0.412,0.683,0.514,0.248,0.0
+county,Marsabit,persistence,98,41,0.442,0.463,0.452,0.25,-0.007
+county,Samburu,model,118,74,0.65,0.527,0.582,0.308,0.008
+county,Samburu,climatology,118,74,0.716,0.851,0.778,0.31,0.0
+county,Samburu,persistence,118,74,0.645,0.662,0.653,0.286,0.077
+county,Turkana,model,118,45,0.49,0.533,0.511,0.232,0.02
+county,Turkana,climatology,118,45,0.386,0.756,0.511,0.237,0.0
+county,Turkana,persistence,118,45,0.413,0.422,0.418,0.242,-0.022
+county,Wajir,model,98,34,0.386,0.5,0.436,0.238,-0.054
+county,Wajir,climatology,98,34,0.412,0.824,0.549,0.226,0.0
+county,Wajir,persistence,98,34,0.297,0.324,0.31,0.24,-0.063
+county_season,Garissa | long_rains,model,30,6,0.2,0.667,0.308,0.202,-0.119
+county_season,Garissa | long_rains,climatology,30,6,0.0,0.0,0.0,0.181,0.0
+county_season,Garissa | long_rains,persistence,30,6,0.25,0.667,0.364,0.188,-0.043
+county_season,Garissa | other,model,60,22,0.522,0.545,0.533,0.213,0.084
+county_season,Garissa | other,climatology,60,22,0.0,0.0,0.0,0.232,0.0
+county_season,Garissa | other,persistence,60,22,0.522,0.545,0.533,0.218,0.063
+county_season,Garissa | short_rains,model,28,19,0.769,0.526,0.625,0.302,0.071
+county_season,Garissa | short_rains,climatology,28,19,0.679,1.0,0.809,0.326,0.0
+county_season,Garissa | short_rains,persistence,28,19,0.6,0.316,0.414,0.341,-0.049
+county_season,Isiolo | long_rains,model,30,9,0.4,0.889,0.552,0.212,-0.001
+county_season,Isiolo | long_rains,climatology,30,9,0.0,0.0,0.0,0.212,0.0
+county_season,Isiolo | long_rains,persistence,30,9,0.353,0.667,0.462,0.213,-0.006
+county_season,Isiolo | other,model,40,16,0.5,0.5,0.5,0.218,0.1
+county_season,Isiolo | other,climatology,40,16,0.0,0.0,0.0,0.242,0.0
+county_season,Isiolo | other,persistence,40,16,0.5,0.438,0.467,0.238,0.019
+county_season,Isiolo | short_rains,model,28,13,0.636,0.538,0.583,0.215,0.178
+county_season,Isiolo | short_rains,climatology,28,13,0.464,1.0,0.634,0.262,0.0
+county_season,Isiolo | short_rains,persistence,28,13,0.333,0.231,0.273,0.284,-0.085
+county_season,Kitui | long_rains,model,30,8,0.368,0.875,0.519,0.201,0.001
+county_season,Kitui | long_rains,climatology,30,8,0.0,0.0,0.0,0.201,0.0
+county_season,Kitui | long_rains,persistence,30,8,0.308,0.5,0.381,0.205,-0.016
+county_season,Kitui | other,model,60,15,0.391,0.6,0.474,0.171,0.135
+county_season,Kitui | other,climatology,60,15,0.0,0.0,0.0,0.198,0.0
+county_season,Kitui | other,persistence,60,15,0.25,0.333,0.286,0.207,-0.045
+county_season,Kitui | short_rains,model,28,12,0.556,0.417,0.476,0.249,0.008
+county_season,Kitui | short_rains,climatology,28,12,0.429,1.0,0.6,0.251,0.0
+county_season,Kitui | short_rains,persistence,28,12,0.5,0.167,0.25,0.258,-0.028
+county_season,Mandera | long_rains,model,30,10,0.316,0.6,0.414,0.251,-0.129
+county_season,Mandera | long_rains,climatology,30,10,0.0,0.0,0.0,0.222,0.0
+county_season,Mandera | long_rains,persistence,30,10,0.167,0.2,0.182,0.252,-0.135
+county_season,Mandera | other,model,40,12,0.273,0.25,0.261,0.24,-0.128
+county_season,Mandera | other,climatology,40,12,0.0,0.0,0.0,0.213,0.0
+county_season,Mandera | other,persistence,40,12,0.25,0.333,0.286,0.232,-0.093
+county_season,Mandera | short_rains,model,28,12,0.636,0.583,0.609,0.219,0.126
+county_season,Mandera | short_rains,climatology,28,12,0.429,1.0,0.6,0.251,0.0
+county_season,Mandera | short_rains,persistence,28,12,0.375,0.25,0.3,0.264,-0.053
+county_season,Marsabit | long_rains,model,30,13,0.438,0.538,0.483,0.284,-0.121
+county_season,Marsabit | long_rains,climatology,30,13,0.0,0.0,0.0,0.254,0.0
+county_season,Marsabit | long_rains,persistence,30,13,0.462,0.462,0.462,0.254,-0.003
+county_season,Marsabit | other,model,40,15,0.421,0.533,0.471,0.215,0.085
+county_season,Marsabit | other,climatology,40,15,0.0,0.0,0.0,0.235,0.0
+county_season,Marsabit | other,persistence,40,15,0.5,0.6,0.545,0.222,0.056
+county_season,Marsabit | short_rains,model,28,13,0.571,0.615,0.593,0.226,0.135
+county_season,Marsabit | short_rains,climatology,28,13,0.464,1.0,0.634,0.262,0.0
+county_season,Marsabit | short_rains,persistence,28,13,0.333,0.308,0.32,0.285,-0.091
+county_season,Samburu | long_rains,model,30,11,0.381,0.727,0.5,0.238,-0.021
+county_season,Samburu | long_rains,climatology,30,11,0.0,0.0,0.0,0.233,0.0
+county_season,Samburu | long_rains,persistence,30,11,0.389,0.636,0.483,0.235,-0.01
+county_season,Samburu | other,model,60,44,0.75,0.409,0.529,0.364,-0.066
+county_season,Samburu | other,climatology,60,44,0.0,0.0,0.0,0.341,0.0
+county_season,Samburu | other,persistence,60,44,0.758,0.568,0.649,0.317,0.072
+county_season,Samburu | short_rains,model,28,19,0.867,0.684,0.765,0.262,0.196
+county_season,Samburu | short_rains,climatology,28,19,0.679,1.0,0.809,0.326,0.0
+county_season,Samburu | short_rains,persistence,28,19,0.68,0.895,0.773,0.275,0.154
+county_season,Turkana | long_rains,model,30,11,0.429,0.545,0.48,0.249,-0.072
+county_season,Turkana | long_rains,climatology,30,11,0.0,0.0,0.0,0.233,0.0
+county_season,Turkana | long_rains,persistence,30,11,0.5,0.455,0.476,0.224,0.037
+county_season,Turkana | other,model,60,21,0.476,0.476,0.476,0.229,-0.005
+county_season,Turkana | other,climatology,60,21,0.0,0.0,0.0,0.228,0.0
+county_season,Turkana | other,persistence,60,21,0.28,0.333,0.304,0.25,-0.1
+county_season,Turkana | short_rains,model,28,13,0.583,0.538,0.56,0.222,0.153
+county_season,Turkana | short_rains,climatology,28,13,0.464,1.0,0.634,0.262,0.0
+county_season,Turkana | short_rains,persistence,28,13,0.636,0.538,0.583,0.244,0.068
+county_season,Wajir | long_rains,model,30,6,0.25,0.833,0.385,0.201,-0.115
+county_season,Wajir | long_rains,climatology,30,6,0.0,0.0,0.0,0.181,0.0
+county_season,Wajir | long_rains,persistence,30,6,0.133,0.333,0.19,0.207,-0.146
+county_season,Wajir | other,model,40,16,0.429,0.375,0.4,0.271,-0.119
+county_season,Wajir | other,climatology,40,16,0.0,0.0,0.0,0.242,0.0
+county_season,Wajir | other,persistence,40,16,0.429,0.375,0.4,0.248,-0.023
+county_season,Wajir | short_rains,model,28,12,0.6,0.5,0.545,0.231,0.081
+county_season,Wajir | short_rains,climatology,28,12,0.429,1.0,0.6,0.251,0.0
+county_season,Wajir | short_rains,persistence,28,12,0.375,0.25,0.3,0.264,-0.053

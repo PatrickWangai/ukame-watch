@@ -1,0 +1,11 @@
+event_id,hazard,label,start,end,indicator,indicator_value,threshold,detected,source_url
+D1,drought,2010-11 Horn of Africa drought,2010-10-01,2011-06-30,lowest regional 3-month % of normal in window,37.22367510808125,< 75%,True,https://climate.gov/print/10339
+D2,drought,2016-17 drought (national disaster declared Feb 2017),2016-10-01,2017-05-31,lowest regional 3-month % of normal in window,49.034249724152815,< 75%,True,https://www.worldweatherattribution.org/kenya-drought-2016/
+D3,drought,2020-21 drought (national disaster declared Sep 2021),2020-10-01,2021-12-31,lowest regional 3-month % of normal in window,70.0114537838388,< 75%,True,https://www.acaps.org/sites/acaps/files/products/files/20220331_acaps_thematic_report_kenyaimpact_of_drought.pdf
+D4,drought,2000 long rains failure (worst drought in 37 years),2000-03-01,2000-05-31,lowest regional 3-month % of normal in window,28.324305797497207,< 75%,True,https://www.fao.org/4/X8374E/pays/ken0010e.htm
+D5,drought,2005-06 drought (national disaster declared Jan 2006),2005-10-01,2006-02-28,lowest regional 3-month % of normal in window,37.001316974804595,< 75%,True,https://www.fao.org/4/J7029e/J7029e00.htm
+F1,heavy_rain,1997 El Nino short rains,1997-10-01,1997-12-31,county-days with 3-day rain above p99 in window,111.0,>= 34.2,True,https://centaur.reading.ac.uk/91881/9/wea.3824.pdf
+F2,heavy_rain,2019 short rains floods (strong positive IOD),2019-10-01,2019-12-31,county-days with 3-day rain above p99 in window,45.0,>= 34.2,True,https://reliefweb.int/report/kenya/kenya-flash-update-1-floods-30-october-2019
+F3,heavy_rain,2023 El Nino floods (Garissa / Mandera / Wajir most affected),2023-10-01,2023-12-31,county-days with 3-day rain above p99 in window,53.0,>= 34.2,True,https://reliefweb.int/report/kenya/kenya-floods-update-reliefweb-noaa-echo-daily-flash-23-november-2023
+F4,heavy_rain,2024 long rains floods,2024-03-01,2024-05-31,county-days with 3-day rain above p99 in window,50.0,>= 34.2,True,https://reliefweb.int/report/kenya/eastern-africa-heavy-rains-and-flooding-flash-update-4-30-may-2024
+F5,heavy_rain,2023 long rains flash floods in northern counties,2023-03-01,2023-05-31,county-days with 3-day rain above p99 in window,49.0,>= 34.2,True,https://go-api.ifrc.org/api/DownloadFile/84115/MDRKE056do

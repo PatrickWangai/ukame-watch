@@ -1,0 +1,35 @@
+{
+  "long_rains": {
+    "clim": 0.34375,
+    "pers_dry": 0.4537037037037037,
+    "pers_wet": 0.28316326530612246,
+    "n_train": 608,
+    "coefficients_standardised": {
+      "oni": -0.142,
+      "dmi": 0.058,
+      "now_pct": -0.525
+    }
+  },
+  "other": {
+    "clim": 0.3515625,
+    "pers_dry": 0.4861111111111111,
+    "pers_wet": 0.2786144578313253,
+    "n_train": 1024,
+    "coefficients_standardised": {
+      "oni": -0.075,
+      "dmi": -0.485,
+      "now_pct": -0.397
+    }
+  },
+  "short_rains": {
+    "clim": 0.35064935064935066,
+    "pers_dry": 0.46296296296296297,
+    "pers_wet": 0.29,
+    "n_train": 616,
+    "coefficients_standardised": {
+      "oni": -0.284,
+      "dmi": -0.965,
+      "now_pct": -0.268
+    }
+  }
+}
