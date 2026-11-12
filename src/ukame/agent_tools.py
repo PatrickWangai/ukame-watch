@@ -43,6 +43,11 @@ def _r(x, nd=1):
     return None if x is None or pd.isna(x) else round(float(x), nd)
 
 
+def _s(x) -> str:
+    """Text from a CSV cell: pandas reads empty cells as NaN, which is truthy, so normalise to ''."""
+    return "" if x is None or (isinstance(x, float) and pd.isna(x)) else str(x)
+
+
 # ---------------------------------------------------------------- 1. current status
 def _level(pct, pct_3m_before) -> str:
     if pd.isna(pct):
@@ -121,19 +126,19 @@ def get_seasonal_outlook(store: Store, county: str) -> dict:
     if "persistence" in s.index:
         skill.update({"persistence_bss": _r(s.loc["persistence", "bss"], 3),
                       "persistence_f1": _r(s.loc["persistence", "f1"], 3)})
-    has_skill = bool(skill) and skill.get("model_bss", 0) > 0 and skill.get("model_bss", 0) > skill.get(
-        "persistence_bss", -1)
+    m_bss, p_bss = skill.get("model_bss"), skill.get("persistence_bss")
+    has_skill = m_bss is not None and m_bss > 0 and (p_bss is None or m_bss > p_bss)
     return {
         "county": c, "issued_after": r["issue"], "target_window": r["target_window"],
         "season_group": r["season_group"],
         "p_dry_model": _r(r.get("p_dry_model"), 2),
-        "chance_of_driest_third": r.get("p_dry_model_display") or "not issued",
+        "chance_of_driest_third": _s(r.get("p_dry_model_display")) or "not issued",
         "p_dry_climatology": _r(r.get("p_dry_climatology"), 2),
         "p_dry_persistence": _r(r.get("p_dry_persistence"), 2),
         "test_skill": skill,
         "skill_metric": "Brier skill score (BSS) vs climatology: above 0 = better than climatology; F1 for warnings",
         "model_beats_baselines_in_test": has_skill,
-        "note": r.get("note") or ("" if has_skill else
+        "note": _s(r.get("note")) or ("" if has_skill else
                                   "The model did not beat the baselines for this county and season in testing; "
                                   "treat the probability as no better than climatology."),
         "method": "Logistic regression on ENSO (ONI), Indian Ocean Dipole (DMI) and recent rainfall; trained 1991-2016, tested 2017 onward",
@@ -148,7 +153,10 @@ def get_heat_stress(store: Store, county: str) -> dict:
         return _unknown(county)
     hm = store.t("heat_monthly")
     g = hm[hm["county"] == c].sort_values(["year", "month"])
-    latest = g.iloc[-1]
+    if "complete" in g:
+        g_done = g[g["complete"].astype(bool)]
+        g = g_done if len(g_done) else g
+    latest = g.iloc[-1]  # latest COMPLETE month: a partial month would understate heat
     normal = g[(g["month"] == latest["month"]) & g["year"].between(C.NORMAL_START, C.NORMAL_END)]["heat_days"].mean()
     dec = store.t("heat_decade")
     tr = store.t("trends")
@@ -230,13 +238,18 @@ TOOLS = {
 
 
 def dispatch(store: Store, name: str, args: dict) -> dict:
+    import inspect
     fn = TOOLS.get(name)
     if fn is None:
         return {"error": f"Unknown tool '{name}'.", "available_tools": list(TOOLS)}
     try:
-        return fn(store, **(args or {}))
+        inspect.signature(fn).bind(store, **(args or {}))
     except TypeError as e:
         return {"error": f"Bad arguments for {name}: {e}"}
+    try:
+        return fn(store, **(args or {}))
+    except Exception as e:  # a tool failure must become an "I don't know", never a crash
+        return {"error": f"{name} could not run ({type(e).__name__}: {e}). I don't know."}
 
 
 def _county_param(required=True):

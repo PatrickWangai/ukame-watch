@@ -84,7 +84,7 @@ def main(force=False):
     heavy_3m = V.rolling_3m(heavy_m)
     heavy_thr = float(np.nanpercentile(heavy_3m["value"].dropna(), 95))
     print(f"  heavy-rain detection threshold (95th pct of 3-month regional counts): {heavy_thr:.0f} county-days")
-    save(V.check_documented(events, dpct, heavy_m, heavy_thr), "validation_documented")
+    save(V.check_documented(events, dpct, heavy_3m, heavy_thr), "validation_documented")
     top_d = V.match_to_events(V.top_periods(dpct, "value", 3, lowest=True, min_gap_months=12), events, "drought")
     top_h = V.match_to_events(V.top_periods(heavy_3m, "value", 3, lowest=False, min_gap_months=6), events, "heavy_rain")
     save(pd.concat([top_d.assign(hazard="drought", measure="regional mean 3-month % of normal (lowest)"),
@@ -110,7 +110,7 @@ def main(force=False):
 
     step("5. Cross-check, metadata, playbook")
     era5 = D.load_era5_crosscheck()
-    if len(era5):
+    if len(era5):  # only on machines that downloaded the full ERA5 files; otherwise keep the committed result
         rows = []
         for c, g in era5.groupby("county"):
             m = g.merge(daily[["county", "date", "precipitation_sum"]], on=["county", "date"], suffixes=("_era5", "_power"))

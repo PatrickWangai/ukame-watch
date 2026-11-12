@@ -228,8 +228,11 @@ def trends(annual: pd.DataFrame, seasons: pd.DataFrame) -> pd.DataFrame:
 def heat_stress(dind: pd.DataFrame) -> pd.DataFrame:
     """Monthly hot days per county (maximum temperature above the county's 1991-2020 p95)."""
     d = dind.assign(year=dind["date"].dt.year, month=dind["date"].dt.month)
-    return d.groupby(["county", "year", "month"]).agg(
-        heat_days=("heat_flag", "sum"), tmax_max_c=("temperature_2m_max", "max")).reset_index()
+    out = d.groupby(["county", "year", "month"]).agg(
+        heat_days=("heat_flag", "sum"), tmax_max_c=("temperature_2m_max", "max"),
+        days=("temperature_2m_max", "count")).reset_index()
+    out["complete"] = out["days"] == pd.to_datetime(dict(year=out.year, month=out.month, day=1)).dt.days_in_month
+    return out
 
 
 def heat_by_decade(annual: pd.DataFrame) -> pd.DataFrame:

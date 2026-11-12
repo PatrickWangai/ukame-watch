@@ -85,17 +85,22 @@ def table(name):
 
 
 @st.cache_data(ttl=3600, show_spinner="Fetching the live 7-day forecast…")
-def watch_all():
-    store = get_store()
-    return {c: T.get_7day_watch(store, c) for c in C.COUNTIES}
+def cached_forecast(lat, lon):
+    from ukame.data import fetch_forecast
+    return fetch_forecast(lat, lon)
 
 
 @st.cache_data(ttl=3600)
+def watch_all():
+    store = get_store()
+    store.forecast_fn = cached_forecast  # one fetch per county, shared by the alerts and the charts
+    return {c: T.get_7day_watch(store, c) for c in C.COUNTIES}
+
+
 def forecast_df(county):
-    from ukame.data import fetch_forecast
     cty = table("counties").set_index("county")
     try:
-        return fetch_forecast(float(cty.loc[county, "lat"]), float(cty.loc[county, "lon"]))
+        return cached_forecast(float(cty.loc[county, "lat"]), float(cty.loc[county, "lon"])).copy()
     except Exception:
         return None
 
@@ -415,9 +420,11 @@ with tabs[4]:
     flagged = int((rd["value"] < 75).sum())
     st.caption(f"{flagged} of {len(rd)} rainy seasons fall below 75% of normal. Not every flagged season is a documented "
                "disaster: the indicator measures rainfall, not impact, so it is a prompt for checking, not a declaration.")
-    xc = table("crosscheck_era5")
     st.markdown("#### Cross-check against a second reanalysis (ERA5)")
-    st.dataframe(xc, hide_index=True, width="stretch")
+    if (P / "crosscheck_era5.csv").exists():
+        st.dataframe(table("crosscheck_era5"), hide_index=True, width="stretch")
+    else:
+        st.info("ERA5 cross-check not built on this machine (needs data/raw/era5_*.csv).")
     st.caption("NASA POWER and ERA5 agree on month-to-month patterns but disagree on amounts in this arid region. "
                "That is why every indicator uses % of normal within one dataset rather than absolute millimetres.")
 

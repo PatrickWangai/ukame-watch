@@ -62,20 +62,23 @@ def build_dataset(mon: pd.DataFrame, idx: pd.DataFrame) -> pd.DataFrame:
 
 def add_targets(ds: pd.DataFrame, test_start_year: int = C.TEST_START_YEAR) -> pd.DataFrame:
     """Adds training-only thresholds, the binary target, persistence state and the split label."""
-    ds = ds.copy()
+    ds = ds.copy().reset_index(drop=True)  # masks below must align with the merged frames
     train = (ds["target_year"] < test_start_year) & ds["target_rain_mm"].notna()
 
     tgt = ds[train].groupby(["county", "target_end_month"])["target_rain_mm"]
     stats = pd.DataFrame({"dry_threshold_mm": tgt.quantile(1 / 3), "train_median_mm": tgt.median()}).reset_index()
     ds = ds.merge(stats, on=["county", "target_end_month"], how="left")
     ds["dry"] = (ds["target_rain_mm"] <= ds["dry_threshold_mm"]).astype("boolean")
-    ds.loc[ds["target_rain_mm"].isna(), "dry"] = pd.NA
+    ds.loc[ds["target_rain_mm"].isna() | ds["dry_threshold_mm"].isna(), "dry"] = pd.NA
     ds["wet_window"] = ds["train_median_mm"] >= MIN_WET_WINDOW_MM
 
     now = ds[train].groupby(["county", "issue_month"])["rain_now3_mm"]
     nstats = pd.DataFrame({"now_mean_mm": now.mean(), "now_p33_mm": now.quantile(1 / 3)}).reset_index()
     ds = ds.merge(nstats, on=["county", "issue_month"], how="left")
+    # In normally dry months (training mean < 10 mm) "% of normal" is meaningless, so recent rainfall counts as
+    # normal (100%) - but only when it was actually observed. Missing recent rainfall stays missing.
     ds["now_pct"] = np.where(ds["now_mean_mm"] >= 10, 100 * ds["rain_now3_mm"] / ds["now_mean_mm"], 100.0)
+    ds.loc[ds["rain_now3_mm"].isna(), "now_pct"] = np.nan
     ds["now_pct"] = ds["now_pct"].clip(0, 300)
     ds["dry_now"] = ds["rain_now3_mm"] <= ds["now_p33_mm"]
 

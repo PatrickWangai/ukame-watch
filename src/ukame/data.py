@@ -100,10 +100,16 @@ def era5_for_days(candidates: pd.DataFrame, counties: pd.DataFrame) -> pd.DataFr
     Looks first in the full ERA5 files we already have, then in a cache, then asks Open-Meteo for just
     those days (tiny requests). Results are cached in data/raw/qc_era5_checks.csv so rebuilds are offline-safe.
     """
-    cache_path = C.RAW / "qc_era5_checks.csv"
-    have = load_era5_crosscheck().rename(columns={"precipitation_sum": "era5_mm"})
+    cols = ["county", "date", "era5_mm"]
+    cache_path = C.REFERENCE / "qc_era5_checks.csv"  # committed, so a fresh clone reproduces QC offline
+    frames = [pd.DataFrame(columns=cols)]
+    full = load_era5_crosscheck()
+    if len(full):
+        frames.append(full.rename(columns={"precipitation_sum": "era5_mm"})[cols])
     if cache_path.exists():
-        have = pd.concat([have, pd.read_csv(cache_path, parse_dates=["date"])], ignore_index=True)
+        frames.append(pd.read_csv(cache_path, parse_dates=["date"])[cols])
+    have = pd.concat(frames, ignore_index=True)
+    have["date"] = pd.to_datetime(have["date"])
     have = have.drop_duplicates(["county", "date"])
     keys = set(zip(have["county"], have["date"]))
     pos = counties.set_index("county")
@@ -121,11 +127,13 @@ def era5_for_days(candidates: pd.DataFrame, counties: pd.DataFrame) -> pd.DataFr
             continue  # no check possible: qc_rainfall falls back to the plausibility limit
         time.sleep(0.5)
     if new_rows:
-        cached = pd.read_csv(cache_path, parse_dates=["date"]) if cache_path.exists() else pd.DataFrame()
-        pd.concat([cached, pd.DataFrame(new_rows)], ignore_index=True).to_csv(cache_path, index=False)
-        have = pd.concat([have, pd.DataFrame(new_rows)], ignore_index=True)
-    want = candidates[["county", "date"]].merge(have[["county", "date", "era5_mm"]], on=["county", "date"], how="inner")
-    return want
+        have = pd.concat([have, pd.DataFrame(new_rows, columns=cols)], ignore_index=True)
+    want = candidates[["county", "date"]].merge(have[cols], on=["county", "date"], how="inner")
+    if len(want):  # keep every value used for QC in the committed cache
+        old = pd.read_csv(cache_path, parse_dates=["date"]) if cache_path.exists() else pd.DataFrame(columns=cols)
+        pd.concat([old, want], ignore_index=True).drop_duplicates(["county", "date"]).sort_values(
+            ["county", "date"]).to_csv(cache_path, index=False)
+    return want.reset_index(drop=True)
 
 
 def load_era5_crosscheck() -> pd.DataFrame:

@@ -68,9 +68,11 @@ def check_documented(events: pd.DataFrame, drought_pct: pd.DataFrame, heavy_coun
         else:
             s = heavy_counts[(heavy_counts.apply(lambda r: lo <= _mi(r.year, r.month) <= hi, axis=1))] \
                 if len(heavy_counts) else heavy_counts
-            value = int(s["value"].sum()) if len(s) else 0
+            # heavy_counts are rolling 3-month totals, matching how the threshold is defined.
+            value = int(s["value"].max()) if len(s) and s["value"].notna().any() else 0
             detected = value >= heavy_threshold
-            indicator, threshold = "county-days with 3-day rain above p99 in window", f">= {heavy_threshold:g}"
+            indicator = "peak 3-month count of county-days with 3-day rain above p99 in window"
+            threshold = f">= {heavy_threshold:g}"
         rows.append({"event_id": e.event_id, "hazard": e.hazard, "label": e.label, "start": e.start, "end": e.end,
                      "indicator": indicator, "indicator_value": value, "threshold": threshold,
                      "detected": detected, "source_url": e.source_url})

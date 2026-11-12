@@ -116,7 +116,16 @@ def answer(question: str, store, llm=None, log_dir: Path = C.LOGS) -> dict:
     if text is None:
         text = "I don't know: I could not complete this request within the allowed number of tool calls."
 
-    # 3. Code-enforced playbook: small models often skip it, so active hazard levels always get cited actions.
+    # 3. Post-LLM guardrail on the model's own words -----------------------------------------------------------------
+    checks["used_tools"] = bool(tool_log)
+    if G.makes_absolute_safety_claim(text):
+        checks["absolute_claim_blocked"] = True
+        levels = [f"{o.get('county', '')}: {k} = {o[k]}" for o in tool_outputs for k in
+                  ("drought_level", "heavy_rain_level", "heat_level") if k in o]
+        text = ("I can't rule out risk, and I won't describe any county as risk-free. "
+                + ("What the tools report: " + "; ".join(levels) + ". " if levels else "")
+                + "Conditions can change quickly; follow Kenya Meteorological Department and NDMA updates.")
+    # 4. Code-enforced playbook: small models often skip it, so active hazard levels always get cited actions.
     looked_up = {(tc["arguments"].get("hazard"), tc["arguments"].get("level"))
                  for tc in tool_log if tc["tool"] == "lookup_playbook"}
     for hazard, level in _active_levels(tool_outputs):
@@ -136,15 +145,7 @@ def answer(question: str, store, llm=None, log_dir: Path = C.LOGS) -> dict:
                               ", ".join(f"[{c['id']}]({c['url']})" for c in a["citations"]) + ")"
                               for a in result["actions"])
 
-    # 4. Post-LLM guardrails -----------------------------------------------------------------
     checks["used_tools"] = bool(tool_log)
-    if G.makes_absolute_safety_claim(text):
-        checks["absolute_claim_blocked"] = True
-        levels = [f"{o.get('county', '')}: {k} = {o[k]}" for o in tool_outputs for k in
-                  ("drought_level", "heavy_rain_level", "heat_level") if k in o]
-        text = ("I can't rule out risk, and I won't describe any county as risk-free. "
-                + ("What the tools report: " + "; ".join(levels) + ". " if levels else "")
-                + "Conditions can change quickly; follow Kenya Meteorological Department and NDMA updates.")
     tools_text = json.dumps(tool_outputs, default=str)
     allowed = re.findall(r"\d[\d,]*(?:\.\d+)?", question + " " + C.DISCLAIMER)
     checks["ungrounded_numbers"] = G.ungrounded_numbers(text, tools_text, allowed=allowed)

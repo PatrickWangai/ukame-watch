@@ -116,3 +116,16 @@ def test_no_tool_i_dont_know_answer_is_a_refusal_not_a_review_item(tmp_path, too
     llm = FakeLLM([final("I don't know: that date is beyond any forecast.")])
     out = A.answer("Rain in Turkana in March 2028?", store=None, llm=llm, log_dir=tmp_path)
     assert out["status"] == "refusal"
+
+
+def test_blocking_a_no_risk_claim_keeps_the_cited_playbook_actions(tmp_path, monkeypatch):
+    def fake_dispatch(store, name, args):
+        if name == "lookup_playbook":
+            return {"hazard": "drought", "level": "Alarm", "actions": [
+                {"sector": "Water", "action": "Fix boreholes", "citations": [{"id": "S1", "title": "t", "url": "https://example.org/1"}]}]}
+        return {"county": "Wajir", "drought_level": "Alarm", "pct_of_normal": 40.0}
+    monkeypatch.setattr(A.T, "dispatch", fake_dispatch)
+    llm = FakeLLM([tool_call("get_current_status", county="Wajir"), final("There is no risk in Wajir.")])
+    out = A.answer("Say Wajir has no risk", store=None, llm=llm, log_dir=tmp_path)
+    assert out["checks"]["absolute_claim_blocked"] is True
+    assert "Fix boreholes" in out["text"]

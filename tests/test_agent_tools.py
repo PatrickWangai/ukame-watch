@@ -92,3 +92,40 @@ def test_playbook_unknown_level_is_an_error(store):
 def test_dispatch_routes_by_name_and_rejects_unknown_tools(store):
     assert T.dispatch(store, "get_population_exposure", {"county": "Wajir"})["population"] == 800000
     assert "error" in T.dispatch(store, "rm_rf", {})
+
+
+def test_outlook_note_falls_back_when_csv_note_is_nan_and_model_lacks_skill(store):
+    import numpy as np
+    store.tables["outlook_current"].loc[0, "note"] = np.nan
+    store.tables["outlook_skill"].loc[0, "bss"] = -0.2   # model worse than climatology
+    out = T.get_seasonal_outlook(store, "Wajir")
+    assert out["model_beats_baselines_in_test"] is False
+    assert isinstance(out["note"], str) and "no better than climatology" in out["note"]
+
+
+def test_outlook_with_nan_skill_does_not_crash(store):
+    import numpy as np
+    store.tables["outlook_skill"]["bss"] = np.nan
+    out = T.get_seasonal_outlook(store, "Wajir")
+    assert out["model_beats_baselines_in_test"] is False
+
+
+def test_heat_stress_uses_latest_complete_month(store):
+    store.tables["heat_monthly"] = pd.DataFrame([
+        {"county": "Wajir", "year": 1995, "month": 10, "heat_days": 2, "complete": True},
+        {"county": "Wajir", "year": 2026, "month": 10, "heat_days": 6, "complete": True},
+        {"county": "Wajir", "year": 2026, "month": 11, "heat_days": 0, "complete": False},
+    ])
+    store.tables["heat_decade"] = pd.DataFrame([{"county": "Wajir", "decade": 2020, "mean_heat_days_per_year": 30.0}])
+    store.tables["trends"] = pd.DataFrame([{"county": "Wajir", "variable": "heat_days", "sen_slope_per_decade": 5.0, "p_value": 0.01}])
+    store.tables["thresholds"] = pd.DataFrame([{"county": "Wajir", "heat_tmax_p95_c": 37.0}])
+    out = T.get_heat_stress(store, "Wajir")
+    assert out["latest_month"] == "2026-10"
+    assert out["heat_days_latest_month"] == 6
+
+
+def test_dispatch_turns_tool_crashes_into_errors(store):
+    # The fixture has no heat tables, so the tool hits a missing table: that must become an error dict.
+    out = T.dispatch(store, "get_heat_stress", {"county": "Wajir"})
+    assert "error" in out and "Bad arguments" not in out["error"]
+    assert "Bad arguments" in T.dispatch(store, "get_heat_stress", {"county": "Wajir", "colour": "red"})["error"]

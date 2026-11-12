@@ -106,3 +106,19 @@ def test_climatology_baseline_never_warns_despite_floating_point_means():
     ev = O.evaluate(pred)
     row = ev[(ev["scope"] == "all") & (ev["method"] == "climatology")].iloc[0]
     assert row["recall"] == 0.0
+
+
+def test_missing_recent_rainfall_is_not_treated_as_normal():
+    # Dry Jul-Sep (mean < 10 mm) is exactly where the old code substituted "100% of normal".
+    mon = monthly_rain(rain=lambda y, m: 1.0 if m in (7, 8, 9) else 50.0)
+    mon.loc[(mon["year"] == 2000) & (mon["month"] == 8), "complete"] = False
+    ds = O.add_targets(O.build_dataset(mon, indices()))
+    row = ds[(ds["issue_year"] == 2000) & (ds["issue_month"] == 9)].iloc[0]
+    assert pd.isna(row["now_pct"])
+
+
+def test_rows_without_a_training_threshold_get_no_label():
+    mon = monthly_rain()
+    ds = O.build_dataset(mon, indices())
+    ds = O.add_targets(ds[~((ds["target_end_month"] == 7) & (ds["target_year"] < 2017))])
+    assert ds.loc[ds["target_end_month"] == 7, "dry"].isna().all()

@@ -32,13 +32,14 @@ def test_documented_drought_is_hit_when_indicator_drops_below_threshold_in_windo
     assert row["indicator_value"] == 40.0
 
 
-def test_documented_flood_missed_when_too_few_heavy_days():
-    events = pd.DataFrame([{"event_id": "F1", "hazard": "heavy_rain", "label": "x", "start": "2024-03-01",
-                            "end": "2024-05-31", "source_url": "u"}])
-    heavy = regional({"2024-03": 1, "2024-04": 2, "2024-05": 1})
-    out = V.check_documented(events, drought_pct=regional({}), heavy_counts=heavy, heavy_threshold=5)
-    assert bool(out.iloc[0]["detected"]) is False
+def test_documented_flood_uses_the_peak_3_month_count_inside_the_window():
+    """The threshold is defined on 3-month totals, so long event windows must not sum many months."""
+    events = pd.DataFrame([{"event_id": "F1", "hazard": "heavy_rain", "label": "x", "start": "2024-01-01",
+                            "end": "2024-08-31", "source_url": "u"}])
+    heavy_3m = regional({"2024-03": 2, "2024-04": 4, "2024-05": 3, "2024-06": 3, "2024-07": 2})
+    out = V.check_documented(events, drought_pct=regional({}), heavy_counts=heavy_3m, heavy_threshold=5)
     assert out.iloc[0]["indicator_value"] == 4
+    assert bool(out.iloc[0]["detected"]) is False
 
 
 def test_regional_drought_pct_can_be_limited_to_rainy_season_windows():
