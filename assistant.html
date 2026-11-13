@@ -72,6 +72,7 @@
         <select id="model">
           <option value="Qwen2.5-1.5B-Instruct">Qwen 2.5 1.5B: better answers (about 1 GB download, once)</option>
           <option value="Qwen2.5-0.5B-Instruct">Qwen 2.5 0.5B: quicker download (about 0.3 GB), weaker answers</option>
+          <option value="Qwen2.5-3B-Instruct">Qwen 2.5 3B: same model as the laptop version (about 1.7 GB download, needs a strong laptop)</option>
         </select>
       </div>
       <button id="start">Start the assistant</button>
@@ -215,7 +216,7 @@ function factLines(county, o) {
   if (ou.error) L.push(`[get_seasonal_outlook] Unavailable: I don't know the seasonal outlook.`);
   else L.push(`[get_seasonal_outlook] For ${ou.target_window}, the chance that rainfall falls in the driest third of the record is ${ou.chance_of_driest_third} (the usual chance is ${pct(ou.p_dry_climatology)}). In tests on 2017 onward the model ${ou.model_beats_baselines_in_test ? "beat" : "did not beat"} both baselines.${ou.note ? " Note: " + ou.note : ""}`);
   if (w.error) L.push(`[get_7day_watch] ${w.error}`);
-  else L.push(`[get_7day_watch] Next 7 days (${w.forecast_start} to ${w.forecast_end}): the highest forecast 3-day rainfall is ${w.max_3day_forecast_mm} mm, against this county's heavy-rain threshold of ${w.threshold_3day_p99_mm} mm. Heavy-rain level: ${w.heavy_rain_level === "None" ? "None (no heavy-rain watch)" : w.heavy_rain_level}. Days forecast above the hot-day threshold of ${w.heat_threshold_p95_c} °C: ${w.heat_alert_days}. Heat level: ${w.heat_level === "None" ? "None (no heat alert)" : w.heat_level}.`);
+  else L.push(`[get_7day_watch] Next 7 days (${w.forecast_start} to ${w.forecast_end}): the highest forecast 3-day rainfall is ${w.max_3day_forecast_mm} mm, which is ${w.heavy_rain_alert ? "ABOVE" : "below"} this county's heavy-rain threshold of ${w.threshold_3day_p99_mm} mm, so ${w.heavy_rain_alert ? `there IS a heavy-rain ${w.heavy_rain_level}` : "there is no heavy-rain watch"}. ${w.heat_alert_days} of the 7 days are forecast above the hot-day threshold of ${w.heat_threshold_p95_c} °C, so ${w.heat_level === "None" ? "there is no heat alert" : `there IS a heat ${w.heat_level}`}.`);
   L.push(`[get_heat_stress] In ${h.latest_month} there were ${h.heat_days_latest_month} hot days (maximum temperature above ${h.hot_day_threshold_tmax_c} °C), against a 1991-2020 normal of ${h.normal_heat_days_same_month_1991_2020} for that month. Hot days are rising by ${h.trend_heat_days_per_decade} per decade${h.trend_p_value < 0.05 ? " (statistically significant)" : " (not statistically significant)"}.`);
   L.push(`[get_population_exposure] ${fmt(p.population)} people (2019 census), ${p.density_per_km2} people per km² over ${fmt(p.area_km2)} km².`);
   return L.join("\n");
@@ -230,7 +231,8 @@ Rules:
 4. Never write "no risk", "no immediate risk" or "safe". When a level is None, write "no heavy-rain watch" or "no heat alert" instead.
 5. Official Kenya Meteorological Department warnings and NDMA drought bulletins take priority over this advisory.
 6. Do not list recommended actions: the official playbook is added separately.
-Use these headings: Situation, Outlook, Who is exposed, Limits. Keep it under 170 words.`;
+7. Do not add any fact that is not in TOOL DATA: no claims about climate, causes, infrastructure or health.
+Use these headings: Situation, Outlook, Who is exposed (the population figures from TOOL DATA), Limits (say this is model-based data and a planning-support draft). Keep it under 170 words.`;
 
 // ------------------------------------------------------------------ rendering
 const html = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -306,7 +308,7 @@ function finish(r) {
   const fl = [];
   if (r.checks.ungrounded_numbers.length) fl.push(`<div class="flag err">Numbers not found in any tool output: ${html(r.checks.ungrounded_numbers.join(", "))}. Check them before approving.</div>`);
   if (r.checks.level_mismatch.length) fl.push(`<div class="flag err">The draft names a drought level the data does not report: ${html(r.checks.level_mismatch.join(", "))}. Correct it before approving.</div>`);
-  if (r.checks.absolute_claim_blocked) fl.push('<div class="flag warn">The model tried to state there was no risk. That statement was blocked and replaced.</div>');
+  if (r.checks.absolute_claim_blocked) fl.push(`<div class="flag warn">The model tried to state there was no risk. ${r.checks.blocked_sentences && r.checks.blocked_sentences.length ? "Removed: <i>" + html(r.checks.blocked_sentences.join(" ")) + "</i>" : "That statement was blocked and replaced."}</div>`);
   $("flags").innerHTML = fl.join("");
   $("calls").classList.toggle("hidden", !r.tool_calls.length);
   $("calls-sum").textContent = `Tool calls (${r.tool_calls.length}): every number above should appear here`;
@@ -356,8 +358,17 @@ $("ask").onclick = async () => {
     // 3. Code guardrails on the model's words
     if (ABSOLUTE.test(text)) {
       checks.absolute_claim_blocked = true;
+      checks.blocked_sentences = [];
+      // Remove only the sentences that claim there is no risk; keep the rest of the draft.
+      const kept = text.split("\n").map((line) => line.split(/(?<=[.!?])\s+/).filter((sn) => {
+        if (ABSOLUTE.test(sn)) { checks.blocked_sentences.push(sn.trim()); return false; }
+        return true;
+      }).join(" ")).join("\n");
+      if (kept.replace(/[#*_\s]|Situation|Outlook|Who is exposed\??|Limits|:/g, "").length > 40) text = kept;
+      else {
       const lv = toolOutputs.flatMap((o) => ["drought_level", "heavy_rain_level", "heat_level"].filter((k) => o && k in o).map((k) => `${county}: ${k} = ${o[k]}`));
       text = "I can't rule out risk, and I won't describe any county as risk-free. " + (lv.length ? `What the tools report: ${lv.join("; ")}. ` : "") + "Conditions can change quickly; follow Kenya Meteorological Department and NDMA updates.";
+      }
     }
     checks.level_mismatch = levelMismatches(text, toolOutputs);
 
