@@ -1,0 +1,1036 @@
+{
+ "generated_at": "2026-11-13T10:45:03+00:00",
+ "counties": {
+  "Turkana": {
+   "lat": 3.411,
+   "lon": 35.4351,
+   "thresholds": {
+    "rain_3day_p99_mm": 30.1,
+    "heat_tmax_p95_c": 38.1
+   },
+   "get_current_status": {
+    "county": "Turkana",
+    "window": "ASO 2026",
+    "rain_3m_mm": 66.9,
+    "normal_3m_mm": 62.3,
+    "pct_of_normal": 107.5,
+    "drought_class": null,
+    "drought_level": "None",
+    "previous_window_pct_of_normal": 20.8,
+    "data_through": "2026-11-09",
+    "source": "NASA POWER daily (MERRA-2 reanalysis, bias-corrected rainfall), compared with 1991-2020 normals (model-based, not station data)"
+   },
+   "get_seasonal_outlook": {
+    "county": "Turkana",
+    "issued_after": "2026-10",
+    "target_window": "Nov 2026 - Jan 2027",
+    "season_group": "short_rains",
+    "p_dry_model": 0.02,
+    "chance_of_driest_third": "under 5%",
+    "p_dry_climatology": 0.35,
+    "p_dry_persistence": 0.29,
+    "test_skill": {
+     "model_bss": 0.153,
+     "model_f1": 0.56,
+     "n_test_forecasts": 28,
+     "persistence_bss": 0.068,
+     "persistence_f1": 0.583
+    },
+    "skill_metric": "Brier skill score (BSS) vs climatology: above 0 = better than climatology; F1 for warnings",
+    "model_beats_baselines_in_test": true,
+    "note": "",
+    "method": "Logistic regression on ENSO (ONI), Indian Ocean Dipole (DMI) and recent rainfall; trained 1991-2016, tested 2017 onward"
+   },
+   "get_heat_stress": {
+    "county": "Turkana",
+    "latest_month": "2026-10",
+    "heat_days_latest_month": 4,
+    "normal_heat_days_same_month_1991_2020": 0.0,
+    "hot_day_threshold_tmax_c": 38.1,
+    "mean_heat_days_per_year_by_decade": {
+     "1990": 14.0,
+     "2000": 15.7,
+     "2010": 26.3,
+     "2020": 18.7
+    },
+    "trend_heat_days_per_decade": 3.33,
+    "trend_p_value": 0.1178,
+    "source": "NASA POWER daily (MERRA-2 reanalysis, bias-corrected rainfall), compared with 1991-2020 normals (model-based, not station data)"
+   },
+   "get_population_exposure": {
+    "county": "Turkana",
+    "population": 926976,
+    "population_year": 2019,
+    "worldpop_2020_estimate": 1259553,
+    "worldpop_to_census_ratio": 1.36,
+    "area_km2": 69746.0,
+    "density_per_km2": 13.3,
+    "source": "KNBS 2019 Kenya Population and Housing Census (official county totals). WorldPop 2020 1 km estimate shown for comparison only: it is much higher than the census in the north-east."
+   }
+  },
+  "Marsabit": {
+   "lat": 2.9795,
+   "lon": 37.5681,
+   "thresholds": {
+    "rain_3day_p99_mm": 28.2,
+    "heat_tmax_p95_c": 38.4
+   },
+   "get_current_status": {
+    "county": "Marsabit",
+    "window": "ASO 2026",
+    "rain_3m_mm": 44.0,
+    "normal_3m_mm": 45.0,
+    "pct_of_normal": 97.7,
+    "drought_class": null,
+    "drought_level": "None",
+    "previous_window_pct_of_normal": 33.2,
+    "data_through": "2026-11-09",
+    "source": "NASA POWER daily (MERRA-2 reanalysis, bias-corrected rainfall), compared with 1991-2020 normals (model-based, not station data)"
+   },
+   "get_seasonal_outlook": {
+    "county": "Marsabit",
+    "issued_after": "2026-10",
+    "target_window": "Nov 2026 - Jan 2027",
+    "season_group": "short_rains",
+    "p_dry_model": 0.02,
+    "chance_of_driest_third": "under 5%",
+    "p_dry_climatology": 0.35,
+    "p_dry_persistence": 0.29,
+    "test_skill": {
+     "model_bss": 0.135,
+     "model_f1": 0.593,
+     "n_test_forecasts": 28,
+     "persistence_bss": -0.091,
+     "persistence_f1": 0.32
+    },
+    "skill_metric": "Brier skill score (BSS) vs climatology: above 0 = better than climatology; F1 for warnings",
+    "model_beats_baselines_in_test": true,
+    "note": "",
+    "method": "Logistic regression on ENSO (ONI), Indian Ocean Dipole (DMI) and recent rainfall; trained 1991-2016, tested 2017 onward"
+   },
+   "get_heat_stress": {
+    "county": "Marsabit",
+    "latest_month": "2026-10",
+    "heat_days_latest_month": 3,
+    "normal_heat_days_same_month_1991_2020": 0.1,
+    "hot_day_threshold_tmax_c": 38.4,
+    "mean_heat_days_per_year_by_decade": {
+     "1990": 10.3,
+     "2000": 15.1,
+     "2010": 27.0,
+     "2020": 28.5
+    },
+    "trend_heat_days_per_decade": 6.88,
+    "trend_p_value": 0.0021,
+    "source": "NASA POWER daily (MERRA-2 reanalysis, bias-corrected rainfall), compared with 1991-2020 normals (model-based, not station data)"
+   },
+   "get_population_exposure": {
+    "county": "Marsabit",
+    "population": 459785,
+    "population_year": 2019,
+    "worldpop_2020_estimate": 364649,
+    "worldpop_to_census_ratio": 0.79,
+    "area_km2": 75927.0,
+    "density_per_km2": 6.1,
+    "source": "KNBS 2019 Kenya Population and Housing Census (official county totals). WorldPop 2020 1 km estimate shown for comparison only: it is much higher than the census in the north-east."
+   }
+  },
+  "Wajir": {
+   "lat": 1.8091,
+   "lon": 40.0336,
+   "thresholds": {
+    "rain_3day_p99_mm": 46.9,
+    "heat_tmax_p95_c": 38.4
+   },
+   "get_current_status": {
+    "county": "Wajir",
+    "window": "ASO 2026",
+    "rain_3m_mm": 164.6,
+    "normal_3m_mm": 103.1,
+    "pct_of_normal": 159.7,
+    "drought_class": null,
+    "drought_level": "None",
+    "previous_window_pct_of_normal": 32.4,
+    "data_through": "2026-11-09",
+    "source": "NASA POWER daily (MERRA-2 reanalysis, bias-corrected rainfall), compared with 1991-2020 normals (model-based, not station data)"
+   },
+   "get_seasonal_outlook": {
+    "county": "Wajir",
+    "issued_after": "2026-10",
+    "target_window": "Nov 2026 - Jan 2027",
+    "season_group": "short_rains",
+    "p_dry_model": 0.02,
+    "chance_of_driest_third": "under 5%",
+    "p_dry_climatology": 0.35,
+    "p_dry_persistence": 0.29,
+    "test_skill": {
+     "model_bss": 0.079,
+     "model_f1": 0.583,
+     "n_test_forecasts": 28,
+     "persistence_bss": -0.035,
+     "persistence_f1": 0.364
+    },
+    "skill_metric": "Brier skill score (BSS) vs climatology: above 0 = better than climatology; F1 for warnings",
+    "model_beats_baselines_in_test": true,
+    "note": "",
+    "method": "Logistic regression on ENSO (ONI), Indian Ocean Dipole (DMI) and recent rainfall; trained 1991-2016, tested 2017 onward"
+   },
+   "get_heat_stress": {
+    "county": "Wajir",
+    "latest_month": "2026-10",
+    "heat_days_latest_month": 0,
+    "normal_heat_days_same_month_1991_2020": 0.0,
+    "hot_day_threshold_tmax_c": 38.4,
+    "mean_heat_days_per_year_by_decade": {
+     "1990": 11.4,
+     "2000": 19.7,
+     "2010": 23.4,
+     "2020": 24.7
+    },
+    "trend_heat_days_per_decade": 5.26,
+    "trend_p_value": 0.0237,
+    "source": "NASA POWER daily (MERRA-2 reanalysis, bias-corrected rainfall), compared with 1991-2020 normals (model-based, not station data)"
+   },
+   "get_population_exposure": {
+    "county": "Wajir",
+    "population": 781263,
+    "population_year": 2019,
+    "worldpop_2020_estimate": 1742496,
+    "worldpop_to_census_ratio": 2.23,
+    "area_km2": 56704.0,
+    "density_per_km2": 13.8,
+    "source": "KNBS 2019 Kenya Population and Housing Census (official county totals). WorldPop 2020 1 km estimate shown for comparison only: it is much higher than the census in the north-east."
+   }
+  },
+  "Mandera": {
+   "lat": 3.4381,
+   "lon": 40.7368,
+   "thresholds": {
+    "rain_3day_p99_mm": 40.3,
+    "heat_tmax_p95_c": 36.6
+   },
+   "get_current_status": {
+    "county": "Mandera",
+    "window": "ASO 2026",
+    "rain_3m_mm": 188.6,
+    "normal_3m_mm": 106.0,
+    "pct_of_normal": 177.9,
+    "drought_class": null,
+    "drought_level": "None",
+    "previous_window_pct_of_normal": 31.0,
+    "data_through": "2026-11-09",
+    "source": "NASA POWER daily (MERRA-2 reanalysis, bias-corrected rainfall), compared with 1991-2020 normals (model-based, not station data)"
+   },
+   "get_seasonal_outlook": {
+    "county": "Mandera",
+    "issued_after": "2026-10",
+    "target_window": "Nov 2026 - Jan 2027",
+    "season_group": "short_rains",
+    "p_dry_model": 0.01,
+    "chance_of_driest_third": "under 5%",
+    "p_dry_climatology": 0.35,
+    "p_dry_persistence": 0.29,
+    "test_skill": {
+     "model_bss": 0.126,
+     "model_f1": 0.609,
+     "n_test_forecasts": 28,
+     "persistence_bss": -0.053,
+     "persistence_f1": 0.3
+    },
+    "skill_metric": "Brier skill score (BSS) vs climatology: above 0 = better than climatology; F1 for warnings",
+    "model_beats_baselines_in_test": true,
+    "note": "",
+    "method": "Logistic regression on ENSO (ONI), Indian Ocean Dipole (DMI) and recent rainfall; trained 1991-2016, tested 2017 onward"
+   },
+   "get_heat_stress": {
+    "county": "Mandera",
+    "latest_month": "2026-10",
+    "heat_days_latest_month": 0,
+    "normal_heat_days_same_month_1991_2020": 0.0,
+    "hot_day_threshold_tmax_c": 36.6,
+    "mean_heat_days_per_year_by_decade": {
+     "1990": 10.9,
+     "2000": 21.6,
+     "2010": 20.2,
+     "2020": 26.8
+    },
+    "trend_heat_days_per_decade": 5.0,
+    "trend_p_value": 0.0105,
+    "source": "NASA POWER daily (MERRA-2 reanalysis, bias-corrected rainfall), compared with 1991-2020 normals (model-based, not station data)"
+   },
+   "get_population_exposure": {
+    "county": "Mandera",
+    "population": 867457,
+    "population_year": 2019,
+    "worldpop_2020_estimate": 2666755,
+    "worldpop_to_census_ratio": 3.07,
+    "area_km2": 26016.0,
+    "density_per_km2": 33.3,
+    "source": "KNBS 2019 Kenya Population and Housing Census (official county totals). WorldPop 2020 1 km estimate shown for comparison only: it is much higher than the census in the north-east."
+   }
+  },
+  "Garissa": {
+   "lat": -0.4884,
+   "lon": 40.1806,
+   "thresholds": {
+    "rain_3day_p99_mm": 35.7,
+    "heat_tmax_p95_c": 38.7
+   },
+   "get_current_status": {
+    "county": "Garissa",
+    "window": "ASO 2026",
+    "rain_3m_mm": 179.4,
+    "normal_3m_mm": 85.2,
+    "pct_of_normal": 210.7,
+    "drought_class": null,
+    "drought_level": "None",
+    "previous_window_pct_of_normal": 58.6,
+    "data_through": "2026-11-09",
+    "source": "NASA POWER daily (MERRA-2 reanalysis, bias-corrected rainfall), compared with 1991-2020 normals (model-based, not station data)"
+   },
+   "get_seasonal_outlook": {
+    "county": "Garissa",
+    "issued_after": "2026-10",
+    "target_window": "Nov 2026 - Jan 2027",
+    "season_group": "short_rains",
+    "p_dry_model": 0.01,
+    "chance_of_driest_third": "under 5%",
+    "p_dry_climatology": 0.35,
+    "p_dry_persistence": 0.29,
+    "test_skill": {
+     "model_bss": 0.071,
+     "model_f1": 0.625,
+     "n_test_forecasts": 28,
+     "persistence_bss": -0.049,
+     "persistence_f1": 0.414
+    },
+    "skill_metric": "Brier skill score (BSS) vs climatology: above 0 = better than climatology; F1 for warnings",
+    "model_beats_baselines_in_test": true,
+    "note": "",
+    "method": "Logistic regression on ENSO (ONI), Indian Ocean Dipole (DMI) and recent rainfall; trained 1991-2016, tested 2017 onward"
+   },
+   "get_heat_stress": {
+    "county": "Garissa",
+    "latest_month": "2026-10",
+    "heat_days_latest_month": 0,
+    "normal_heat_days_same_month_1991_2020": 0.0,
+    "hot_day_threshold_tmax_c": 38.7,
+    "mean_heat_days_per_year_by_decade": {
+     "1990": 8.8,
+     "2000": 16.8,
+     "2010": 26.7,
+     "2020": 23.8
+    },
+    "trend_heat_days_per_decade": 6.67,
+    "trend_p_value": 0.0035,
+    "source": "NASA POWER daily (MERRA-2 reanalysis, bias-corrected rainfall), compared with 1991-2020 normals (model-based, not station data)"
+   },
+   "get_population_exposure": {
+    "county": "Garissa",
+    "population": 841353,
+    "population_year": 2019,
+    "worldpop_2020_estimate": 1630158,
+    "worldpop_to_census_ratio": 1.94,
+    "area_km2": 44825.0,
+    "density_per_km2": 18.8,
+    "source": "KNBS 2019 Kenya Population and Housing Census (official county totals). WorldPop 2020 1 km estimate shown for comparison only: it is much higher than the census in the north-east."
+   }
+  },
+  "Isiolo": {
+   "lat": 1.0116,
+   "lon": 38.5392,
+   "thresholds": {
+    "rain_3day_p99_mm": 31.4,
+    "heat_tmax_p95_c": 38.0
+   },
+   "get_current_status": {
+    "county": "Isiolo",
+    "window": "ASO 2026",
+    "rain_3m_mm": 52.1,
+    "normal_3m_mm": 56.0,
+    "pct_of_normal": 93.1,
+    "drought_class": null,
+    "drought_level": "None",
+    "previous_window_pct_of_normal": 33.4,
+    "data_through": "2026-11-09",
+    "source": "NASA POWER daily (MERRA-2 reanalysis, bias-corrected rainfall), compared with 1991-2020 normals (model-based, not station data)"
+   },
+   "get_seasonal_outlook": {
+    "county": "Isiolo",
+    "issued_after": "2026-10",
+    "target_window": "Nov 2026 - Jan 2027",
+    "season_group": "short_rains",
+    "p_dry_model": 0.02,
+    "chance_of_driest_third": "under 5%",
+    "p_dry_climatology": 0.35,
+    "p_dry_persistence": 0.29,
+    "test_skill": {
+     "model_bss": 0.178,
+     "model_f1": 0.583,
+     "n_test_forecasts": 28,
+     "persistence_bss": -0.085,
+     "persistence_f1": 0.273
+    },
+    "skill_metric": "Brier skill score (BSS) vs climatology: above 0 = better than climatology; F1 for warnings",
+    "model_beats_baselines_in_test": true,
+    "note": "",
+    "method": "Logistic regression on ENSO (ONI), Indian Ocean Dipole (DMI) and recent rainfall; trained 1991-2016, tested 2017 onward"
+   },
+   "get_heat_stress": {
+    "county": "Isiolo",
+    "latest_month": "2026-10",
+    "heat_days_latest_month": 4,
+    "normal_heat_days_same_month_1991_2020": 0.8,
+    "hot_day_threshold_tmax_c": 38.0,
+    "mean_heat_days_per_year_by_decade": {
+     "1990": 7.4,
+     "2000": 17.6,
+     "2010": 28.6,
+     "2020": 20.5
+    },
+    "trend_heat_days_per_decade": 5.77,
+    "trend_p_value": 0.0026,
+    "source": "NASA POWER daily (MERRA-2 reanalysis, bias-corrected rainfall), compared with 1991-2020 normals (model-based, not station data)"
+   },
+   "get_population_exposure": {
+    "county": "Isiolo",
+    "population": 268002,
+    "population_year": 2019,
+    "worldpop_2020_estimate": 184988,
+    "worldpop_to_census_ratio": 0.69,
+    "area_km2": 25351.0,
+    "density_per_km2": 10.6,
+    "source": "KNBS 2019 Kenya Population and Housing Census (official county totals). WorldPop 2020 1 km estimate shown for comparison only: it is much higher than the census in the north-east."
+   }
+  },
+  "Samburu": {
+   "lat": 1.3196,
+   "lon": 37.1167,
+   "thresholds": {
+    "rain_3day_p99_mm": 26.6,
+    "heat_tmax_p95_c": 32.9
+   },
+   "get_current_status": {
+    "county": "Samburu",
+    "window": "ASO 2026",
+    "rain_3m_mm": 25.2,
+    "normal_3m_mm": 97.0,
+    "pct_of_normal": 25.9,
+    "drought_class": "Severe",
+    "drought_level": "Alarm",
+    "previous_window_pct_of_normal": 26.3,
+    "data_through": "2026-11-09",
+    "source": "NASA POWER daily (MERRA-2 reanalysis, bias-corrected rainfall), compared with 1991-2020 normals (model-based, not station data)"
+   },
+   "get_seasonal_outlook": {
+    "county": "Samburu",
+    "issued_after": "2026-10",
+    "target_window": "Nov 2026 - Jan 2027",
+    "season_group": "short_rains",
+    "p_dry_model": 0.03,
+    "chance_of_driest_third": "under 5%",
+    "p_dry_climatology": 0.35,
+    "p_dry_persistence": 0.46,
+    "test_skill": {
+     "model_bss": 0.196,
+     "model_f1": 0.765,
+     "n_test_forecasts": 28,
+     "persistence_bss": 0.154,
+     "persistence_f1": 0.773
+    },
+    "skill_metric": "Brier skill score (BSS) vs climatology: above 0 = better than climatology; F1 for warnings",
+    "model_beats_baselines_in_test": true,
+    "note": "",
+    "method": "Logistic regression on ENSO (ONI), Indian Ocean Dipole (DMI) and recent rainfall; trained 1991-2016, tested 2017 onward"
+   },
+   "get_heat_stress": {
+    "county": "Samburu",
+    "latest_month": "2026-10",
+    "heat_days_latest_month": 15,
+    "normal_heat_days_same_month_1991_2020": 2.3,
+    "hot_day_threshold_tmax_c": 32.9,
+    "mean_heat_days_per_year_by_decade": {
+     "1990": 7.7,
+     "2000": 12.3,
+     "2010": 29.6,
+     "2020": 36.0
+    },
+    "trend_heat_days_per_decade": 10.0,
+    "trend_p_value": 0.0,
+    "source": "NASA POWER daily (MERRA-2 reanalysis, bias-corrected rainfall), compared with 1991-2020 normals (model-based, not station data)"
+   },
+   "get_population_exposure": {
+    "county": "Samburu",
+    "population": 310327,
+    "population_year": 2019,
+    "worldpop_2020_estimate": 330921,
+    "worldpop_to_census_ratio": 1.07,
+    "area_km2": 21079.0,
+    "density_per_km2": 14.7,
+    "source": "KNBS 2019 Kenya Population and Housing Census (official county totals). WorldPop 2020 1 km estimate shown for comparison only: it is much higher than the census in the north-east."
+   }
+  },
+  "Kitui": {
+   "lat": -1.4857,
+   "lon": 38.4058,
+   "thresholds": {
+    "rain_3day_p99_mm": 37.5,
+    "heat_tmax_p95_c": 34.6
+   },
+   "get_current_status": {
+    "county": "Kitui",
+    "window": "ASO 2026",
+    "rain_3m_mm": 136.9,
+    "normal_3m_mm": 89.1,
+    "pct_of_normal": 153.6,
+    "drought_class": null,
+    "drought_level": "None",
+    "previous_window_pct_of_normal": 61.2,
+    "data_through": "2026-11-09",
+    "source": "NASA POWER daily (MERRA-2 reanalysis, bias-corrected rainfall), compared with 1991-2020 normals (model-based, not station data)"
+   },
+   "get_seasonal_outlook": {
+    "county": "Kitui",
+    "issued_after": "2026-10",
+    "target_window": "Nov 2026 - Jan 2027",
+    "season_group": "short_rains",
+    "p_dry_model": 0.02,
+    "chance_of_driest_third": "under 5%",
+    "p_dry_climatology": 0.35,
+    "p_dry_persistence": 0.29,
+    "test_skill": {
+     "model_bss": 0.008,
+     "model_f1": 0.476,
+     "n_test_forecasts": 28,
+     "persistence_bss": -0.028,
+     "persistence_f1": 0.25
+    },
+    "skill_metric": "Brier skill score (BSS) vs climatology: above 0 = better than climatology; F1 for warnings",
+    "model_beats_baselines_in_test": true,
+    "note": "",
+    "method": "Logistic regression on ENSO (ONI), Indian Ocean Dipole (DMI) and recent rainfall; trained 1991-2016, tested 2017 onward"
+   },
+   "get_heat_stress": {
+    "county": "Kitui",
+    "latest_month": "2026-10",
+    "heat_days_latest_month": 4,
+    "normal_heat_days_same_month_1991_2020": 1.1,
+    "hot_day_threshold_tmax_c": 34.6,
+    "mean_heat_days_per_year_by_decade": {
+     "1990": 10.4,
+     "2000": 18.1,
+     "2010": 29.0,
+     "2020": 26.0
+    },
+    "trend_heat_days_per_decade": 6.67,
+    "trend_p_value": 0.0027,
+    "source": "NASA POWER daily (MERRA-2 reanalysis, bias-corrected rainfall), compared with 1991-2020 normals (model-based, not station data)"
+   },
+   "get_population_exposure": {
+    "county": "Kitui",
+    "population": 1136187,
+    "population_year": 2019,
+    "worldpop_2020_estimate": 1273454,
+    "worldpop_to_census_ratio": 1.12,
+    "area_km2": 30556.0,
+    "density_per_km2": 37.2,
+    "source": "KNBS 2019 Kenya Population and Housing Census (official county totals). WorldPop 2020 1 km estimate shown for comparison only: it is much higher than the census in the north-east."
+   }
+  }
+ },
+ "playbook": {
+  "drought|Alert": {
+   "hazard": "drought",
+   "level": "Alert",
+   "trigger": "3-month rainfall below 75% of the 1991-2020 normal, OR seasonal outlook probability of a driest-third season of 50% or more",
+   "actions": [
+    {
+     "sector": "Coordination",
+     "action": "Share this draft with the County Steering Group and compare it with the latest NDMA drought early warning bulletin before any decision",
+     "citations": [
+      {
+       "id": "NDMA-BULLETIN",
+       "title": "NDMA National Drought Early Warning Bulletin, February 2026",
+       "url": "https://knowledgeweb.ndma.go.ke/Content/LibraryDocuments/National_Drought_Early_Warning_Bulletin_Feb_202620260311171955.pdf"
+      },
+      {
+       "id": "NDMA-PHASES",
+       "title": "NDMA Kenya: Drought early warning system and phases (Normal, Alert, Alarm, Emergency, Recovery) - presentation to UN-SPIDER",
+       "url": "https://www.un-spider.org/sites/default/files/03_ValerianMicheni_NDMA.pdf"
+      }
+     ]
+    },
+    {
+     "sector": "Water",
+     "action": "Run a rapid functionality check of boreholes, water pans and earth dams in the county",
+     "citations": [
+      {
+       "id": "KRCS-DROUGHT-EAP",
+       "title": "Kenya Red Cross / IFRC: Kenya Drought Early Action Protocol summary (EAP2022KE02)",
+       "url": "https://reliefweb.int/report/kenya/kenya-drought-early-action-protocol-summary-eap2022ke02"
+      }
+     ]
+    },
+    {
+     "sector": "Water",
+     "action": "Schedule repairs of broken water points and desilting of water pans while there is still lead time",
+     "citations": [
+      {
+       "id": "KRCS-DROUGHT-EAP",
+       "title": "Kenya Red Cross / IFRC: Kenya Drought Early Action Protocol summary (EAP2022KE02)",
+       "url": "https://reliefweb.int/report/kenya/kenya-drought-early-action-protocol-summary-eap2022ke02"
+      }
+     ]
+    },
+    {
+     "sector": "Livestock",
+     "action": "Alert livestock officers to monitor pasture, water distances and livestock body condition for early decline",
+     "citations": [
+      {
+       "id": "ACAPS-DROUGHT",
+       "title": "ACAPS: Kenya - Impact of drought (31 Mar 2022)",
+       "url": "https://www.acaps.org/sites/acaps/files/products/files/20220331_acaps_thematic_report_kenyaimpact_of_drought.pdf"
+      },
+      {
+       "id": "NDMA-BULLETIN",
+       "title": "NDMA National Drought Early Warning Bulletin, February 2026",
+       "url": "https://knowledgeweb.ndma.go.ke/Content/LibraryDocuments/National_Drought_Early_Warning_Bulletin_Feb_202620260311171955.pdf"
+      }
+     ]
+    },
+    {
+     "sector": "Anticipatory action",
+     "action": "Check whether early action protocol triggers (e.g. Kenya Red Cross drought EAP) are close to being met and confirm readiness",
+     "citations": [
+      {
+       "id": "KRCS-DROUGHT-EAP",
+       "title": "Kenya Red Cross / IFRC: Kenya Drought Early Action Protocol summary (EAP2022KE02)",
+       "url": "https://reliefweb.int/report/kenya/kenya-drought-early-action-protocol-summary-eap2022ke02"
+      },
+      {
+       "id": "NDMA-BULLETIN",
+       "title": "NDMA National Drought Early Warning Bulletin, February 2026",
+       "url": "https://knowledgeweb.ndma.go.ke/Content/LibraryDocuments/National_Drought_Early_Warning_Bulletin_Feb_202620260311171955.pdf"
+      }
+     ]
+    }
+   ],
+   "note": "Planning-support actions informed by the cited sources. This is not an official NDMA contingency plan. Drought Emergency and Recovery phases are declared by NDMA using food-security indicators this tool does not have, so the tool never issues them."
+  },
+  "drought|Alarm": {
+   "hazard": "drought",
+   "level": "Alarm",
+   "trigger": "3-month rainfall below 50% of normal, OR two consecutive assessed windows below 75% of normal",
+   "actions": [
+    {
+     "sector": "Coordination",
+     "action": "Request NDMA confirmation of the county phase and activate the county drought contingency plan through official channels",
+     "citations": [
+      {
+       "id": "NDMA-PHASES",
+       "title": "NDMA Kenya: Drought early warning system and phases (Normal, Alert, Alarm, Emergency, Recovery) - presentation to UN-SPIDER",
+       "url": "https://www.un-spider.org/sites/default/files/03_ValerianMicheni_NDMA.pdf"
+      },
+      {
+       "id": "NDMA-BULLETIN",
+       "title": "NDMA National Drought Early Warning Bulletin, February 2026",
+       "url": "https://knowledgeweb.ndma.go.ke/Content/LibraryDocuments/National_Drought_Early_Warning_Bulletin_Feb_202620260311171955.pdf"
+      }
+     ]
+    },
+    {
+     "sector": "Water",
+     "action": "Prepare water trucking and water-point repair for areas with the longest walking distances to water",
+     "citations": [
+      {
+       "id": "KRCS-DROUGHT-EAP",
+       "title": "Kenya Red Cross / IFRC: Kenya Drought Early Action Protocol summary (EAP2022KE02)",
+       "url": "https://reliefweb.int/report/kenya/kenya-drought-early-action-protocol-summary-eap2022ke02"
+      },
+      {
+       "id": "ACAPS-DROUGHT",
+       "title": "ACAPS: Kenya - Impact of drought (31 Mar 2022)",
+       "url": "https://www.acaps.org/sites/acaps/files/products/files/20220331_acaps_thematic_report_kenyaimpact_of_drought.pdf"
+      }
+     ]
+    },
+    {
+     "sector": "Cash",
+     "action": "Prepare cash support for the most affected households so they can buy water when vendor prices rise",
+     "citations": [
+      {
+       "id": "KRCS-DROUGHT-EAP",
+       "title": "Kenya Red Cross / IFRC: Kenya Drought Early Action Protocol summary (EAP2022KE02)",
+       "url": "https://reliefweb.int/report/kenya/kenya-drought-early-action-protocol-summary-eap2022ke02"
+      }
+     ]
+    },
+    {
+     "sector": "Nutrition and health",
+     "action": "Ask the county health department to scale up nutrition screening of children and pregnant or breastfeeding women",
+     "citations": [
+      {
+       "id": "ACAPS-DROUGHT",
+       "title": "ACAPS: Kenya - Impact of drought (31 Mar 2022)",
+       "url": "https://www.acaps.org/sites/acaps/files/products/files/20220331_acaps_thematic_report_kenyaimpact_of_drought.pdf"
+      }
+     ]
+    },
+    {
+     "sector": "Livestock",
+     "action": "Coordinate with livestock officers on timely offtake and feed or water support before animals lose condition",
+     "citations": [
+      {
+       "id": "ACAPS-DROUGHT",
+       "title": "ACAPS: Kenya - Impact of drought (31 Mar 2022)",
+       "url": "https://www.acaps.org/sites/acaps/files/products/files/20220331_acaps_thematic_report_kenyaimpact_of_drought.pdf"
+      },
+      {
+       "id": "NDMA-BULLETIN",
+       "title": "NDMA National Drought Early Warning Bulletin, February 2026",
+       "url": "https://knowledgeweb.ndma.go.ke/Content/LibraryDocuments/National_Drought_Early_Warning_Bulletin_Feb_202620260311171955.pdf"
+      }
+     ]
+    },
+    {
+     "sector": "Communication",
+     "action": "Publish an approved advisory in English and Swahili through county radio and chiefs' barazas",
+     "citations": [
+      {
+       "id": "NDMA-BULLETIN",
+       "title": "NDMA National Drought Early Warning Bulletin, February 2026",
+       "url": "https://knowledgeweb.ndma.go.ke/Content/LibraryDocuments/National_Drought_Early_Warning_Bulletin_Feb_202620260311171955.pdf"
+      }
+     ]
+    }
+   ],
+   "note": "Planning-support actions informed by the cited sources. This is not an official NDMA contingency plan. Drought Emergency and Recovery phases are declared by NDMA using food-security indicators this tool does not have, so the tool never issues them."
+  },
+  "heavy_rain|Watch": {
+   "hazard": "heavy_rain",
+   "level": "Watch",
+   "trigger": "Forecast 3-day rainfall total in the next 7 days above the county's 99th-percentile 3-day total",
+   "actions": [
+    {
+     "sector": "Coordination",
+     "action": "Check the latest Kenya Meteorological Department warnings; they take priority over this tool",
+     "citations": [
+      {
+       "id": "KMD",
+       "title": "Kenya Meteorological Department: official forecasts and warnings",
+       "url": "https://meteo.go.ke"
+      }
+     ]
+    },
+    {
+     "sector": "Early warning",
+     "action": "Send early warning messages to communities living along seasonal rivers (laggas) and in low-lying areas",
+     "citations": [
+      {
+       "id": "KRCS-FLOOD-EAP",
+       "title": "Kenya Red Cross / IFRC: Kenya Floods Early Action Protocol (EAP2021KE01)",
+       "url": "https://www.anticipation-hub.org/Documents/EAPs/EAP2021KE01_Kenya_Floods.pdf"
+      }
+     ]
+    },
+    {
+     "sector": "Preparedness",
+     "action": "Confirm the location and readiness of pre-positioned relief items (shelter kits, water treatment, hygiene kits)",
+     "citations": [
+      {
+       "id": "KRCS-FLOOD-EAP",
+       "title": "Kenya Red Cross / IFRC: Kenya Floods Early Action Protocol (EAP2021KE01)",
+       "url": "https://www.anticipation-hub.org/Documents/EAPs/EAP2021KE01_Kenya_Floods.pdf"
+      }
+     ]
+    },
+    {
+     "sector": "Infrastructure",
+     "action": "Inspect and clear drainage channels and culverts on key roads",
+     "citations": [
+      {
+       "id": "KRCS-FLOOD-EAP",
+       "title": "Kenya Red Cross / IFRC: Kenya Floods Early Action Protocol (EAP2021KE01)",
+       "url": "https://www.anticipation-hub.org/Documents/EAPs/EAP2021KE01_Kenya_Floods.pdf"
+      }
+     ]
+    },
+    {
+     "sector": "Health",
+     "action": "Alert the county health department to prepare for waterborne disease after flooding, including cholera",
+     "citations": [
+      {
+       "id": "OCHA-FLOODS-2024",
+       "title": "ReliefWeb: Kenya Floods - Apr 2024 (OCHA flash updates)",
+       "url": "https://reliefweb.int/disaster/FL-2024-000045-KEN"
+      }
+     ]
+    }
+   ],
+   "note": "Planning-support actions informed by the cited sources. This is not an official NDMA contingency plan. Drought Emergency and Recovery phases are declared by NDMA using food-security indicators this tool does not have, so the tool never issues them."
+  },
+  "heavy_rain|Warning": {
+   "hazard": "heavy_rain",
+   "level": "Warning",
+   "trigger": "Observed 3-day rainfall above the 99th percentile in the last 3 days AND more heavy rain forecast",
+   "actions": [
+    {
+     "sector": "Coordination",
+     "action": "Escalate to the County Disaster Management Committee and align with KMD and Kenya Red Cross updates",
+     "citations": [
+      {
+       "id": "KMD",
+       "title": "Kenya Meteorological Department: official forecasts and warnings",
+       "url": "https://meteo.go.ke"
+      },
+      {
+       "id": "OCHA-FLOODS-2024",
+       "title": "ReliefWeb: Kenya Floods - Apr 2024 (OCHA flash updates)",
+       "url": "https://reliefweb.int/disaster/FL-2024-000045-KEN"
+      }
+     ]
+    },
+    {
+     "sector": "Evacuation",
+     "action": "Prepare evacuation of households in flood-prone areas to identified safe sites",
+     "citations": [
+      {
+       "id": "KRCS-FLOOD-EAP",
+       "title": "Kenya Red Cross / IFRC: Kenya Floods Early Action Protocol (EAP2021KE01)",
+       "url": "https://www.anticipation-hub.org/Documents/EAPs/EAP2021KE01_Kenya_Floods.pdf"
+      },
+      {
+       "id": "OCHA-FLOODS-2024",
+       "title": "ReliefWeb: Kenya Floods - Apr 2024 (OCHA flash updates)",
+       "url": "https://reliefweb.int/disaster/FL-2024-000045-KEN"
+      }
+     ]
+    },
+    {
+     "sector": "Shelter and WASH",
+     "action": "Distribute water treatment and hygiene supplies to displaced households",
+     "citations": [
+      {
+       "id": "OCHA-FLOODS-2024",
+       "title": "ReliefWeb: Kenya Floods - Apr 2024 (OCHA flash updates)",
+       "url": "https://reliefweb.int/disaster/FL-2024-000045-KEN"
+      },
+      {
+       "id": "KRCS-FLOOD-EAP",
+       "title": "Kenya Red Cross / IFRC: Kenya Floods Early Action Protocol (EAP2021KE01)",
+       "url": "https://www.anticipation-hub.org/Documents/EAPs/EAP2021KE01_Kenya_Floods.pdf"
+      }
+     ]
+    },
+    {
+     "sector": "Access",
+     "action": "Map cut-off roads and bridges to plan how relief will reach isolated areas",
+     "citations": [
+      {
+       "id": "OCHA-FLOODS-2024",
+       "title": "ReliefWeb: Kenya Floods - Apr 2024 (OCHA flash updates)",
+       "url": "https://reliefweb.int/disaster/FL-2024-000045-KEN"
+      }
+     ]
+    },
+    {
+     "sector": "Health",
+     "action": "Increase disease surveillance and readiness for cholera cases in affected areas",
+     "citations": [
+      {
+       "id": "OCHA-FLOODS-2024",
+       "title": "ReliefWeb: Kenya Floods - Apr 2024 (OCHA flash updates)",
+       "url": "https://reliefweb.int/disaster/FL-2024-000045-KEN"
+      }
+     ]
+    }
+   ],
+   "note": "Planning-support actions informed by the cited sources. This is not an official NDMA contingency plan. Drought Emergency and Recovery phases are declared by NDMA using food-security indicators this tool does not have, so the tool never issues them."
+  },
+  "heat|Watch": {
+   "hazard": "heat",
+   "level": "Watch",
+   "trigger": "3 or more forecast days in the next 7 with apparent maximum temperature above the county's 95th percentile",
+   "actions": [
+    {
+     "sector": "Communication",
+     "action": "Issue public heat advice: drink water, avoid midday sun, check on older people and young children",
+     "citations": [
+      {
+       "id": "WHO-HEAT",
+       "title": "WHO: Heat-health action plans - guidance, second edition",
+       "url": "https://who.int/europe/publications/i/item/9789289062930"
+      }
+     ]
+    },
+    {
+     "sector": "Health",
+     "action": "Alert health facilities to expect heat-related illness and confirm cooling and rehydration supplies",
+     "citations": [
+      {
+       "id": "WHO-HEAT",
+       "title": "WHO: Heat-health action plans - guidance, second edition",
+       "url": "https://who.int/europe/publications/i/item/9789289062930"
+      }
+     ]
+    },
+    {
+     "sector": "Schools",
+     "action": "Advise schools to shift outdoor activities away from the hottest hours and ensure drinking water",
+     "citations": [
+      {
+       "id": "WHO-HEAT",
+       "title": "WHO: Heat-health action plans - guidance, second edition",
+       "url": "https://who.int/europe/publications/i/item/9789289062930"
+      }
+     ]
+    },
+    {
+     "sector": "Livelihoods",
+     "action": "Advise employers and outdoor workers, including herders, to schedule heavy work for cooler hours",
+     "citations": [
+      {
+       "id": "WHO-HEAT",
+       "title": "WHO: Heat-health action plans - guidance, second edition",
+       "url": "https://who.int/europe/publications/i/item/9789289062930"
+      }
+     ]
+    },
+    {
+     "sector": "Water",
+     "action": "Check that water points can cope with higher demand from people and livestock",
+     "citations": [
+      {
+       "id": "WHO-HEAT",
+       "title": "WHO: Heat-health action plans - guidance, second edition",
+       "url": "https://who.int/europe/publications/i/item/9789289062930"
+      },
+      {
+       "id": "KRCS-DROUGHT-EAP",
+       "title": "Kenya Red Cross / IFRC: Kenya Drought Early Action Protocol summary (EAP2022KE02)",
+       "url": "https://reliefweb.int/report/kenya/kenya-drought-early-action-protocol-summary-eap2022ke02"
+      }
+     ]
+    }
+   ],
+   "note": "Planning-support actions informed by the cited sources. This is not an official NDMA contingency plan. Drought Emergency and Recovery phases are declared by NDMA using food-security indicators this tool does not have, so the tool never issues them."
+  },
+  "heat|Warning": {
+   "hazard": "heat",
+   "level": "Warning",
+   "trigger": "5 or more forecast days in the next 7 above the county's 95th percentile",
+   "actions": [
+    {
+     "sector": "Coordination",
+     "action": "Activate pre-agreed heat actions with the county health department; link the warning to specific responsibilities",
+     "citations": [
+      {
+       "id": "WHO-HEAT",
+       "title": "WHO: Heat-health action plans - guidance, second edition",
+       "url": "https://who.int/europe/publications/i/item/9789289062930"
+      }
+     ]
+    },
+    {
+     "sector": "At-risk groups",
+     "action": "Prioritise outreach to older people, young children, people with chronic illness and outdoor workers",
+     "citations": [
+      {
+       "id": "WHO-HEAT",
+       "title": "WHO: Heat-health action plans - guidance, second edition",
+       "url": "https://who.int/europe/publications/i/item/9789289062930"
+      }
+     ]
+    },
+    {
+     "sector": "Health",
+     "action": "Ensure cooling in health facilities and schools where possible",
+     "citations": [
+      {
+       "id": "WHO-HEAT",
+       "title": "WHO: Heat-health action plans - guidance, second edition",
+       "url": "https://who.int/europe/publications/i/item/9789289062930"
+      }
+     ]
+    },
+    {
+     "sector": "Surveillance",
+     "action": "Track heat-related illness reports during the event to judge whether actions are working",
+     "citations": [
+      {
+       "id": "WHO-HEAT",
+       "title": "WHO: Heat-health action plans - guidance, second edition",
+       "url": "https://who.int/europe/publications/i/item/9789289062930"
+      }
+     ]
+    },
+    {
+     "sector": "Compound risk",
+     "action": "If drought is also at Alert or Alarm, treat water supply as the top priority for people and livestock",
+     "citations": [
+      {
+       "id": "KRCS-DROUGHT-EAP",
+       "title": "Kenya Red Cross / IFRC: Kenya Drought Early Action Protocol summary (EAP2022KE02)",
+       "url": "https://reliefweb.int/report/kenya/kenya-drought-early-action-protocol-summary-eap2022ke02"
+      },
+      {
+       "id": "ACAPS-DROUGHT",
+       "title": "ACAPS: Kenya - Impact of drought (31 Mar 2022)",
+       "url": "https://www.acaps.org/sites/acaps/files/products/files/20220331_acaps_thematic_report_kenyaimpact_of_drought.pdf"
+      }
+     ]
+    }
+   ],
+   "note": "Planning-support actions informed by the cited sources. This is not an official NDMA contingency plan. Drought Emergency and Recovery phases are declared by NDMA using food-security indicators this tool does not have, so the tool never issues them."
+  }
+ },
+ "other_counties": [
+  "Baringo",
+  "Bomet",
+  "Bungoma",
+  "Busia",
+  "Elgeyo-Marakwet",
+  "Embu",
+  "Homa Bay",
+  "Kajiado",
+  "Kakamega",
+  "Kericho",
+  "Kiambu",
+  "Kilifi",
+  "Kirinyaga",
+  "Kisii",
+  "Kisumu",
+  "Kwale",
+  "Laikipia",
+  "Lamu",
+  "Machakos",
+  "Makueni",
+  "Meru",
+  "Migori",
+  "Mombasa",
+  "Murang'a",
+  "Nairobi",
+  "Nakuru",
+  "Nandi",
+  "Narok",
+  "Nyamira",
+  "Nyandarua",
+  "Nyeri",
+  "Siaya",
+  "Taita Taveta",
+  "Tana River",
+  "Tharaka",
+  "Trans Nzoia",
+  "Uasin Gishu",
+  "Vihiga",
+  "West Pokot"
+ ],
+ "cyclone_refusal": "I can't predict cyclone paths or landfall. For tropical cyclone forecasts in the South-West Indian Ocean, follow the Kenya Meteorological Department (meteo.go.ke) and the WMO Regional Specialized Meteorological Centre La R\u00e9union. This tool covers drought, heavy rain and heat for eight inland counties.",
+ "disclaimer": "Planning-support draft only, not an official warning. Kenya Meteorological Department warnings and NDMA drought bulletins take priority.",
+ "forecast": {
+  "url": "https://api.open-meteo.com/v1/forecast",
+  "timezone": "Africa/Nairobi",
+  "heat_watch_days": 3,
+  "heat_warning_days": 5
+ }
+}

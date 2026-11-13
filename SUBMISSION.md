@@ -64,7 +64,7 @@ with `ollama pull qwen2.5:3b` (see README).
 git clone https://github.com/PatrickWangai/ukame-watch.git && cd ukame-watch
 python3.12 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt
 python tools/build_all.py           # rebuilds every result from public data (~1 minute)
-pytest                              # 92 tests
+pytest                              # 93 tests
 streamlit run app/streamlit_app.py  # the dashboard
 ```
 

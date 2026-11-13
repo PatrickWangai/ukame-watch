@@ -28,6 +28,7 @@ def test_ordinary_questions_are_not_flagged_as_cyclone_track(q):
     "Garissa is completely safe this season",
     "Zero risk of flooding.",
     "Rainfall is guaranteed to be normal",
+    "While there is no immediate risk of flooding, stay alert.",
 ])
 def test_absolute_safety_claims_are_caught(text):
     assert G.makes_absolute_safety_claim(text)

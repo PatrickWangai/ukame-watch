@@ -8,6 +8,7 @@ Zetech Alumni × Student Hackathon 2026 · ML & Data Science track · **Challeng
 | | |
 |---|---|
 | **Live site** | https://patrickwangai.github.io/ukame-watch/ (dashboard only: https://patrickwangai.github.io/ukame-watch/dashboard.html, first load 1–2 minutes) |
+| **AI assistant in your browser** | https://patrickwangai.github.io/ukame-watch/assistant.html (recent Chrome or Edge on a laptop; the model downloads once, about 0.8 GB) |
 | **Demo video** (2 min 57 s, captioned) | https://patrickwangai.github.io/ukame-watch/docs/ukame-watch-demo.mp4 |
 | **Submission report** (every deliverable, linked) | [SUBMISSION.md](SUBMISSION.md) |
 | **Run it yourself** | [Quick start](#quick-start) |
@@ -39,7 +40,8 @@ The project has three parts:
   validates them against documented disasters and trains the forecast.
 - **A dashboard.** It runs online in any browser, or offline on a laptop.
 - **An AI assistant.** Qwen 2.5 3B runs locally. It can only use six data tools, and code checks every
-  number it writes.
+  number it writes. On the website, a smaller open model (Qwen 2.5 1.5B) runs the same flow inside the visitor's
+  browser ([assistant.html](assistant.html)), so nothing typed leaves their device.
 
 Secondary users include county agriculture and livestock officers, and humanitarian partners planning water,
 cash and nutrition support.
@@ -67,7 +69,7 @@ Below the map, seven tabs give the detail:
 | **7-day watch** | The live Open-Meteo forecast for the next 7 days, against the county's own extremes: 3-day rain above its 99th percentile, and maximum temperature above its 95th percentile |
 | **Heat stress** | Hot days per year since 1991, with the trend test (Mann-Kendall and Sen's slope) and the results for all counties |
 | **Track record** | Whether the indicators caught the 10 documented disasters, and whether the worst periods in the data match them. It also has the 8-county rainfall for every rainy season and the cross-check against ERA5 |
-| **Draft an advisory** | The AI assistant. Ask a question, read the draft, its sources and checks, then **Approve** or **Reject** it under your name. Every decision goes into the decision log. The live assistant runs on a laptop with Ollama (see [Quick start](#quick-start)); the online version shows the recorded 8-question test run instead |
+| **Draft an advisory** | The AI assistant. Ask a question, read the draft, its sources and checks, then **Approve** or **Reject** it under your name. Every decision goes into the decision log. The laptop version runs with Ollama (see [Quick start](#quick-start)); the online dashboard shows the recorded 8-question test run instead, and the live in-browser assistant is at [assistant.html](assistant.html) |
 | **Method & limits** | The full limitations note ([docs/limitations.md](docs/limitations.md)) |
 
 ## 2. Problem statement
@@ -197,6 +199,8 @@ flags some dry seasons that were never declared disasters.
 - **Guardrails are necessary.** The small model once described Samburu (Alarm) as being at "Alert" level. A
   code check now flags any draft whose drought level word differs from the data. Note that the logged
   evaluation predates this check.
+- **In the browser:** the smallest browser model (Qwen 2.5 0.5B) once wrote "14,700 people" for Samburu, a number
+  that is not in the data. The number check flagged it and held the draft for review.
 - **Speed:** on a MacBook Air M1 with 8 GB of memory, a draft takes about 3 to 54 seconds. It needs no internet
   except for the live forecast, and nothing leaves the laptop.
 
@@ -264,7 +268,10 @@ ollama pull qwen2.5:3b
 python tools/run_agent_eval.py                    # 8-question evaluation -> logs/agent_eval.md
 python tools/run_agent_eval.py --review "Name"    # same, with a person approving or rejecting each draft
 
-pytest                                  # 92 tests
+python tools/make_web_demo.py          # rebuild dashboard.html (the browser dashboard)
+python tools/make_assistant_data.py    # rebuild assistant-data.json (the in-browser assistant)
+
+pytest                                  # 93 tests
 ```
 
 Processed results are committed in `data/processed/`, so the dashboard runs even without internet
@@ -337,10 +344,11 @@ replace NDMA or KMD. Its value depends on officers acting on its drafts, and we 
 | Analysis | pandas, NumPy, SciPy, pymannkendall (trend tests), GeoPandas, Shapely, rasterio, rasterstats |
 | Model | scikit-learn logistic regression per season, time-based split, Brier skill score vs climatology and persistence |
 | AI assistant | Qwen 2.5 3B via Ollama (local), six Python tools, code-level guardrails, JSONL audit logs |
+| In-browser AI | Qwen 2.5 1.5B Instruct via WebLLM (MLC) on WebGPU, the same guardrails ported to JavaScript (`assistant.html`) |
 | Dashboard | Streamlit, Plotly |
 | Live demo | stlite (Streamlit on Pyodide/WebAssembly), GitHub Pages |
 | Notebooks | Jupyter (nbformat, nbconvert), Matplotlib |
-| Testing | pytest (92 tests) |
+| Testing | pytest (93 tests) |
 | Hardware | Runs on a MacBook Air M1 with 8 GB RAM; no GPU, no paid services |
 
 All data sources, access dates and licences: [DATA.md](DATA.md).
@@ -365,7 +373,7 @@ data/processed/           build outputs read by the app (regenerated by build_al
 notebooks/                weather behaviour and forecasting notebooks (executed)
 docs/                     playbook.md (generated), limitations.md, demo video, finale slides
 logs/                     agent evaluation and audit logs
-tests/                    92 tests
+tests/                    93 tests
 ```
 
 Details: `notebooks/01_weather_behaviour.ipynb`, `notebooks/02_forecasting.ipynb`, `logs/agent_eval.md`.
@@ -375,6 +383,7 @@ Details: `notebooks/01_weather_behaviour.ipynb`, `notebooks/02_forecasting.ipynb
 | Model | Provider and licence | How we use it |
 |---|---|---|
 | **Qwen 2.5 3B Instruct** (`qwen2.5:3b`) | Alibaba Cloud Qwen team, [Qwen Research License](https://huggingface.co/Qwen/Qwen2.5-3B-Instruct) (non-commercial research use; this is a non-commercial hackathon prototype) | Runs **locally** through Ollama, selected explicitly in `src/ukame/config.py`. It only chooses which of six data tools to call and words the draft advisory. It never calculates: every number comes from a tool and is checked in code |
+| **Qwen 2.5 1.5B Instruct** (and 0.5B as a quicker option) | Alibaba Cloud Qwen team, Apache 2.0; browser build by the MLC WebLLM project | Runs **in the visitor's browser** on the website ([assistant.html](assistant.html)). Code calls all the data tools for the chosen county; the model only words the draft; code checks numbers and level words, adds the playbook and sources, and a person approves |
 | **Logistic regression** (scikit-learn, BSD licence) | Trained by us | Seasonal outlook: probability that the next 3 months fall in the driest third, one model per season group, trained 1991–2016, tested 2017–2026 |
 | **MERRA-2 reanalysis** via NASA POWER | NASA, free and open | Source of daily rainfall and temperature (a weather model constrained by observations, not station data) |
 | **ERA5 reanalysis** via Open-Meteo | ECMWF / Copernicus, CC BY 4.0 via Open-Meteo | Cross-check and quality control of suspicious rainfall days |

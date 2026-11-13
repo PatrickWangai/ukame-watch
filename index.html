@@ -117,6 +117,8 @@
   .tabs-guide b { display: block; font-family: var(--display); font-size: 22px; line-height: 1.1; color: var(--jade); margin-bottom: 6px; }
   .tabs-guide b::before { content: counter(tab) " "; color: var(--ink2); font-weight: 400; }
   .tabs-guide span { display: block; color: var(--ink2); font-size: 16px; line-height: 1.4; }
+  .assist-frame { margin-top: 28px; border-radius: 18px; overflow: hidden; border: 1px solid var(--line); background: var(--dust); height: min(92svh, 1100px); min-height: 720px; box-shadow: 0 20px 60px rgba(27,29,28,.10); }
+  .assist-frame iframe { width: 100%; height: 100%; border: 0; display: block; }
   .board-frame { position: relative; margin-top: 36px; border-radius: 18px; overflow: hidden; border: 1px solid var(--line); background: var(--dust); height: min(90svh, 960px); min-height: 640px; box-shadow: 0 20px 60px rgba(27,29,28,.10); }
   .board-frame iframe { width: 100%; height: 100%; border: 0; display: block; }
   .loader { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; gap: 14px; background: var(--dust); padding: 24px; transition: opacity .5s; }
@@ -184,6 +186,7 @@
       <li class="hide-sm"><a href="#story">The whiplash</a></li>
       <li class="hide-sm"><a href="#proof">Proof</a></li>
       <li class="hide-sm"><a href="#requirements">Requirements</a></li>
+      <li><a href="#assistant">AI assistant</a></li>
       <li><a href="#board">Live board</a></li>
       <li><a href="https://github.com/PatrickWangai/ukame-watch">GitHub</a></li>
     </ul></nav>
@@ -274,7 +277,7 @@
       <li><a href="https://github.com/PatrickWangai/ukame-watch/blob/main/notebooks/02_forecasting.ipynb">Forecasting notebook</a></li>
       <li>Working app: <a href="dashboard.html">in the browser</a>, or locally with the AI assistant</li>
       <li><a href="https://github.com/PatrickWangai/ukame-watch/blob/main/docs/playbook.md">Playbook</a> and <a href="https://github.com/PatrickWangai/ukame-watch/blob/main/docs/limitations.md">limitations note</a></li>
-      <li>Reproducible: one command rebuilds every number; 92 automated tests</li>
+      <li>Reproducible: one command rebuilds every number; 93 automated tests</li>
       <li class="todo">Agent log with a team member’s approval (added before the freeze)</li>
       <li><a href="docs/ukame-watch-demo.mp4">3-minute captioned demo video</a></li>
       <li><a href="https://github.com/PatrickWangai/ukame-watch/blob/main/SUBMISSION.md">Submission report</a> listing every item</li>
@@ -308,6 +311,19 @@
     <p class="lede reveal" style="margin-top:28px">What we can claim: Ukame Watch shortens the time between a rainfall signal and a county conversation about preparedness. It does not measure hunger or losses, and it has not yet been tested with county officers.</p>
   </section>
 
+  <section class="block wrap" id="assistant" aria-labelledby="assist-title">
+    <p class="eyebrow">Ask it</p>
+    <h2 id="assist-title">The AI assistant, running in your browser</h2>
+    <p class="lede">Ask about any of the eight counties. Code fetches the data from six tools, a small open model (Qwen 2.5 1.5B) writes the draft on your own device, code checks every number and drought level and adds the cited playbook, and a named person approves or rejects it. Nothing you type leaves your computer. Needs a recent Chrome or Edge on a laptop; the model downloads once (about 0.8 GB).</p>
+    <div class="assist-frame">
+      <iframe src="assistant.html" title="Ukame Watch AI assistant" loading="lazy"></iframe>
+    </div>
+    <div class="board-links">
+      <a href="assistant.html">Open the assistant full screen →</a>
+      <a href="https://github.com/PatrickWangai/ukame-watch/blob/main/logs/agent_eval.md">Recorded 8-question test run (laptop, Qwen 2.5 3B) →</a>
+    </div>
+  </section>
+
   <section class="block wrap" id="board" aria-labelledby="board-title">
     <p class="eyebrow">Live</p>
     <h2 id="board-title">The live board</h2>
@@ -319,11 +335,11 @@
       <li><b>7-day watch</b><span>The live forecast against the county’s own heavy-rain and heat extremes</span></li>
       <li><b>Heat stress</b><span>Hot days per year since 1991, with trend tests for every county</span></li>
       <li><b>Track record</b><span>The 10 documented disasters it caught, and the cross-check against ERA5</span></li>
-      <li><b>Draft an advisory</b><span>The AI assistant, with approve or reject. It runs live on a laptop; online it shows the recorded test run</span></li>
+      <li><b>Draft an advisory</b><span>The laptop version of the assistant. Online it shows the recorded test run; use the in-browser assistant above to try it live</span></li>
       <li><b>Method &amp; limits</b><span>The full limitations note</span></li>
     </ol>
     <div class="board-frame">
-      <iframe id="board-frame" title="Ukame Watch live dashboard" data-src="dashboard.html?v=20261113123810"></iframe>
+      <iframe id="board-frame" title="Ukame Watch live dashboard" data-src="dashboard.html?v=20261113134502"></iframe>
       <div class="loader" id="loader" role="status">
         <p class="t">Starting the board</p>
         <p id="loader-text">Python is downloading into your browser. The first visit takes about a minute; later visits are faster.</p>

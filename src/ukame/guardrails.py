@@ -23,7 +23,7 @@ _CYCLONE = re.compile(r"\b(cyclone|hurricane|typhoon|tropical storm)s?\b", re.I)
 _TRACK = re.compile(r"\b(path|track|trajectory|landfall|where will|head(?:ing)?|hit|predict|forecast)\b", re.I)
 
 _ABSOLUTE = re.compile(
-    r"\b(no risk|zero risk|completely safe|totally safe|100% safe|guaranteed|nothing to worry|no chance)\b", re.I)
+    r"\b(no (?:immediate |real |significant |serious )?risk|zero risk|completely safe|totally safe|100% safe|guaranteed|nothing to worry|no chance)\b", re.I)
 
 _NUMBER = re.compile(r"(?<![\w.])\d[\d,]*(?:\.\d+)?")
 

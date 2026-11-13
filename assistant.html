@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ask Ukame Watch: the AI assistant, running in your browser</title>
+<meta name="description" content="Ukame Watch's advisory assistant running entirely in your browser: a small open model, six data tools, code-checked numbers and human approval.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%230F6E66%22/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+  :root {
+    --dust: #EEF0EC; --card: #FCFCFB; --ink: #1B1D1C; --ink2: #3E423D; --muted: #5E625D;
+    --jade: #0F6E66; --jade-light: #6FC1B5; --line: #D9DCD6; --alarm: #b8302f; --warn: #9a5b00;
+    --display: 'Archivo Narrow', 'Arial Narrow', Arial, sans-serif;
+    --body: 'Atkinson Hyperlegible', Verdana, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--dust); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+  a { color: var(--jade); }
+  :focus-visible { outline: 3px solid var(--jade); outline-offset: 2px; border-radius: 4px; }
+  .wrap { width: min(1080px, 100% - 32px); margin: 0 auto; padding: 28px 0 48px; }
+  h1 { font-family: var(--display); font-size: clamp(34px, 5vw, 52px); line-height: 1; margin: 0 0 10px; }
+  h1 span { color: var(--jade); }
+  h2 { font-family: var(--display); font-size: 26px; margin: 0 0 12px; }
+  .lede { color: var(--ink2); margin: 0 0 18px; max-width: 70ch; }
+  .note { border-left: 5px solid var(--jade); background: var(--card); padding: 12px 16px; border-radius: 8px; margin: 0 0 18px; font-size: 15px; color: var(--ink2); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px; margin: 0 0 16px; }
+  .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; }
+  label { display: block; font-weight: 700; font-size: 15px; margin: 0 0 6px; }
+  select, textarea, input[type=text] { font: inherit; font-size: 16px; color: var(--ink); background: #fff; border: 1px solid #b9bdb6; border-radius: 10px; padding: 10px 12px; }
+  textarea { width: 100%; min-height: 76px; resize: vertical; }
+  button { font: inherit; font-weight: 700; font-size: 16px; border-radius: 10px; padding: 10px 18px; cursor: pointer; border: 1px solid var(--jade); background: var(--jade); color: #fff; }
+  button.ghost { background: transparent; color: var(--jade); }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 12px; }
+  .chip { font-weight: 400; font-size: 14px; padding: 6px 12px; border-radius: 999px; background: transparent; color: var(--ink2); border: 1px solid var(--line); }
+  .chip:hover { border-color: var(--jade); color: var(--jade); }
+  .bar { height: 8px; background: var(--line); border-radius: 99px; overflow: hidden; margin: 12px 0 6px; }
+  .bar i { display: block; height: 100%; width: 0; background: var(--jade); transition: width .3s; }
+  .small { font-size: 14px; color: var(--muted); }
+  .badge { display: inline-block; color: #fff; font-weight: 700; font-size: 14px; padding: 4px 12px; border-radius: 999px; margin: 0 0 12px; }
+  .out { font-size: 16px; }
+  .out h4 { font-family: var(--display); font-size: 21px; margin: 16px 0 4px; }
+  .out p { margin: 0 0 10px; }
+  .out ul, .out ol { margin: 0 0 10px; padding-left: 22px; }
+  .live { white-space: pre-wrap; color: var(--ink2); }
+  .flag { border-radius: 10px; padding: 10px 14px; margin: 10px 0; font-size: 15px; }
+  .flag.err { background: #f7e1df; color: #7a1f1e; }
+  .flag.warn { background: #f6ecd9; color: #5c3900; }
+  details { margin: 12px 0; }
+  summary { cursor: pointer; font-weight: 700; }
+  pre { white-space: pre-wrap; word-break: break-word; background: var(--dust); border-radius: 8px; padding: 10px; font-size: 12.5px; max-height: 260px; overflow: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Ask Ukame <span>Watch</span></h1>
+  <p class="lede">The advisory assistant, running entirely in your browser. Code fetches the data from six tools; a small open AI model only writes the wording; code then checks every number and drought level, adds the cited playbook, and holds the result as a draft until a named person approves it.</p>
+  <p class="note"><b>Planning support only, not an official warning.</b> Kenya Meteorological Department warnings and NDMA drought bulletins take priority. Nothing you type leaves your device: the model runs on your own computer's graphics chip (WebGPU). On the team's laptop the same assistant runs with the larger Qwen 2.5 3B model through Ollama.</p>
+
+  <section class="card" id="setup" aria-labelledby="setup-h">
+    <h2 id="setup-h">1. Start the assistant</h2>
+    <div id="nogpu" class="flag warn hidden" role="alert"></div>
+    <div class="row" id="setup-controls">
+      <div>
+        <label for="model">Model</label>
+        <select id="model">
+          <option value="Qwen2.5-1.5B-Instruct">Qwen 2.5 1.5B: better answers (about 1 GB download, once)</option>
+          <option value="Qwen2.5-0.5B-Instruct">Qwen 2.5 0.5B: quicker download (about 0.3 GB), weaker answers</option>
+        </select>
+      </div>
+      <button id="start">Start the assistant</button>
+    </div>
+    <div class="bar" aria-hidden="true"><i id="bar"></i></div>
+    <p class="small" id="load-text" aria-live="polite">The model downloads once and is then kept by your browser. Cyclone-path and other-county questions are answered by code straight away, without the model.</p>
+  </section>
+
+  <section class="card" aria-labelledby="ask-h">
+    <h2 id="ask-h">2. Ask a question</h2>
+    <div class="row">
+      <div>
+        <label for="county">County</label>
+        <select id="county"></select>
+      </div>
+    </div>
+    <div class="chips" id="chips" aria-label="Example questions"></div>
+    <label for="q">Your question</label>
+    <textarea id="q"></textarea>
+    <div class="row" style="margin-top:10px">
+      <button id="ask">Draft advisory</button>
+      <span class="small" id="ask-text" aria-live="polite"></span>
+    </div>
+  </section>
+
+  <section class="card hidden" id="result" aria-labelledby="res-h" aria-live="polite">
+    <h2 id="res-h">3. Review the draft</h2>
+    <span class="badge" id="badge"></span>
+    <div class="out" id="out"></div>
+    <div id="flags"></div>
+    <details id="calls"><summary id="calls-sum">Tool calls</summary><div id="calls-body"></div></details>
+    <div id="approve" class="row hidden" style="margin-top:8px">
+      <div style="flex:1;min-width:240px">
+        <label for="who">Your name and role (recorded with the decision)</label>
+        <input type="text" id="who" style="width:100%" placeholder="e.g. Jane Doe, county disaster officer">
+      </div>
+      <button id="yes" disabled>Approve</button>
+      <button id="no" class="ghost" disabled>Reject</button>
+    </div>
+    <p class="small" id="decided" aria-live="polite"></p>
+  </section>
+
+  <section class="card hidden" id="logcard" aria-labelledby="log-h">
+    <h2 id="log-h">Decision log (kept in this browser)</h2>
+    <table><thead><tr><th>When</th><th>Decision</th><th>Approver</th><th>Question</th></tr></thead><tbody id="log"></tbody></table>
+    <p style="margin:12px 0 0"><button class="ghost" id="dl">Download the log (JSON lines)</button></p>
+  </section>
+
+  <p class="small">Model: Qwen 2.5 Instruct (Alibaba Cloud Qwen team, Apache 2.0), compiled for browsers by the MLC <a href="https://github.com/mlc-ai/web-llm" target="_blank" rel="noopener">WebLLM</a> project. Data: NASA POWER, Open-Meteo, NOAA CPC, KNBS 2019 census. Code: <a href="https://github.com/PatrickWangai/ukame-watch" target="_blank" rel="noopener">github.com/PatrickWangai/ukame-watch</a>.</p>
+</div>
+
+<script type="module">
+const WEBLLM = "https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.88/+esm";
+const $ = (id) => document.getElementById(id);
+const DATA = await (await fetch("assistant-data.json?v=" + Date.now().toString().slice(0, 7))).json();
+const COUNTIES = Object.keys(DATA.counties);
+let engine = null, current = null;
+
+// ------------------------------------------------------------------ guardrails (ported from src/ukame/guardrails.py)
+const CYCLONE = /\b(cyclone|hurricane|typhoon|tropical storm)s?\b/i;
+const TRACK = /\b(path|track|trajectory|landfall|where will|head(?:ing)?|hit|predict|forecast)\b/i;
+const ABSOLUTE = /\b(no (?:immediate |real |significant |serious )?risk|zero risk|completely safe|totally safe|100% safe|guaranteed|nothing to worry|no chance)\b/i;
+const NUMBER = /(?<![\w.])\d[\d,]*(?:\.\d+)?/g;
+const I_DONT_KNOW = /\bI (?:don'?t|do not|can'?t|cannot) (?:know|have|predict)/i;
+const W = "(Normal|None|Alert|Alarm|Emergency|Recovery)";
+const LV = "(?:[Ll]evel|LEVEL|[Pp]hase|PHASE|[Ss]tage|STAGE)";
+const SEP = "[\\s*_`:=\"“”']*";
+const LEVEL_PATTERNS = [
+  new RegExp(`\\b${W}\\s+(?:[Dd]rought\\s+)?${LV}\\b`, "g"),
+  new RegExp(`\\b${LV}\\b${SEP}(?:(?:[Ii]s|IS|[Oo]f|OF|[Aa]t|AT)\\b${SEP})?${W}\\b`, "g"),
+];
+const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const mentions = (q, names) => names.filter((n) => new RegExp(`\\b${esc(n)}\\b`, "i").test(q));
+const toF = (s) => { const v = parseFloat(String(s).replace(/,/g, "")); return Number.isNaN(v) ? null : v; };
+const rnd = (x, d) => Math.round(x * 10 ** d) / 10 ** d;
+
+function ungroundedNumbers(answer, toolsText, allowed) {
+  const cand = [];
+  for (const m of toolsText.matchAll(NUMBER)) {
+    const v = toF(m[0]); if (v === null) continue;
+    for (const x of [v, v * 100]) cand.push(x, rnd(x, 0), rnd(x, 1), rnd(x, 2));
+  }
+  const ok = new Set(allowed.map(toF));
+  const bad = [];
+  for (const m of answer.matchAll(NUMBER)) {
+    const raw = m[0], after = answer.slice(m.index + raw.length, m.index + raw.length + 2).toLowerCase();
+    if (["st", "nd", "rd", "th"].includes(after)) continue;  // ordinals such as "99th percentile"
+    const val = toF(raw.replace(/[.,]+$/, ""));
+    if (val === null || (Number.isInteger(val) && val >= 0 && val <= 10) || ok.has(val)) continue;
+    if (!cand.some((c) => Math.abs(val - c) < 1e-9)) bad.push(raw.replace(/,/g, "").replace(/\.$/, ""));
+  }
+  return bad;
+}
+const canon = (w) => (w === "None" || w === "Normal" ? "Normal" : w);
+function levelMismatches(text, outputs) {
+  const reported = new Set(outputs.filter((o) => o && ["None", "Alert", "Alarm"].includes(o.drought_level)).map((o) => canon(o.drought_level)));
+  if (!reported.size) return [];
+  const wrong = [];
+  for (const p of LEVEL_PATTERNS) for (const m of text.matchAll(p)) { const w = canon(m[1]); if (!reported.has(w) && !wrong.includes(w)) wrong.push(w); }
+  return wrong;
+}
+
+// ------------------------------------------------------------------ tools
+const SEASONS = { NDJ: "Nov–Jan", DJF: "Dec–Feb", JFM: "Jan–Mar", FMA: "Feb–Apr", MAM: "Mar–May", AMJ: "Apr–Jun", MJJ: "May–Jul", JJA: "Jun–Aug", JAS: "Jul–Sep", ASO: "Aug–Oct", SON: "Sep–Nov", OND: "Oct–Dec" };
+const nice = (w) => { const [s, y] = String(w).split(" "); return SEASONS[s] ? `${SEASONS[s]} ${y}` : w; };
+const fmt = (n) => Number(n).toLocaleString("en-US");
+const pct = (x) => `${Math.round(x * 100)}%`;
+
+async function get7dayWatch(county) {  // same logic as src/ukame/watch.py, on the live Open-Meteo forecast
+  const c = DATA.counties[county], f = DATA.forecast;
+  const url = `${f.url}?latitude=${c.lat}&longitude=${c.lon}&forecast_days=7&timezone=${encodeURIComponent(f.timezone)}&daily=precipitation_sum,temperature_2m_max`;
+  try {
+    const r = await fetch(url, { signal: AbortSignal.timeout(15000) });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const d = (await r.json()).daily;
+    const rain = d.precipitation_sum.map((v) => (v == null ? NaN : v)), tmax = d.temperature_2m_max;
+    const rain3 = rain.map((_, i) => (i < 2 ? NaN : rain[i] + rain[i - 1] + rain[i - 2]));
+    const p99 = c.thresholds.rain_3day_p99_mm, p95 = c.thresholds.heat_tmax_p95_c;
+    const valid = rain3.filter((v) => !Number.isNaN(v));
+    const alertDates = d.time.filter((_, i) => rain3[i] > p99);
+    const heatDays = tmax.filter((t) => t != null && t > p95).length;
+    return {
+      county, forecast_start: d.time[0], forecast_end: d.time[d.time.length - 1],
+      max_3day_forecast_mm: valid.length ? rnd(Math.max(...valid), 1) : null, threshold_3day_p99_mm: p99,
+      heavy_rain_alert: alertDates.length > 0, heavy_rain_level: alertDates.length ? "Watch" : "None", alert_dates: alertDates,
+      forecast_total_7day_mm: rnd(rain.filter((v) => !Number.isNaN(v)).reduce((a, b) => a + b, 0), 1),
+      heat_alert_days: heatDays, heat_threshold_p95_c: p95,
+      heat_level: heatDays >= f.heat_warning_days ? "Warning" : heatDays >= f.heat_watch_days ? "Watch" : "None",
+      source: "Open-Meteo 7-day forecast (live), compared with the county's NASA POWER 1991-2020 thresholds",
+    };
+  } catch (e) {
+    return { error: `Live forecast unavailable (${e.name}). I don't know the 7-day outlook right now.` };
+  }
+}
+
+function factLines(county, o) {
+  const s = o.get_current_status, w = o.get_7day_watch, ou = o.get_seasonal_outlook, h = o.get_heat_stress, p = o.get_population_exposure;
+  const L = [];
+  if (s.pct_of_normal == null) L.push(`[get_current_status] ${nice(s.window)}: drought level not assessed (normal dry season). Data through ${s.data_through}.`);
+  else L.push(`[get_current_status] Rainfall in ${nice(s.window)} was ${s.rain_3m_mm} mm, which is ${s.pct_of_normal}% of the 1991-2020 normal of ${s.normal_3m_mm} mm. Drought level: ${canon(s.drought_level)}. The 3 months before were ${s.previous_window_pct_of_normal}% of normal. Data through ${s.data_through}.`);
+  if (ou.error) L.push(`[get_seasonal_outlook] Unavailable: I don't know the seasonal outlook.`);
+  else L.push(`[get_seasonal_outlook] For ${ou.target_window}, the chance that rainfall falls in the driest third of the record is ${ou.chance_of_driest_third} (the usual chance is ${pct(ou.p_dry_climatology)}). In tests on 2017 onward the model ${ou.model_beats_baselines_in_test ? "beat" : "did not beat"} both baselines.${ou.note ? " Note: " + ou.note : ""}`);
+  if (w.error) L.push(`[get_7day_watch] ${w.error}`);
+  else L.push(`[get_7day_watch] Next 7 days (${w.forecast_start} to ${w.forecast_end}): the highest forecast 3-day rainfall is ${w.max_3day_forecast_mm} mm, against this county's heavy-rain threshold of ${w.threshold_3day_p99_mm} mm. Heavy-rain level: ${w.heavy_rain_level === "None" ? "None (no heavy-rain watch)" : w.heavy_rain_level}. Days forecast above the hot-day threshold of ${w.heat_threshold_p95_c} °C: ${w.heat_alert_days}. Heat level: ${w.heat_level === "None" ? "None (no heat alert)" : w.heat_level}.`);
+  L.push(`[get_heat_stress] In ${h.latest_month} there were ${h.heat_days_latest_month} hot days (maximum temperature above ${h.hot_day_threshold_tmax_c} °C), against a 1991-2020 normal of ${h.normal_heat_days_same_month_1991_2020} for that month. Hot days are rising by ${h.trend_heat_days_per_decade} per decade${h.trend_p_value < 0.05 ? " (statistically significant)" : " (not statistically significant)"}.`);
+  L.push(`[get_population_exposure] ${fmt(p.population)} people (2019 census), ${p.density_per_km2} people per km² over ${fmt(p.area_km2)} km².`);
+  return L.join("\n");
+}
+
+const SYSTEM = `You are Ukame Watch, a planning-support assistant for county disaster managers in northern Kenya.
+Write a short advisory that answers the user's question using ONLY the TOOL DATA in the message.
+Rules:
+1. Copy every number exactly as it is written in TOOL DATA. Never calculate, convert or invent numbers.
+2. Use the exact level words from TOOL DATA (Normal, Alert, Alarm, Watch, Warning, None). Never change them.
+3. If the data needed to answer is not in TOOL DATA, say "I don't know".
+4. Never write "no risk", "no immediate risk" or "safe". When a level is None, write "no heavy-rain watch" or "no heat alert" instead.
+5. Official Kenya Meteorological Department warnings and NDMA drought bulletins take priority over this advisory.
+6. Do not list recommended actions: the official playbook is added separately.
+Use these headings: Situation, Outlook, Who is exposed, Limits. Keep it under 170 words.`;
+
+// ------------------------------------------------------------------ rendering
+const html = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const inline = (s) => html(s)
+  .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+  .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>").replace(/(^|\s)_([^_]+)_(?=\s|$|[.,])/g, "$1<i>$2</i>");
+function md(text) {
+  const out = []; let list = null;
+  const close = () => { if (list) { out.push(`</${list}>`); list = null; } };
+  for (const raw of text.split("\n")) {
+    const line = raw.trim();
+    let m;
+    if (!line) { close(); continue; }
+    if ((m = line.match(/^#{1,6}\s*(.+)$/)) || (m = line.match(/^\*\*([^*]+?):?\*\*:?$/))) { close(); out.push(`<h4>${inline(m[1])}</h4>`); continue; }
+    if ((m = line.match(/^[-*•]\s+(.+)$/))) { if (list !== "ul") { close(); out.push("<ul>"); list = "ul"; } out.push(`<li>${inline(m[1])}</li>`); continue; }
+    if ((m = line.match(/^\d+[.)]\s+(.+)$/))) { if (list !== "ol") { close(); out.push("<ol>"); list = "ol"; } out.push(`<li>${inline(m[1])}</li>`); continue; }
+    close(); out.push(`<p>${inline(line)}</p>`);
+  }
+  close(); return out.join("");
+}
+
+// ------------------------------------------------------------------ UI setup
+$("county").innerHTML = COUNTIES.map((c) => `<option${c === "Samburu" ? " selected" : ""}>${c}</option>`).join("");
+const examples = (c) => [
+  `What is the current drought situation in ${c}, and what should the county prepare?`,
+  `Is there a heavy-rain or heat alert for ${c} in the next 7 days?`,
+  `How many people live in ${c}, and what is the drought outlook?`,
+  "Where will the cyclone make landfall next week?",
+  "Is Nairobi facing drought this season?",
+];
+function renderChips() {
+  const c = $("county").value;
+  $("chips").innerHTML = examples(c).map((e) => `<button class="chip" type="button">${html(e)}</button>`).join("");
+  [...$("chips").children].forEach((b) => (b.onclick = () => { $("q").value = b.textContent; $("q").focus(); }));
+  if (!$("q").value || examples(COUNTIES.find((x) => $("q").value.includes(x)) || c).includes($("q").value)) $("q").value = examples(c)[0];
+}
+$("county").onchange = renderChips; renderChips();
+
+let f16 = true;
+if (!navigator.gpu || !(await navigator.gpu.requestAdapter().catch(() => null))) {
+  $("nogpu").classList.remove("hidden");
+  $("nogpu").innerHTML = 'This browser cannot run the in-browser model: it needs <b>WebGPU</b> (recent Chrome or Edge on a laptop or desktop). Cyclone-path and other-county questions still work. See the <a href="https://github.com/PatrickWangai/ukame-watch/blob/main/logs/agent_eval.md" target="_blank" rel="noopener">recorded test run</a>, or run the full assistant on a laptop (README, Quick start).';
+  $("start").disabled = true;
+} else {
+  f16 = (await navigator.gpu.requestAdapter()).features.has("shader-f16");
+}
+
+$("start").onclick = async () => {
+  $("start").disabled = true; $("model").disabled = true;
+  const id = `${$("model").value}-${f16 ? "q4f16_1" : "q4f32_1"}-MLC`;
+  try {
+    $("load-text").textContent = "Loading the WebLLM runtime…";
+    const webllm = await import(WEBLLM);
+    engine = await webllm.CreateMLCEngine(id, {
+      initProgressCallback: (r) => { $("bar").style.width = `${Math.round((r.progress || 0) * 100)}%`; $("load-text").textContent = r.text; },
+    });
+    $("bar").style.width = "100%";
+    $("load-text").textContent = `Ready: ${id} is running on this device. Ask a question below.`;
+    $("start").textContent = "Assistant ready";
+  } catch (e) {
+    $("load-text").textContent = `Could not start the model (${e.message || e}). Try the 0.5B model, or use the recorded test run.`;
+    $("start").disabled = false; $("model").disabled = false;
+  }
+};
+
+// ------------------------------------------------------------------ the advisory flow (mirrors src/ukame/agent.py)
+function finish(r) {
+  current = r;
+  const colour = { draft: "var(--jade)", needs_review: "var(--alarm)", refusal: "var(--muted)" }[r.status];
+  const label = { draft: "Draft: awaiting approval", needs_review: "Needs review: check flagged items", refusal: "Refused / out of scope" }[r.status];
+  $("badge").style.background = colour; $("badge").textContent = label;
+  $("out").innerHTML = md(r.text);
+  const fl = [];
+  if (r.checks.ungrounded_numbers.length) fl.push(`<div class="flag err">Numbers not found in any tool output: ${html(r.checks.ungrounded_numbers.join(", "))}. Check them before approving.</div>`);
+  if (r.checks.level_mismatch.length) fl.push(`<div class="flag err">The draft names a drought level the data does not report: ${html(r.checks.level_mismatch.join(", "))}. Correct it before approving.</div>`);
+  if (r.checks.absolute_claim_blocked) fl.push('<div class="flag warn">The model tried to state there was no risk. That statement was blocked and replaced.</div>');
+  $("flags").innerHTML = fl.join("");
+  $("calls").classList.toggle("hidden", !r.tool_calls.length);
+  $("calls-sum").textContent = `Tool calls (${r.tool_calls.length}): every number above should appear here`;
+  $("calls-body").innerHTML = r.tool_calls.map((t) => `<p style="margin:10px 0 4px"><b>${t.tool}</b> <code>${html(JSON.stringify(t.arguments))}</code>${t.added_by ? " (added by code)" : ""}</p><pre>${html(JSON.stringify(t.result, null, 1))}</pre>`).join("");
+  $("approve").classList.toggle("hidden", r.status === "refusal");
+  $("decided").textContent = "";
+  $("result").classList.remove("hidden");
+}
+
+$("ask").onclick = async () => {
+  const q = $("q").value.trim(); if (!q) return;
+  $("ask").disabled = true; $("ask-text").textContent = "";
+  const id = `q-${new Date().toISOString().replace(/[-:T.Z]/g, "").slice(0, 14)}-${Math.random().toString(16).slice(2, 8)}`;
+  const checks = { used_tools: false, ungrounded_numbers: [], absolute_claim_blocked: false, level_mismatch: [] };
+  const done = (text, status, tool_calls = []) => { finish({ id, question: q, text: `${text.trim()}\n\n_${DATA.disclaimer}_`, status, tool_calls, checks }); $("ask").disabled = false; };
+  try {
+    // 1. Code guardrails before any model sees the question
+    if (CYCLONE.test(q) && TRACK.test(q)) return done(DATA.cyclone_refusal, "refusal");
+    const covered = mentions(q, COUNTIES), uncovered = mentions(q, DATA.other_counties);
+    if (uncovered.length && !covered.length)
+      return done(`I don't know: ${uncovered.join(", ")} is not covered by this tool. It covers ${COUNTIES.join(", ")}. Please check NDMA bulletins for other counties.`, "refusal");
+    if (!engine) { $("ask-text").textContent = "Start the assistant first (step 1)."; $("ask").disabled = false; return; }
+    const county = covered[0] || $("county").value;
+    if (covered[0]) $("county").value = covered[0];
+
+    // 2. Code calls the tools; the model only writes
+    $("ask-text").textContent = "Calling the tools…";
+    const outs = { ...Object.fromEntries(["get_current_status", "get_seasonal_outlook", "get_heat_stress", "get_population_exposure"].map((t) => [t, DATA.counties[county][t]])) };
+    outs.get_7day_watch = await get7dayWatch(county);
+    const order = ["get_current_status", "get_7day_watch", "get_seasonal_outlook", "get_heat_stress", "get_population_exposure"];
+    const toolLog = order.map((t) => ({ tool: t, arguments: { county }, result: outs[t] }));
+    const toolOutputs = order.map((t) => outs[t]);
+    checks.used_tools = true;
+
+    $("ask-text").textContent = "Drafting… the text appears below as it is written.";
+    $("result").classList.remove("hidden"); $("badge").textContent = "Drafting…"; $("badge").style.background = "var(--muted)";
+    $("flags").innerHTML = ""; $("approve").classList.add("hidden"); $("calls").classList.add("hidden");
+    $("out").innerHTML = '<div class="live" id="live"></div>';
+    const t0 = performance.now();
+    const stream = await engine.chat.completions.create({
+      messages: [{ role: "system", content: SYSTEM }, { role: "user", content: `County: ${county}\nQuestion: ${q}\n\nTOOL DATA:\n${factLines(county, outs)}` }],
+      temperature: 0.1, max_tokens: 380, stream: true,
+    });
+    let text = "";
+    for await (const ch of stream) { text += ch.choices[0]?.delta?.content || ""; $("live").textContent = text; }
+
+    // 3. Code guardrails on the model's words
+    if (ABSOLUTE.test(text)) {
+      checks.absolute_claim_blocked = true;
+      const lv = toolOutputs.flatMap((o) => ["drought_level", "heavy_rain_level", "heat_level"].filter((k) => o && k in o).map((k) => `${county}: ${k} = ${o[k]}`));
+      text = "I can't rule out risk, and I won't describe any county as risk-free. " + (lv.length ? `What the tools report: ${lv.join("; ")}. ` : "") + "Conditions can change quickly; follow Kenya Meteorological Department and NDMA updates.";
+    }
+    checks.level_mismatch = levelMismatches(text, toolOutputs);
+
+    // 4. Code adds the cited playbook for every active level
+    const active = [];
+    const s = outs.get_current_status, w = outs.get_7day_watch;
+    if (["Alert", "Alarm"].includes(s.drought_level)) active.push(["drought", s.drought_level]);
+    if (["Watch", "Warning"].includes(w.heavy_rain_level)) active.push(["heavy_rain", w.heavy_rain_level]);
+    if (["Watch", "Warning"].includes(w.heat_level)) active.push(["heat", w.heat_level]);
+    for (const [hz, lv] of active) {
+      const pb = DATA.playbook[`${hz}|${lv}`];
+      toolLog.push({ tool: "lookup_playbook", arguments: { hazard: hz, level: lv }, result: pb, added_by: "code" });
+      toolOutputs.push(pb);
+      if (pb && pb.actions) text += `\n\n**Recommended actions: ${hz.replace("_", " ")} ${lv}** (Ukame Watch playbook)\n` +
+        pb.actions.map((a) => `- ${a.sector}: ${a.action} (${a.citations.map((c) => `[${c.id}](${c.url})`).join(", ")})`).join("\n");
+    }
+
+    // 5. Sources for every number
+    const cites = [];
+    for (const t of toolLog) if (t.result && t.result.source) {
+      const line = `- ${t.tool} (${county}): ${t.result.source}${t.result.data_through ? `, data through ${t.result.data_through}` : ""}`;
+      if (!cites.includes(line)) cites.push(line);
+    }
+    if (cites.length) text += "\n\n**Sources**\n" + cites.join("\n");
+
+    const allowed = [...(q + " " + DATA.disclaimer).matchAll(NUMBER)].map((m) => m[0]);
+    checks.ungrounded_numbers = ungroundedNumbers(text, JSON.stringify(toolOutputs), allowed);
+    let status = checks.ungrounded_numbers.length || checks.level_mismatch.length ? "needs_review" : "draft";
+    $("ask-text").textContent = `Drafted in ${((performance.now() - t0) / 1000).toFixed(0)} s.`;
+    done(text, status, toolLog);
+  } catch (e) {
+    $("ask-text").textContent = `Something went wrong (${e.message || e}).`;
+    $("ask").disabled = false;
+  }
+};
+
+// ------------------------------------------------------------------ human approval (mirrors record_decision)
+const LOG_KEY = "ukame-watch-advisories";
+const readLog = () => JSON.parse(localStorage.getItem(LOG_KEY) || "[]");
+function renderLog() {
+  const rows = readLog();
+  $("logcard").classList.toggle("hidden", !rows.length);
+  $("log").innerHTML = rows.slice().reverse().map((r) => `<tr><td>${html(r.decided_at.replace("T", " ").slice(0, 16))}</td><td>${r.decision}</td><td>${html(r.approver)}</td><td>${html(r.question)}</td></tr>`).join("");
+}
+$("who").oninput = () => { const ok = $("who").value.trim().length > 1; $("yes").disabled = !ok; $("no").disabled = !ok; };
+function decide(decision) {
+  if (!current) return;
+  const rec = { id: current.id, question: current.question, text: current.text, status_before: current.status, decision, approver: $("who").value.trim(), decided_at: new Date().toISOString() };
+  localStorage.setItem(LOG_KEY, JSON.stringify([...readLog(), rec]));
+  $("decided").textContent = `${decision === "approved" ? "Approved" : "Rejected"} by ${rec.approver}. Recorded in this browser's decision log.`;
+  $("yes").disabled = $("no").disabled = true;
+  renderLog();
+}
+$("yes").onclick = () => decide("approved");
+$("no").onclick = () => decide("rejected");
+$("dl").onclick = () => {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([readLog().map((r) => JSON.stringify(r)).join("\n") + "\n"], { type: "application/json" }));
+  a.download = "ukame-watch-advisories.jsonl"; a.click();
+};
+renderLog();
+</script>
+</body>
+</html>

@@ -465,7 +465,8 @@ with tabs[5]:
                 f"({C.AGENT_MODEL}, about 2 GB) through Ollama, so nothing leaves the device and no API key is "
                 "needed. To try it live, follow the Quick start in the README. Below is the recorded test run: "
                 "eight questions answered on a laptop, including a cyclone-path request, a county that does "
-                "not exist and an attempt to force a \"no risk\" answer.")
+                "not exist and an attempt to force a \"no risk\" answer. To try the assistant live in your "
+                "browser, open [the in-browser assistant](assistant.html).")
         ev = ROOT / "logs" / "agent_eval.md"
         if ev.exists():
             with st.expander("Recorded test run (logs/agent_eval.md)", expanded=True):
