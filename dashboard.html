@@ -32,6 +32,7 @@
     const files = [
       "app/streamlit_app.py",
       "docs/limitations.md",
+      "logs/agent_eval.md",
       "src/ukame/__init__.py",
       "src/ukame/config.py",
       "src/ukame/agent.py",
@@ -72,7 +73,7 @@
 ];
     mount(
       {
-        requirements: ["pandas", "plotly", "shapely", "requests"],
+        requirements: ["pandas", "plotly", "shapely", "requests", "pyarrow"],
         entrypoint: "app/streamlit_app.py",
         files: Object.fromEntries(files.map((f) => [f, { url: "./" + f }])),
         streamlitConfig: {"theme.base": "light", "theme.primaryColor": "#0F6E66", "theme.backgroundColor": "#EEF0EC", "theme.secondaryBackgroundColor": "#FCFCFB", "theme.textColor": "#1B1D1C", "client.toolbarMode": "viewer"},

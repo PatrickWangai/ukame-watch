@@ -460,57 +460,68 @@ with tabs[5]:
     st.caption(f"The assistant uses a small local model ({C.AGENT_MODEL}, via Ollama; nothing leaves this computer). "
                "It can only use six tools, every call is logged, numbers are checked against tool outputs, and the "
                "draft is not final until a named person approves it.")
-    examples = [f"What is the current drought situation in {county}, and what should the county prepare?",
-                f"Is there a heavy-rain or heat alert for {county} in the next 7 days?",
-                f"How many people live in {county}, and what is the drought outlook?"]
-    pick = st.radio("Example questions", examples, index=0, label_visibility="collapsed")
-    q = st.text_area("Your question", value=pick, height=80)
-    if st.button("Draft advisory", type="primary"):
-        with st.spinner("Calling tools and drafting… (about 20–60 seconds on this laptop)"):
-            try:
-                st.session_state["draft"] = A.answer(q, store)
-            except Exception as e:
-                st.error(f"The assistant needs a local AI model ({C.AGENT_MODEL} via Ollama), which is not running "
-                         f"here ({type(e).__name__}). In the online demo it is switched off: clone the repository and "
-                         f"follow the README to run it on a laptop, where nothing leaves the device. "
-                         f"Locally: start `ollama serve` and check `ollama list` shows {C.AGENT_MODEL}.")
-    d = st.session_state.get("draft")
-    if d:
-        colour = {"draft": JADE, "needs_review": STATUS["critical"], "refusal": INK2}.get(d["status"], INK2)
-        label = {"draft": "Draft — awaiting approval", "needs_review": "Needs review — check flagged items",
-                 "refusal": "Refused / out of scope"}.get(d["status"], d["status"])
-        st.markdown(f'<span class="uw-badge" style="background:{colour}">{label}</span>', unsafe_allow_html=True)
-        st.markdown(d["text"])
-        if d["checks"]["ungrounded_numbers"]:
-            st.error("Numbers not found in any tool output: " + ", ".join(d["checks"]["ungrounded_numbers"]))
-        if d["checks"].get("level_mismatch"):
-            st.error("The draft names a drought level the data does not report: "
-                     + ", ".join(d["checks"]["level_mismatch"]) + ". Correct it before approving.")
-        if d["checks"].get("unsupported_claims"):
-            st.warning("Unsupported by the tools: " + "; ".join(d["checks"]["unsupported_claims"]) + ".")
-        if d["checks"]["absolute_claim_blocked"]:
-            st.warning("The model tried to state there was no risk. That statement was blocked and replaced.")
-        with st.expander(f"Tool calls ({len(d['tool_calls'])}) — every number above should appear here"):
-            for tc in d["tool_calls"]:
-                st.markdown(f"**{tc['tool']}** `{json.dumps(tc['arguments'])}`")
-                st.json(tc["result"], expanded=False)
-        if d["status"] != "refusal":
-            c1, c2, c3 = st.columns([2, 1, 1])
-            who = c1.text_input("Your name and role (recorded with the decision)", key="approver")
-            if c2.button("Approve", disabled=not who):
-                A.record_decision(d, who, "approved")
-                st.success(f"Approved by {who}. Recorded in logs/advisories.jsonl.")
-            if c3.button("Reject", disabled=not who):
-                A.record_decision(d, who, "rejected")
-                st.info(f"Rejected by {who}. Recorded in logs/advisories.jsonl.")
-    log = C.LOGS / "advisories.jsonl"
-    if log.exists():
-        st.markdown("##### Decision log")
-        rows = [json.loads(line) for line in log.read_text().splitlines()]
-        st.dataframe(pd.DataFrame(rows)[["decided_at", "decision", "approver", "question"]].iloc[::-1],
-                     hide_index=True, width="stretch")
+    if sys.platform == "emscripten":  # browser demo (stlite/Pyodide): the local model cannot run here
+        st.info("**The AI assistant runs on a laptop, not in the browser.** It uses a local model "
+                f"({C.AGENT_MODEL}, about 2 GB) through Ollama, so nothing leaves the device and no API key is "
+                "needed. To try it live, follow the Quick start in the README. Below is the recorded test run: "
+                "eight questions answered on a laptop, including a cyclone-path request, a county that does "
+                "not exist and an attempt to force a \"no risk\" answer.")
+        ev = ROOT / "logs" / "agent_eval.md"
+        if ev.exists():
+            with st.expander("Recorded test run (logs/agent_eval.md)", expanded=True):
+                st.markdown(ev.read_text().split("\n", 1)[1])
+    else:
+        examples = [f"What is the current drought situation in {county}, and what should the county prepare?",
+                    f"Is there a heavy-rain or heat alert for {county} in the next 7 days?",
+                    f"How many people live in {county}, and what is the drought outlook?"]
+        pick = st.radio("Example questions", examples, index=0, label_visibility="collapsed")
+        q = st.text_area("Your question", value=pick, height=80)
+        if st.button("Draft advisory", type="primary"):
+            with st.spinner("Calling tools and drafting… (about 20–60 seconds on this laptop)"):
+                try:
+                    st.session_state["draft"] = A.answer(q, store)
+                except Exception as e:
+                    st.error(f"The assistant needs a local AI model ({C.AGENT_MODEL} via Ollama), which is not running "
+                             f"here ({type(e).__name__}). In the online demo it is switched off: clone the repository and "
+                             f"follow the README to run it on a laptop, where nothing leaves the device. "
+                             f"Locally: start `ollama serve` and check `ollama list` shows {C.AGENT_MODEL}.")
+        d = st.session_state.get("draft")
+        if d:
+            colour = {"draft": JADE, "needs_review": STATUS["critical"], "refusal": INK2}.get(d["status"], INK2)
+            label = {"draft": "Draft — awaiting approval", "needs_review": "Needs review — check flagged items",
+                     "refusal": "Refused / out of scope"}.get(d["status"], d["status"])
+            st.markdown(f'<span class="uw-badge" style="background:{colour}">{label}</span>', unsafe_allow_html=True)
+            st.markdown(d["text"])
+            if d["checks"]["ungrounded_numbers"]:
+                st.error("Numbers not found in any tool output: " + ", ".join(d["checks"]["ungrounded_numbers"]))
+            if d["checks"].get("level_mismatch"):
+                st.error("The draft names a drought level the data does not report: "
+                         + ", ".join(d["checks"]["level_mismatch"]) + ". Correct it before approving.")
+            if d["checks"].get("unsupported_claims"):
+                st.warning("Unsupported by the tools: " + "; ".join(d["checks"]["unsupported_claims"]) + ".")
+            if d["checks"]["absolute_claim_blocked"]:
+                st.warning("The model tried to state there was no risk. That statement was blocked and replaced.")
+            with st.expander(f"Tool calls ({len(d['tool_calls'])}) — every number above should appear here"):
+                for tc in d["tool_calls"]:
+                    st.markdown(f"**{tc['tool']}** `{json.dumps(tc['arguments'])}`")
+                    st.json(tc["result"], expanded=False)
+            if d["status"] != "refusal":
+                c1, c2, c3 = st.columns([2, 1, 1])
+                who = c1.text_input("Your name and role (recorded with the decision)", key="approver")
+                if c2.button("Approve", disabled=not who):
+                    A.record_decision(d, who, "approved")
+                    st.success(f"Approved by {who}. Recorded in logs/advisories.jsonl.")
+                if c3.button("Reject", disabled=not who):
+                    A.record_decision(d, who, "rejected")
+                    st.info(f"Rejected by {who}. Recorded in logs/advisories.jsonl.")
+        log = C.LOGS / "advisories.jsonl"
+        if log.exists():
+            st.markdown("##### Decision log")
+            rows = [json.loads(line) for line in log.read_text().splitlines()]
+            st.dataframe(pd.DataFrame(rows)[["decided_at", "decision", "approver", "question"]].iloc[::-1],
+                         hide_index=True, width="stretch")
 
-# ---- method & limits
+    # ---- method & limits
 with tabs[6]:
     lim = ROOT / "docs" / "limitations.md"
     st.markdown(lim.read_text() if lim.exists() else "See README.md and DATA.md.")

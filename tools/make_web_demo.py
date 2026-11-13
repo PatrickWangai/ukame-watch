@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 STLITE = "1.12.2"  # bundles Streamlit 1.65; tested with this version
 
 APP_FILES = (
-    ["app/streamlit_app.py", "docs/limitations.md"]
+    ["app/streamlit_app.py", "docs/limitations.md", "logs/agent_eval.md"]
     + [f"src/ukame/{m}.py" for m in ["__init__", "config", "agent", "agent_tools", "guardrails", "watch",
                                      "outlook", "data"]]
     + sorted(str(p.relative_to(ROOT)) for p in (ROOT / "data/processed").glob("*") if p.suffix in
@@ -61,7 +61,7 @@ HTML = """<!doctype html>
     const files = {files};
     mount(
       {{
-        requirements: ["pandas", "plotly", "shapely", "requests"],
+        requirements: ["pandas", "plotly", "shapely", "requests", "pyarrow"],
         entrypoint: "app/streamlit_app.py",
         files: Object.fromEntries(files.map((f) => [f, {{ url: "./" + f }}])),
         streamlitConfig: {config},

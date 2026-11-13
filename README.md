@@ -67,7 +67,7 @@ Below the map, seven tabs give the detail:
 | **7-day watch** | The live Open-Meteo forecast for the next 7 days, against the county's own extremes: 3-day rain above its 99th percentile, and maximum temperature above its 95th percentile |
 | **Heat stress** | Hot days per year since 1991, with the trend test (Mann-Kendall and Sen's slope) and the results for all counties |
 | **Track record** | Whether the indicators caught the 10 documented disasters, and whether the worst periods in the data match them. It also has the 8-county rainfall for every rainy season and the cross-check against ERA5 |
-| **Draft an advisory** | The AI assistant. Ask a question, read the draft, its sources and checks, then **Approve** or **Reject** it under your name. Every decision goes into the decision log. This tab runs only on a laptop with Ollama (see [Quick start](#quick-start)) |
+| **Draft an advisory** | The AI assistant. Ask a question, read the draft, its sources and checks, then **Approve** or **Reject** it under your name. Every decision goes into the decision log. The live assistant runs on a laptop with Ollama (see [Quick start](#quick-start)); the online version shows the recorded 8-question test run instead |
 | **Method & limits** | The full limitations note ([docs/limitations.md](docs/limitations.md)) |
 
 ## 2. Problem statement
