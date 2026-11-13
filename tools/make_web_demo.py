@@ -8,6 +8,7 @@ The local-LLM assistant cannot run in a browser, so the "Draft an advisory" tab 
 run it locally instead. Everything else, including the live 7-day forecast, works.
 """
 import json
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -63,7 +64,7 @@ HTML = """<!doctype html>
       {{
         requirements: ["pandas", "plotly", "shapely", "requests", "pyarrow"],
         entrypoint: "app/streamlit_app.py",
-        files: Object.fromEntries(files.map((f) => [f, {{ url: "./" + f }}])),
+        files: Object.fromEntries(files.map((f) => [f, {{ url: "./" + f + "?v={build}" }}])),
         streamlitConfig: {config},
       }},
       document.getElementById("root"),
@@ -83,8 +84,15 @@ def main():
     missing = [f for f in APP_FILES if not (ROOT / f).exists()]
     if missing:
         raise SystemExit(f"Missing files: {missing}")
-    (ROOT / "dashboard.html").write_text(HTML.format(stlite=STLITE, files=json.dumps(APP_FILES, indent=6),
+    (ROOT / "dashboard.html").write_text(HTML.format(stlite=STLITE, build=time.strftime("%Y%m%d%H%M%S"), files=json.dumps(APP_FILES, indent=6),
                                                   config=json.dumps(STREAMLIT_CONFIG)))
+    # Version the iframe URL on the landing page too, so browsers never show a stale dashboard after an update.
+    index = ROOT / "index.html"
+    if index.exists():
+        import re
+        build = re.search(r'\?v=(\d+)', (ROOT / "dashboard.html").read_text()).group(1)
+        index.write_text(re.sub(r'data-src="dashboard\.html(?:\?v=\d+)?"', f'data-src="dashboard.html?v={build}"',
+                                index.read_text()))
     (ROOT / ".nojekyll").write_text("")  # serve dot-folders and every file as-is on GitHub Pages
     print(f"wrote dashboard.html ({len(APP_FILES)} files mounted)")
 
