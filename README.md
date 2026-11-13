@@ -44,6 +44,32 @@ The project has three parts:
 Secondary users include county agriculture and livestock officers, and humanitarian partners planning water,
 cash and nutrition support.
 
+### Using the dashboard
+
+The top of the page is the situation board:
+
+- **County cards.** For each of the 8 counties:
+  - rainfall for the last 3 months as % of normal
+  - its drought level
+  - its last 8 rainy seasons
+  - its population
+  - the seasonal outlook
+  - the 7-day watch.
+- **Hazard map.** It has three layers: rainfall vs normal, population density and hot days.
+- **County in focus.** This selector sets which county the tabs below show.
+
+Below the map, seven tabs give the detail:
+
+| Tab | What it shows |
+|---|---|
+| **Season history** | Every rainy season since 1991 for the chosen county, as % of its 1991–2020 normal. Failed seasons are red, and documented disasters are labelled |
+| **Seasonal outlook** | The chance that the next 3 months fall in the driest third, compared with the usual one-in-three. It also shows whether the model beat the climatology and persistence baselines on the test years 2017–2026 |
+| **7-day watch** | The live Open-Meteo forecast for the next 7 days, against the county's own extremes: 3-day rain above its 99th percentile, and maximum temperature above its 95th percentile |
+| **Heat stress** | Hot days per year since 1991, with the trend test (Mann-Kendall and Sen's slope) and the results for all counties |
+| **Track record** | Whether the indicators caught the 10 documented disasters, and whether the worst periods in the data match them. It also has the 8-county rainfall for every rainy season and the cross-check against ERA5 |
+| **Draft an advisory** | The AI assistant. Ask a question, read the draft, its sources and checks, then **Approve** or **Reject** it under your name. Every decision goes into the decision log. This tab runs only on a laptop with Ollama (see [Quick start](#quick-start)) |
+| **Method & limits** | The full limitations note ([docs/limitations.md](docs/limitations.md)) |
+
 ## 2. Problem statement
 
 Northern Kenya swings between drought and flood. Across our eight counties, the last eight rainy seasons were:
