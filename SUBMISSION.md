@@ -29,7 +29,7 @@ with `ollama pull qwen2.5:3b` (see README).
 | 2 | README with setup and run instructions | Done | [README.md](README.md), "Quick start" |
 | 3 | Backup demo video, 2–3 minutes | Done | https://patrickwangai.github.io/ukame-watch/docs/ukame-watch-demo.mp4 (also in the repo: [docs/ukame-watch-demo.mp4](docs/ukame-watch-demo.mp4)) |
 | 4 | Live demo URL | Done | https://patrickwangai.github.io/ukame-watch/ |
-| 5 | Team member details | **Names to add** | [README.md](README.md), "Team" |
+| 5 | Team member details | Done | Patrick Wangai, Faith Githaiga, Monchari Leah, Dedan Mugambi; roles in [README.md](README.md), "Team" |
 | 6 | Alumni Contribution note | Not applicable: the organisers told us no alumni collaborator is needed for our team | — |
 | 7 | SDG impact statement | Done | [README.md](README.md), "SDG impact statement" (SDG 13.1, 2.4, 1.5, 11.5) |
 | 8 | Technology stack | Done | [README.md](README.md), "Technology stack" |
@@ -73,5 +73,5 @@ A fresh clone reproduces the same validation and forecast-skill results.
 ## Still to do before the 15:00 freeze
 
 - [x] Record and link the backup demo video (item 3)
-- [ ] Add team names (item 5)
+- [x] Add team names (item 5)
 - [ ] A team member approves at least one advisory in the dashboard, so the agent log shows a human approval

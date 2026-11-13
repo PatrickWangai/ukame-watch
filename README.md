@@ -182,7 +182,7 @@ licences are in `DATA.md`.
 
 | Member | Role | Owns (can explain and rerun) |
 |---|---|---|
-| _name_ | Data and QC | Data pipeline, QC and `DATA.md` (`data.py`, `analysis.py`) |
-| _name_ | Modelling | Seasonal outlook and validation (`outlook.py`, `validation.py`, notebook 02) |
-| _name_ | AI assistant | Agent, guardrails and evaluation (`agent*.py`, `guardrails.py`, `logs/`) |
-| _name_ | Product and demo | Dashboard, playbook, live demo and pitch (`app/`, `docs/`) |
+| Patrick Wangai | Data and QC | Data pipeline, QC and `DATA.md` (`data.py`, `analysis.py`) |
+| Faith Githaiga | Modelling | Seasonal outlook and validation (`outlook.py`, `validation.py`, notebook 02) |
+| Monchari Leah | AI assistant | Agent, guardrails and evaluation (`agent*.py`, `guardrails.py`, `logs/`) |
+| Dedan Mugambi | Product and demo | Dashboard, playbook, live demo and pitch (`app/`, `docs/`) |
