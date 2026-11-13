@@ -111,6 +111,12 @@
   .trust .k { font-weight: 700; color: var(--jade); font-size: 15px; letter-spacing: .1em; text-transform: uppercase; display: block; margin-bottom: 10px; }
   @media (max-width: 860px) { .trust { grid-template-columns: 1fr; } }
 
+  .tabs-intro { margin: 28px 0 14px; color: var(--ink2); max-width: 70ch; }
+  .tabs-guide { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 12px; counter-reset: tab; }
+  .tabs-guide li { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; counter-increment: tab; }
+  .tabs-guide b { display: block; font-family: var(--display); font-size: 22px; line-height: 1.1; color: var(--jade); margin-bottom: 6px; }
+  .tabs-guide b::before { content: counter(tab) " "; color: var(--ink2); font-weight: 400; }
+  .tabs-guide span { display: block; color: var(--ink2); font-size: 16px; line-height: 1.4; }
   .board-frame { position: relative; margin-top: 36px; border-radius: 18px; overflow: hidden; border: 1px solid var(--line); background: var(--dust); height: min(90svh, 960px); min-height: 640px; box-shadow: 0 20px 60px rgba(27,29,28,.10); }
   .board-frame iframe { width: 100%; height: 100%; border: 0; display: block; }
   .loader { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; gap: 14px; background: var(--dust); padding: 24px; transition: opacity .5s; }
@@ -306,6 +312,16 @@
     <p class="eyebrow">Live</p>
     <h2 id="board-title">The live board</h2>
     <p class="lede">The full dashboard, running in your browser with live data and the 7-day forecast. It started loading when you opened this page.</p>
+    <p class="tabs-intro">Inside the board, the county cards and hazard map come first. Below them, seven tabs give the detail for the county you pick under <b>County in focus</b>:</p>
+    <ol class="tabs-guide">
+      <li><b>Season history</b><span>Every rainy season since 1991 as % of normal, with documented disasters labelled</span></li>
+      <li><b>Seasonal outlook</b><span>The chance of a very dry next 3 months, and whether the model beat both baselines</span></li>
+      <li><b>7-day watch</b><span>The live forecast against the county’s own heavy-rain and heat extremes</span></li>
+      <li><b>Heat stress</b><span>Hot days per year since 1991, with trend tests for every county</span></li>
+      <li><b>Track record</b><span>The 10 documented disasters it caught, and the cross-check against ERA5</span></li>
+      <li><b>Draft an advisory</b><span>The AI assistant, with approve or reject. It runs on a laptop with Ollama</span></li>
+      <li><b>Method &amp; limits</b><span>The full limitations note</span></li>
+    </ol>
     <div class="board-frame">
       <iframe id="board-frame" title="Ukame Watch live dashboard" data-src="dashboard.html"></iframe>
       <div class="loader" id="loader" role="status">
