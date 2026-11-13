@@ -12,14 +12,16 @@ Planning-support tool only: Kenya Meteorological Department warnings and NDMA dr
 |---|---|
 | **Live site** (story page; preloads the dashboard) | https://patrickwangai.github.io/ukame-watch/ |
 | **Dashboard only** (runs in the browser; first load 1–2 minutes) | https://patrickwangai.github.io/ukame-watch/dashboard.html |
+| **AI assistant** (runs in the browser; first visit downloads ~0.8 GB) | https://patrickwangai.github.io/ukame-watch/assistant.html |
 | **Code repository** (public) | https://github.com/PatrickWangai/ukame-watch |
 | **README** (overview, problem, objectives, findings, conclusions, recommendations; setup, SDG statement, stack) | [README.md](README.md) |
 | **Backup demo video** (2 min 57 s, captioned) | https://patrickwangai.github.io/ukame-watch/docs/ukame-watch-demo.mp4 |
 | **Grand Finale slides** (PDF) | https://patrickwangai.github.io/ukame-watch/docs/ukame-watch-finale-slides.pdf |
 | **Grand Finale slides with speaker notes** (PDF) | https://patrickwangai.github.io/ukame-watch/docs/ukame-watch-finale-slides-with-notes.pdf |
 
-The live demo has every feature except the AI assistant, which needs a local model. Run it on a laptop
-with `ollama pull qwen2.5:3b` (see README).
+Everything runs in the browser, including the AI assistant: a small open model (Qwen 2.5 1.5B) runs on the
+visitor's own device, so there's no server and no API key. The first visit downloads about 0.8 GB. Use a normal
+(not private) Chrome or Edge window. The laptop version uses `ollama pull qwen2.5:3b` (see README).
 
 ## Required submission items (general rules)
 
